@@ -5,32 +5,34 @@
  * @package artdom
  */
 
-$u = get_template_directory_uri();
+$paragraphs = preg_split( '/\R{2,}/u', trim( (string) artdom_field( 'about_text' ) ) );
 ?>
   <!-- ============ О компании ============ -->
   <section class="sec sec--surface about" id="about">
     <div class="wrap">
-      <h2 class="h2--big" data-rise>Экспертные решения<br>в сфере недвижимости</h2>
+      <h2 class="h2--big" data-rise><?php echo artdom_lines( artdom_field( 'about_title' ) ); ?></h2>
 
       <div class="about__in">
         <div class="about__side" data-rise>
           <div class="about__portrait">
-            <img draggable="false" src="<?php echo esc_url( $u ); ?>/img/founder.webp" alt="Мария Артемьева, основатель компании АРТДОМ" width="181" height="181" loading="lazy" decoding="async">
+            <?php
+            artdom_img(
+              artdom_field( 'about_portrait' ),
+              'founder.webp',
+              artdom_field( 'about_name' ) . ', ' . artdom_field( 'about_role' ) . ' компании АРТДОМ',
+              array( 181, 181 )
+            );
+            ?>
           </div>
-          <blockquote class="about__quote">«Хороший брокер не показывает десять квартир подряд&nbsp;— он приходит с двумя, и одна из них уже именно та».</blockquote>
-          <p class="about__who">Мария Артемьева<span class="about__role">Основатель</span></p>
+          <blockquote class="about__quote"><?php echo artdom_lines( artdom_field( 'about_quote' ) ); ?></blockquote>
+          <p class="about__who"><?php echo esc_html( artdom_field( 'about_name' ) ); ?><span class="about__role"><?php echo esc_html( artdom_field( 'about_role' ) ); ?></span></p>
         </div>
 
         <div class="about__main" data-rise>
-          <p class="body">Компания «АРТДОМ» родилась путем объединения усилий ведущих экспертов и лиц руководящего состава крупных московских Агентств. За годы совместной работы сложилась Команда, получившая огромное количество отзывов от благодарных клиентов и, у которой, сложилось собственное понимание целей.</p>
-          <p class="body">Три кита, на которых строится наша работа&nbsp;— это ВЫГОДА, БЕЗОПАСНОСТЬ и ИНТЕРЕСЫ наших клиентов. Наша миссия&nbsp;— предоставить клиентам надежные и качественные услуги в сфере недвижимости, вдохновляя их на осуществление мечты о доме, придавая им уверенность в будущем. Создавая для клиентов безопасную и комфортную среду, мы обеспечиваем профессиональный подход, прозрачность сделок и высокий уровень сервиса.</p>
-          <p class="body">Мы привыкли, что нам доверяют, рекомендуют друзьям и родственникам. Топовые места в рейтинге Российской гильдии риэлторов означают, что мы на правильном пути!</p>
-          <p class="body">Океан недвижимости для нас&nbsp;— родная стихия, мы умеем находить в нем нужные пути, открываем перед клиентами поистине безграничные возможности и помогаем клиентам выбрать идеальное решение для их нужд и желаний.</p>
-          <p class="body">Свяжитесь с нами сегодня, и откройте для себя новый мир возможностей!</p>
-          <a class="btn btn--ghost" href="#contacts" draggable="false">
-            <span class="roll"><span class="roll__a">Узнать больше</span><span class="roll__b" aria-hidden="true">Узнать больше</span></span>
-            <span class="btn__arrow" aria-hidden="true"><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg></span>
-          </a>
+          <?php foreach ( $paragraphs as $p ) : ?>
+          <p class="body"><?php echo artdom_lines( $p ); ?></p>
+          <?php endforeach; ?>
+          <?php artdom_btn( artdom_field( 'about_btn_text' ), artdom_field( 'about_btn_link' ), 'btn btn--ghost' ); ?>
         </div>
       </div>
     </div>

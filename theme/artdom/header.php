@@ -43,13 +43,22 @@ $u = get_template_directory_uri();
     </a>
 
     <div class="hdr__right">
-      <nav class="nav" aria-label="Основная навигация">
-        <a href="#about">О компании</a>
-        <a href="#objects">Объекты</a>
-        <a href="#services">Услуги</a>
-        <a href="#contacts">Контакты</a>
-      </nav>
-      <a class="hdr__tel selectable" href="tel:+74951204830">+7&nbsp;495&nbsp;120&nbsp;48&nbsp;30</a>
+      <?php
+      wp_nav_menu(
+        array(
+          'theme_location'  => 'menu_main',
+          'container'       => 'nav',
+          'container_class' => 'nav',
+          'container_aria_label' => 'Основная навигация',
+          'menu_class'      => '',
+          'items_wrap'      => '%3$s',
+          'depth'           => 1,
+          'fallback_cb'     => false,
+        )
+      );
+      ?>
+      <?php $artdom_phone = artdom_field( 'opt_phone', true ); ?>
+      <a class="hdr__tel selectable" href="tel:<?php echo esc_attr( artdom_tel( $artdom_phone ) ); ?>"><?php echo esc_html( str_replace( ' ', "\u{00a0}", $artdom_phone ) ); ?></a>
     </div>
 
     <button class="hdr__burger" type="button" data-menu-open aria-label="Открыть меню" aria-expanded="false" aria-controls="menu">
@@ -63,9 +72,20 @@ $u = get_template_directory_uri();
   <button class="menu__close" type="button" data-menu-close aria-label="Закрыть меню">
     <svg viewBox="0 0 22 22" aria-hidden="true"><use href="#i-close"></use></svg>
   </button>
-  <a href="#about">О компании</a>
-  <a href="#objects">Объекты</a>
-  <a href="#services">Услуги</a>
-  <a href="#contacts">Контакты</a>
-  <a class="selectable" href="tel:+74951204830">+7&nbsp;495&nbsp;120&nbsp;48&nbsp;30</a>
+      <?php
+      wp_nav_menu(
+        array(
+          'theme_location'  => 'menu_main',
+          'container'       => 'nav',
+          'container_class' => 'menu__nav',
+          'container_aria_label' => 'Меню',
+          'menu_class'      => '',
+          'items_wrap'      => '%3$s',
+          'depth'           => 1,
+          'fallback_cb'     => false,
+        )
+      );
+      ?>
+  <?php $artdom_phone = artdom_field( 'opt_phone', true ); ?>
+  <a class="selectable" href="tel:<?php echo esc_attr( artdom_tel( $artdom_phone ) ); ?>"><?php echo esc_html( str_replace( ' ', "\u{00a0}", $artdom_phone ) ); ?></a>
 </div>

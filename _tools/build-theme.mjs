@@ -65,6 +65,33 @@ const head = [
   '',
 ].join('\n');
 
+/* ПРЕДОХРАНИТЕЛЬ.
+   Этот скрипт генерирует шапку, подвал и все секции главной ИЗ СТАТИКИ.
+   Если поверх них уже навешана привязка к админке (artdom_field, WP_Query),
+   запуск её сотрёт — ровно это и случилось 25.08.2026, восстановить было
+   нечем, потому что проекта ещё не было в git. Теперь скрипт сначала смотрит,
+   что собирается затирать, и без явного --force отказывается. */
+{
+  const цели = [
+    'header.php', 'footer.php', 'templates/template-mainpage.php',
+    ...['hero','services','objects','about','guaranty','stats','reviews']
+        .map(n => 'template-parts/main/' + n + '.php'),
+  ];
+  const живые = цели.filter(f => {
+    try {
+      const t = fs.readFileSync(T + '/' + f, 'utf8');
+      return t.includes('artdom_field') || t.includes('WP_Query') || t.includes('get_posts');
+    } catch { return false; }
+  });
+  if (живые.length && !process.argv.includes('--force')) {
+    console.error("ОСТАНОВЛЕН: в этих файлах уже есть привязка к админке,");
+    console.error("генерация из статики её сотрёт:");
+    живые.forEach(f => console.error('  ' + f));
+    console.error("Если это осознанно — добавьте --force. Сперва сделайте коммит.");
+    process.exit(1);
+  }
+}
+
 fs.writeFileSync(T + '/header.php', head, 'utf8');
 console.log('header.php: ' + head.split('\n').length + ' строк');
 

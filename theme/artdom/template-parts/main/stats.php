@@ -5,28 +5,22 @@
  * @package artdom
  */
 
-$u = get_template_directory_uri();
+$items = artdom_field( 'stats_items' );
+$items = is_array( $items ) ? $items : array();
+
+if ( $items ) :
 ?>
   <!-- ============ Цифры ============ -->
   <section class="sec--white stats-sec">
     <div class="wrap">
       <ul class="stats">
+        <?php foreach ( $items as $item ) : ?>
         <li class="stats__item" data-rise>
-          <p class="stats__num">14+</p>
-          <p class="stats__label">Лет на рынке премиальной недвижимости</p>
+          <p class="stats__num"><?php echo esc_html( $item['number'] ); ?></p>
+          <p class="stats__label"><?php echo artdom_lines( $item['label'] ); ?></p>
         </li>
-        <li class="stats__item" data-rise>
-          <p class="stats__num">120+</p>
-          <p class="stats__label">Реализованных объектов в портфеле</p>
-        </li>
-        <li class="stats__item" data-rise>
-          <p class="stats__num">38</p>
-          <p class="stats__label">Млн ₽<br>Средний бюджет сделки</p>
-        </li>
-        <li class="stats__item" data-rise>
-          <p class="stats__num">&lt;1</p>
-          <p class="stats__label">Среднее время ответа, меньше часа</p>
-        </li>
+        <?php endforeach; ?>
       </ul>
     </div>
   </section>
+<?php endif; ?>

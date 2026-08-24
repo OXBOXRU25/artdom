@@ -170,3 +170,83 @@ function artdom_lines( $text ) {
 function artdom_tel( $phone ) {
 	return preg_replace( '/[^0-9+]/', '', $phone );
 }
+
+/**
+ * Кнопка с перекатом текста и улетающей стрелкой.
+ *
+ * Разметка у неё непростая — две копии текста под перекат и две стрелки под
+ * улёт, — и повторялась она в шаблонах восемь раз. Одна функция вместо восьми
+ * копий: поправить поведение теперь можно в одном месте.
+ *
+ * @param string $text  Текст. Перенос строки станет <br>.
+ * @param string $link  Адрес.
+ * @param string $class Классы: btn btn--wide | btn btn--ghost | btn btn--sm.
+ */
+function artdom_btn( $text, $link = '#', $class = 'btn btn--wide', $attrs = array() ) {
+	$html = artdom_lines( $text );
+	$arrow = '<span class="btn__arrow" aria-hidden="true">'
+		. '<svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg>'
+		. '<svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg></span>';
+
+	$extra = '';
+	foreach ( $attrs as $k => $v ) {
+		$extra .= ' ' . esc_attr( $k ) . '="' . esc_attr( $v ) . '"';
+	}
+
+	printf(
+		'<a class="%1$s" href="%2$s" draggable="false"%5$s><span class="roll">'
+			. '<span class="roll__a">%3$s</span>'
+			. '<span class="roll__b" aria-hidden="true">%3$s</span></span>%4$s</a>',
+		esc_attr( $class ),
+		esc_url( $link ),
+		$html,
+		$arrow,
+		$extra
+	);
+}
+
+/**
+ * Картинка из поля ACF, а если поле пусто — файл из папки темы.
+ *
+ * @param array|false $field Значение поля типа «Изображение» (формат «массив»).
+ * @param string      $fallback Имя файла в /img/.
+ * @param string      $alt   Запасное описание.
+ * @param array       $size  Ширина и высота для верстки.
+ * @param bool        $lazy  Ленивая загрузка.
+ */
+function artdom_img( $field, $fallback, $alt = '', $size = array( 580, 395 ), $lazy = true ) {
+	$src = is_array( $field ) && ! empty( $field['url'] )
+		? $field['url']
+		: get_template_directory_uri() . '/img/' . $fallback;
+
+	if ( is_array( $field ) && ! empty( $field['alt'] ) ) {
+		$alt = $field['alt'];
+	}
+
+	printf(
+		'<img draggable="false" src="%s" alt="%s" width="%d" height="%d"%s decoding="async">',
+		esc_url( $src ),
+		esc_attr( $alt ),
+		(int) $size[0],
+		(int) $size[1],
+		$lazy ? ' loading="lazy"' : ''
+	);
+}
+
+/**
+ * Пять звёзд одной строкой.
+ *
+ * @param int    $n     Сколько закрашено, 1..5.
+ * @param string $label Подпись для скринридера.
+ */
+function artdom_stars( $n = 5, $label = '', $tag = 'span' ) {
+	$n = max( 0, min( 5, (int) $n ) );
+	$label = $label ? $label : sprintf( 'Оценка %d из 5', $n );
+	$tag = in_array( $tag, array( 'span', 'p' ), true ) ? $tag : 'span';
+	$out = '<' . $tag . ' class="stars" role="img" aria-label="' . esc_attr( $label ) . '">';
+	for ( $i = 1; $i <= 5; $i++ ) {
+		$out .= '<svg viewBox="0 0 20 19" aria-hidden="true"' . ( $i > $n ? ' data-off="true"' : '' )
+			. '><use href="#i-star"></use></svg>';
+	}
+	return $out . '</' . $tag . '>';
+}
