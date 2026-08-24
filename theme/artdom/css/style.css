@@ -780,3 +780,17 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 
 /* Звёзды без заливки — для оценок ниже пяти. */
 .stars svg[data-off] { opacity: .25; }
+
+/* Шапка на внутренних страницах.
+   На главной она белым текстом лежит поверх тёмного видео. Внутри страницы
+   фон белый, и в прежнем виде шапка была невидима — белым по белому.
+   Здесь она встаёт в поток и красится в основной цвет. */
+.hdr--solid { position: relative; color: var(--c-ink); background: var(--c-white); }
+.hdr--solid .btn { --btn-bg: var(--c-accent); --btn-fg: var(--c-white); }
+.pagehead { padding-block-start: max(24px, calc(30 * var(--k))); }
+
+/* Поле формы на странице контактов лежит на той же серой подложке, что и его
+   собственный фон, — и потому невидимо до фокуса. В модалке подложка белая,
+   поэтому там проблемы нет. Меняем ролями: поле белое, панель серая. */
+.contacts__form .field__input { background: var(--c-white); border-color: var(--c-rule); }
+.contacts__form .field__input:hover { background: var(--c-white); border-color: var(--c-muted); }

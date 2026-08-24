@@ -140,33 +140,88 @@ function artdom_maybe_flush_rules() {
 add_action( 'init', 'artdom_maybe_flush_rules', 99 );
 
 /**
- * Один раз наполнить пустой сайт примерами.
+ * Наполнить сайт примерами — один раз на каждую версию набора.
  *
- * Демонстрационный сайт без содержимого показывает пустые разделы и выглядит
- * сломанным. Кнопка в админке для этого есть, но требовать нажатия ради того,
- * чтобы сайт вообще что-то показал, — плохой обмен. Поэтому наполняем сами,
- * строго один раз: флаг ставится до заполнения, так что удалённое вручную
- * содержимое обратно не вернётся.
+ * Версия нужна вот зачем: первый заход поставил прежние шесть заглушек, флаг
+ * «уже наполнено» встал, и переписанный набор на боевой уже не попал бы
+ * никогда. Номер версии снимает это ограничение ровно один раз.
+ *
+ * Создание идемпотентно, поэтому повторный проход ничего не дублирует.
  */
 function artdom_maybe_seed() {
-	if ( get_option( 'artdom_seeded' ) ) {
+	$version = 3;
+
+	if ( (int) get_option( 'artdom_seed_version' ) >= $version ) {
 		return;
 	}
 	if ( ! function_exists( 'update_field' ) || ! function_exists( 'artdom_fill_demo' ) ) {
 		return;   // ACF ещё не поднялся — попробуем на следующем запросе
 	}
 
-	$has = 0;
-	foreach ( array( 'artdom_object', 'artdom_review', 'artdom_service' ) as $type ) {
-		$has += (int) wp_count_posts( $type )->publish;
-	}
-	if ( $has > 0 ) {
-		update_option( 'artdom_seeded', 'было своё', false );
-		return;
-	}
+	/* Флаг ставим ДО работы: если что-то упадёт на середине, второй заход не
+	   начнёт всё заново и не наплодит половинок. */
+	update_option( 'artdom_seed_version', $version, false );
 
-	update_option( 'artdom_seeded', gmdate( 'c' ), false );
+	artdom_drop_old_demo();
 	artdom_fill_demo();
+	artdom_drop_duplicates();
 	flush_rewrite_rules( false );
 }
 add_action( 'init', 'artdom_maybe_seed', 100 );
+
+/**
+ * Убрать заглушки прежнего набора.
+ *
+ * Опознаём по тексту, который писался только в них: заказчик такого не
+ * напишет, а чужие записи трогать нельзя.
+ */
+function artdom_drop_old_demo() {
+	$marks = array(
+		'artdom_object' => array( 'obj_text', array( 'Текст-заглушка', 'Демонстрационная карточка' ) ),
+		'artdom_review' => array( 'rev_text', array( 'Демонстрационный отзыв' ) ),
+	);
+
+	foreach ( $marks as $type => $rule ) {
+		list( $field, $needles ) = $rule;
+		$posts = get_posts( array( 'post_type' => $type, 'numberposts' => -1, 'post_status' => 'any' ) );
+		foreach ( $posts as $post ) {
+			$text = (string) get_field( $field, $post->ID );
+			foreach ( $needles as $needle ) {
+				if ( false !== mb_strpos( $text, $needle ) ) {
+					wp_delete_post( $post->ID, true );
+					break;
+				}
+			}
+		}
+	}
+}
+
+
+/**
+ * Снять дубли по заголовку.
+ *
+ * Появились от смены правил ярлыка: прежние записи имели кириллический
+ * post_name, проверка «уже есть» искала латинский и не находила — заводилась
+ * вторая копия того же отзыва. Оставляем самую свежую.
+ */
+function artdom_drop_duplicates() {
+	foreach ( array( 'artdom_object', 'artdom_review', 'artdom_service' ) as $type ) {
+		$seen  = array();
+		$posts = get_posts(
+			array(
+				'post_type'   => $type,
+				'numberposts' => -1,
+				'post_status' => 'any',
+				'orderby'     => 'ID',
+				'order'       => 'DESC',
+			)
+		);
+		foreach ( $posts as $post ) {
+			if ( isset( $seen[ $post->post_title ] ) ) {
+				wp_delete_post( $post->ID, true );
+				continue;
+			}
+			$seen[ $post->post_title ] = true;
+		}
+	}
+}
