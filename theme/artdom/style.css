@@ -1,0 +1,18 @@
+/*!
+Theme Name: Артдом
+Theme URI: https://oxbox.ru
+Author: OXBOX
+Author URI: https://oxbox.ru
+Description: Тема для сайта агентства премиальной недвижимости АРТДОМ. Собрана на базе oxboxwise.
+Version: 1.0.0
+Requires at least: 6.0
+Tested up to: 7.1
+Requires PHP: 8.0
+License: GNU General Public License v2 or later
+License URI: LICENSE
+Text Domain: artdom
+Tags: custom-menu, featured-images, translation-ready
+
+Стили лежат в css/style.css и подключаются отдельно: здесь только заголовок темы,
+чтобы пути к шрифтам и картинкам не зависели от того, где лежит этот файл.
+*/

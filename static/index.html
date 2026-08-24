@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>АРТДОМ — премиальная недвижимость в Москве</title>
+<meta name="description" content="Подбираем и сопровождаем сделки с премиальной недвижимостью: клубные дома, резиденции и апартаменты в лучших локациях города.">
+<link rel="preload" href="fonts/inter18-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/inter18-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+<script>
+  /* Прячем блоки до появления только если скрипты живы. Плюс страховка:
+     если main.js не поднялся за 1.2 с — показываем всё принудительно. */
+  document.documentElement.classList.add('js');
+  setTimeout(function () {
+    if (!document.documentElement.dataset.riseReady) document.documentElement.classList.add('rise-failsafe');
+  }, 1200);
+</script>
+</head>
+<body>
+
+<!-- ============ Иконки одним спрайтом ============ -->
+<svg class="vh" aria-hidden="true">
+  <defs>
+    <symbol id="i-arrow" viewBox="0 0 23 6"><path d="M0 3h21M17.6.6 21.4 3l-3.8 2.4" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 12 12"><path d="M6 .8v10.4M.8 6h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-star" viewBox="0 0 20 19"><path d="M10 0l2.47 6.33 6.78.36-5.29 4.26 1.78 6.55L10 13.86 4.26 17.5l1.78-6.55L.75 6.69l6.78-.36z" fill="currentColor"/></symbol>
+    <symbol id="i-burger" viewBox="0 0 26 16"><path d="M0 1h26M0 8h26M0 15h26" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-arrow-lg" viewBox="0 0 30 10"><path d="M0 5h27M22.5 1.2 28.4 5l-5.9 3.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 22 22"><path d="M1 1l20 20M21 1L1 21" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  </defs>
+</svg>
+
+<!-- ============ Шапка ============ -->
+<header class="hdr">
+  <div class="wrap hdr__in">
+    <a class="logo" href="#" aria-label="АРТДОМ — на главную">
+      <svg class="logo__mark" viewBox="0 0 38 40" fill="currentColor" aria-hidden="true"><path d="M19.38 0.75L18.25 1.63L18.50 2.63L31.00 24.63L32.00 25.50L32.75 25.63L33.75 24.63L36.88 19.00L36.63 17.13L28.75 3.13L27.38 1.25L26.38 0.88Z"/><path d="M13.63 11.38L12.25 12.00L11.25 13.38L1.00 31.25L1.00 33.13L3.13 37.00L4.13 38.63L5.13 39.50L5.13 39.88L5.88 40.00L5.88 39.63L6.88 38.75L21.75 12.88L21.75 12.38L20.63 11.50Z"/><path d="M16.75 27.13L15.38 28.00L15.25 28.75L18.38 34.25L19.63 35.63L20.75 35.88L26.13 36.00L27.25 35.63L28.75 33.75L31.50 28.63L30.75 27.50L29.75 27.25Z"/></svg><svg class="logo__word" viewBox="0 0 500.2 70" fill="currentColor" aria-hidden="true"><path d="M53.7 14L53.7 14L16.3 14Q15.3 14 14.65 14.65Q14 15.3 14 16.3L14 16.3L14 39.7Q14 40.7 14.65 41.35Q15.3 42 16.3 42L16.3 42L53.7 42Q54.7 42 55.35 41.35Q56 40.7 56 39.7L56 39.7L56 16.3Q56 15.3 55.35 14.65Q54.7 14 53.7 14M0 67.7L0 67.7L0 14Q0 8.2 4.1 4.1Q8.2 0 14 0L14 0L56 0Q61.8 0 65.9 4.1Q70 8.2 70 14L70 14L70 67.7Q70 68.7 69.35 69.35Q68.7 70 67.7 70L67.7 70L58.3 70Q57.3 70 56.65 69.35Q56 68.7 56 67.7L56 67.7L56 58.3Q56 57.3 55.35 56.65Q54.7 56 53.7 56L53.7 56L16.3 56Q15.3 56 14.65 56.65Q14 57.3 14 58.3L14 58.3L14 67.7Q14 68.7 13.35 69.35Q12.7 70 11.7 70L11.7 70L2.3 70Q1.3 70 0.65 69.35Q0 68.7 0 67.7M133.7 14L133.7 14L96.3 14Q95.3 14 94.65 14.65Q94 15.3 94 16.3L94 16.3L94 39.7Q94 40.7 94.65 41.35Q95.3 42 96.3 42L96.3 42L133.7 42Q134.7 42 135.35 41.35Q136 40.7 136 39.7L136 39.7L136 16.3Q136 15.3 135.35 14.65Q134.7 14 133.7 14M80 67.7L80 67.7L80 14Q80 8.2 84.1 4.1Q88.2 0 94 0L94 0L136 0Q141.8 0 145.9 4.1Q150 8.2 150 14L150 14L150 42Q150 47.8 145.9 51.9Q141.8 56 136 56L136 56L96.3 56Q95.3 56 94.65 56.65Q94 57.3 94 58.3L94 58.3L94 67.7Q94 68.7 93.35 69.35Q92.7 70 91.7 70L91.7 70L82.3 70Q81.3 70 80.65 69.35Q80 68.7 80 67.7M158.1 11.7L158.1 2.3Q158.1 1.3 158.75 0.65Q159.4 0 160.4 0L160.4 0L225.8 0Q226.8 0 227.45 0.65Q228.1 1.3 228.1 2.3L228.1 2.3L228.1 11.7Q228.1 12.7 227.45 13.35Q226.8 14 225.8 14L225.8 14L202.4 14Q201.4 14 200.75 14.65Q200.1 15.3 200.1 16.3L200.1 16.3L200.1 67.7Q200.1 68.7 199.45 69.35Q198.8 70 197.8 70L197.8 70L188.4 70Q187.4 70 186.75 69.35Q186.1 68.7 186.1 67.7L186.1 67.7L186.1 16.3Q186.1 15.3 185.45 14.65Q184.8 14 183.8 14L183.8 14L160.4 14Q159.4 14 158.75 13.35Q158.1 12.7 158.1 11.7L158.1 11.7M291.9 14L291.9 14L254.5 14Q253.5 14 252.85 14.65Q252.2 15.3 252.2 16.3L252.2 16.3L252.2 53.7Q252.2 54.7 252.85 55.35Q253.5 56 254.5 56L254.5 56L291.9 56Q292.9 56 293.55 55.35Q294.2 54.7 294.2 53.7L294.2 53.7L294.2 16.3Q294.2 15.3 293.55 14.65Q292.9 14 291.9 14M238.2 53.7L238.2 53.7L238.2 14Q238.2 8.2 242.3 4.1Q246.4 0 252.2 0L252.2 0L294.2 0Q300 0 304.1 4.1Q308.2 8.2 308.2 14L308.2 14L308.2 53.7Q308.2 54.7 308.85 55.35Q309.5 56 310.5 56L310.5 56L312.9 56Q313.9 56 314.55 56.65Q315.2 57.3 315.2 58.3L315.2 58.3L315.2 67.7Q315.2 68.7 314.55 69.35Q313.9 70 312.9 70L312.9 70L233.5 70Q232.5 70 231.85 69.35Q231.2 68.7 231.2 67.7L231.2 67.7L231.2 58.3Q231.2 57.3 231.85 56.65Q232.5 56 233.5 56L233.5 56L235.9 56Q236.9 56 237.55 55.35Q238.2 54.7 238.2 53.7M322.2 56L322.2 56L322.2 14Q322.2 8.2 326.3 4.1Q330.4 0 336.2 0L336.2 0L378.2 0Q384 0 388.1 4.1Q392.2 8.2 392.2 14L392.2 14L392.2 56Q392.2 61.8 388.1 65.9Q384 70 378.2 70L378.2 70L336.2 70Q330.4 70 326.3 65.9Q322.2 61.8 322.2 56M338.5 56L338.5 56L375.9 56Q376.9 56 377.55 55.35Q378.2 54.7 378.2 53.7L378.2 53.7L378.2 16.3Q378.2 15.3 377.55 14.65Q376.9 14 375.9 14L375.9 14L338.5 14Q337.5 14 336.85 14.65Q336.2 15.3 336.2 16.3L336.2 16.3L336.2 53.7Q336.2 54.7 336.85 55.35Q337.5 56 338.5 56M402.2 67.7L402.2 2.3Q402.2 1.3 402.85 0.65Q403.5 0 404.5 0L404.5 0L413.9 0Q416.4 0 417.7 1.8L417.7 1.8L451.2 40.5Q462.3 27.6 484.7 1.8L484.7 1.8Q486.1 0 488.5 0L488.5 0L497.9 0Q498.9 0 499.55 0.65Q500.2 1.3 500.2 2.3L500.2 2.3L500.2 67.7Q500.2 68.7 499.5 69.35Q498.8 70 497.9 70L497.9 70L488.5 70Q487.5 70 486.85 69.35Q486.2 68.7 486.2 67.7L486.2 67.7L486.2 23.7Q486.2 22.8 485.75 22.65Q485.3 22.5 484.7 23.2L484.7 23.2Q475.7 33.5 452.7 60.2L452.7 60.2Q452 60.9 451.2 60.9Q450.4 60.9 449.7 60.2L449.7 60.2Q426.7 33.5 417.7 23.2L417.7 23.2Q417.1 22.5 416.65 22.65Q416.2 22.8 416.2 23.8L416.2 23.8L416.2 67.7Q416.2 68.7 415.55 69.35Q414.9 70 413.9 70L413.9 70L404.6 70Q403.6 70 402.9 69.35Q402.2 68.7 402.2 67.7L402.2 67.7"/></svg>
+    </a>
+
+    <div class="hdr__right">
+      <nav class="nav" aria-label="Основная навигация">
+        <a href="#about">О компании</a>
+        <a href="#objects">Объекты</a>
+        <a href="#services">Услуги</a>
+        <a href="#contacts">Контакты</a>
+      </nav>
+      <a class="hdr__tel selectable" href="tel:+74951204830">+7&nbsp;495&nbsp;120&nbsp;48&nbsp;30</a>
+    </div>
+
+    <button class="hdr__burger" type="button" data-menu-open aria-label="Открыть меню" aria-expanded="false" aria-controls="menu">
+      <svg viewBox="0 0 26 16" aria-hidden="true"><use href="#i-burger"></use></svg>
+    </button>
+  </div>
+</header>
+
+<!-- ============ Меню на телефоне ============ -->
+<div class="menu" id="menu" data-open="false" inert>
+  <button class="menu__close" type="button" data-menu-close aria-label="Закрыть меню">
+    <svg viewBox="0 0 22 22" aria-hidden="true"><use href="#i-close"></use></svg>
+  </button>
+  <a href="#about">О компании</a>
+  <a href="#objects">Объекты</a>
+  <a href="#services">Услуги</a>
+  <a href="#contacts">Контакты</a>
+  <a class="selectable" href="tel:+74951204830">+7&nbsp;495&nbsp;120&nbsp;48&nbsp;30</a>
+</div>
+
+<main>
+
+  <!-- ============ Hero ============ -->
+  <section class="hero">
+    <div class="hero__bg">
+      <!-- Постер вырезан из этого же ролика, поэтому подмены кадра не видно.
+           На телефоне ни один source не подходит по media, качать нечего — остаётся постер.
+           display:none видео не спасает: preload тянет файл независимо от отрисовки. -->
+      <video class="hero__video" autoplay muted loop playsinline
+             poster="img/hero-poster.webp" preload="metadata"
+             width="1920" height="1080" aria-hidden="true" tabindex="-1">
+        <source src="video/hero.webm" type="video/webm" media="(min-width: 768px)">
+        <source src="video/hero.mp4"  type="video/mp4"  media="(min-width: 768px)">
+      </video>
+    </div>
+    <div class="wrap hero__in">
+      <h1 class="h1 hero__title">Дом&nbsp;— это<br>произведение<br>искусства, а&nbsp;не<br>квадратные метры.</h1>
+      <div class="hero__aside">
+        <p class="lead">Подбираем и сопровождаем сделки с премиальной недвижимостью: клубные дома, резиденции и апартаменты в лучших локациях города.</p>
+        <a class="btn btn--wide" href="#objects" draggable="false">
+          <span class="roll"><span class="roll__a">Смотреть<br>готовые объекты</span><span class="roll__b" aria-hidden="true">Смотреть<br>готовые объекты</span></span>
+          <span class="btn__arrow" aria-hidden="true"><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Услуги ============ -->
+  <section class="sec sec--surface services" id="services">
+    <div class="wrap services__in">
+      <div class="services__col">
+        <div class="services__head" data-rise>
+          <h2 class="h2">Услуги</h2>
+          <p class="body">Ведём клиента от подбора объекта до регистрации права&nbsp;— сами или через проверенных партнёров.</p>
+        </div>
+
+        <div class="acc" data-acc data-rise>
+          <div class="acc__item" data-open="true">
+            <h3>
+              <button class="acc__btn" type="button" aria-expanded="true" aria-controls="acc-1">
+                <span>Покупка и покупка</span>
+                <span class="acc__icon" aria-hidden="true"><svg viewBox="0 0 12 12"><use href="#i-plus"></use></svg></span>
+              </button>
+            </h3>
+            <div class="acc__panel" id="acc-1">
+              <div class="acc__panelIn">
+                <div class="acc__body">
+                  <p class="body">Подбор и сопровождение сделок с премиальной недвижимостью&nbsp;— от показа объекта до подписания и регистрации.</p>
+                  <a class="btn btn--sm" href="#" draggable="false">
+                    <span class="roll"><span class="roll__a">Узнать больше</span><span class="roll__b" aria-hidden="true">Узнать больше</span></span>
+                    <span class="btn__arrow" aria-hidden="true"><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg></span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="acc__item" data-open="false">
+            <h3>
+              <button class="acc__btn" type="button" aria-expanded="false" aria-controls="acc-2">
+                <span>Новостройки</span>
+                <span class="acc__icon" aria-hidden="true"><svg viewBox="0 0 12 12"><use href="#i-plus"></use></svg></span>
+              </button>
+            </h3>
+            <div class="acc__panel" id="acc-2">
+              <div class="acc__panelIn">
+                <div class="acc__body">
+                  <p class="body">Прямые договоры с застройщиками, брони на старте продаж и проверка проектной документации до внесения средств.</p>
+                  <a class="btn btn--sm" href="#" draggable="false">
+                    <span class="roll"><span class="roll__a">Узнать больше</span><span class="roll__b" aria-hidden="true">Узнать больше</span></span>
+                    <span class="btn__arrow" aria-hidden="true"><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg></span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="acc__item" data-open="false">
+            <h3>
+              <button class="acc__btn" type="button" aria-expanded="false" aria-controls="acc-3">
+                <span>Ипотека и кредиты</span>
+                <span class="acc__icon" aria-hidden="true"><svg viewBox="0 0 12 12"><use href="#i-plus"></use></svg></span>
+              </button>
+            </h3>
+            <div class="acc__panel" id="acc-3">
+              <div class="acc__panelIn">
+                <div class="acc__body">
+                  <p class="body">Подбор программы и банка, предварительное одобрение и сопровождение до выдачи средств.</p>
+                  <a class="btn btn--sm" href="#" draggable="false">
+                    <span class="roll"><span class="roll__a">Узнать больше</span><span class="roll__b" aria-hidden="true">Узнать больше</span></span>
+                    <span class="btn__arrow" aria-hidden="true"><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg></span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="acc__item" data-open="false">
+            <h3>
+              <button class="acc__btn" type="button" aria-expanded="false" aria-controls="acc-4">
+                <span>Юридическое сопровождение</span>
+                <span class="acc__icon" aria-hidden="true"><svg viewBox="0 0 12 12"><use href="#i-plus"></use></svg></span>
+              </button>
+            </h3>
+            <div class="acc__panel" id="acc-4">
+              <div class="acc__panelIn">
+                <div class="acc__body">
+                  <p class="body">Проверка истории объекта и продавца, подготовка договора, безопасные расчёты и регистрация права.</p>
+                  <a class="btn btn--sm" href="#" draggable="false">
+                    <span class="roll"><span class="roll__a">Узнать больше</span><span class="roll__b" aria-hidden="true">Узнать больше</span></span>
+                    <span class="btn__arrow" aria-hidden="true"><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg></span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="acc__item" data-open="false">
+            <h3>
+              <button class="acc__btn" type="button" aria-expanded="false" aria-controls="acc-5">
+                <span>Оценка недвижимости</span>
+                <span class="acc__icon" aria-hidden="true"><svg viewBox="0 0 12 12"><use href="#i-plus"></use></svg></span>
+              </button>
+            </h3>
+            <div class="acc__panel" id="acc-5">
+              <div class="acc__panelIn">
+                <div class="acc__body">
+                  <p class="body">Отчёт об оценке для банка и суда, а также экспресс-расчёт справедливой цены перед выходом на рынок.</p>
+                  <a class="btn btn--sm" href="#" draggable="false">
+                    <span class="roll"><span class="roll__a">Узнать больше</span><span class="roll__b" aria-hidden="true">Узнать больше</span></span>
+                    <span class="btn__arrow" aria-hidden="true"><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg></span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <figure class="services__media" data-rise="shutter">
+        <img draggable="false" src="img/uslugi.webp" alt="Фасад современного жилого комплекса" width="710" height="722" loading="lazy" decoding="async">
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ Избранные объекты ============ -->
+  <section class="sec sec--white objects" id="objects">
+    <div class="wrap">
+      <div class="sechead" data-rise>
+        <div class="sechead__text">
+          <h2 class="h2">Избранные объекты</h2>
+          <p class="body">Ведём клиента от подбора объекта до регистрации права&nbsp;— сами или через проверенных партнёров.</p>
+        </div>
+        <a class="btn btn--wide" href="#" draggable="false">
+          <span class="roll"><span class="roll__a">Смотреть<br>готовые объекты</span><span class="roll__b" aria-hidden="true">Смотреть<br>готовые объекты</span></span>
+          <span class="btn__arrow" aria-hidden="true"><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg></span>
+        </a>
+      </div>
+
+      <div class="rule"></div>
+
+      <div class="slider" data-slider data-rise>
+        <div class="slider__track" tabindex="0" role="group" aria-label="Избранные объекты, лента">
+
+          <article class="card">
+            <a class="card__media" data-rise="shutter" href="#" draggable="false" data-cursor tabindex="-1" aria-hidden="true"><img draggable="false" src="img/object.webp" alt="Резиденция на Ленинском" width="580" height="395" loading="lazy" decoding="async"></a>
+            <div class="card__meta">
+              <span class="chip">Новостройка</span>
+              <span class="chip">2026</span>
+            </div>
+            <h3 class="card__title"><a class="roll" href="#" draggable="false"><span class="roll__a">Резиденция на Ленинском</span><span class="roll__b" aria-hidden="true">Резиденция на Ленинском</span></a></h3>
+            <ul class="card__facts selectable"><li>180 м²</li><li>4 спальни</li><li>12 этаж</li></ul>
+            <p class="body card__text">Москва, Ленинский проспект. Текст-заглушка, который используют в типографике и дизайне. Он имитирует будущий текст, показывая, как будут выглядеть текстовые блоки, их объём, шрифт и расположение.</p>
+            <p class="card__price selectable">89 млн <sup>₽</sup></p>
+          </article>
+
+          <article class="card">
+            <a class="card__media" data-rise="shutter" href="#" draggable="false" data-cursor tabindex="-1" aria-hidden="true"><img draggable="false" src="img/object.webp" alt="Апартаменты «Панорама»" width="580" height="395" loading="lazy" decoding="async"></a>
+            <div class="card__meta">
+              <span class="chip">Офис</span>
+              <span class="chip">2026</span>
+            </div>
+            <h3 class="card__title"><a class="roll" href="#" draggable="false"><span class="roll__a">Апартаменты «Панорама»</span><span class="roll__b" aria-hidden="true">Апартаменты «Панорама»</span></a></h3>
+            <ul class="card__facts selectable"><li>320 м²</li><li>1 этаж</li></ul>
+            <p class="body card__text">Москва, Ленинский проспект. Текст-заглушка, который используют в типографике и дизайне. Он имитирует будущий текст, показывая, как будут выглядеть текстовые блоки, их объём, шрифт и расположение.</p>
+            <p class="card__price selectable">30 млн <sup>₽</sup></p>
+          </article>
+
+          <article class="card">
+            <a class="card__media" data-rise="shutter" href="#" draggable="false" data-cursor tabindex="-1" aria-hidden="true"><img draggable="false" src="img/object.webp" alt="Клубный дом «Северный»" width="580" height="395" loading="lazy" decoding="async"></a>
+            <div class="card__meta">
+              <span class="chip">Новостройка</span>
+              <span class="chip">2026</span>
+            </div>
+            <h3 class="card__title"><a class="roll" href="#" draggable="false"><span class="roll__a">Клубный дом «Северный»</span><span class="roll__b" aria-hidden="true">Клубный дом «Северный»</span></a></h3>
+            <ul class="card__facts selectable"><li>180 м²</li><li>4 спальни</li><li>12 этаж</li></ul>
+            <p class="body card__text">Москва, Ленинский проспект. Текст-заглушка, который используют в типографике и дизайне. Он имитирует будущий текст, показывая, как будут выглядеть текстовые блоки, их объём, шрифт и расположение.</p>
+            <p class="card__price selectable">89 млн <sup>₽</sup></p>
+          </article>
+
+          <!-- ВНИМАНИЕ: карточки 4–6 добавил я, в макете их нет.
+               Нужны, чтобы лента реально листалась (в макете бегунок занимает 53% трека,
+               то есть объектов там около шести). Данные условные — заменить на настоящие. -->
+          <article class="card">
+            <a class="card__media" data-rise="shutter" href="#" draggable="false" data-cursor tabindex="-1" aria-hidden="true"><img draggable="false" src="img/object.webp" alt="Пример объекта" width="580" height="395" loading="lazy" decoding="async"></a>
+            <div class="card__meta">
+              <span class="chip">Новостройка</span>
+              <span class="chip">2027</span>
+            </div>
+            <h3 class="card__title"><a class="roll" href="#" draggable="false"><span class="roll__a">Пример объекта №4</span><span class="roll__b" aria-hidden="true">Пример объекта №4</span></a></h3>
+            <ul class="card__facts selectable"><li>96 м²</li><li>2 спальни</li><li>7 этаж</li></ul>
+            <p class="body card__text">Демонстрационная карточка для проверки листания. Настоящие данные подставим из админки после посадки на WordPress.</p>
+            <p class="card__price selectable">45 млн <sup>₽</sup></p>
+          </article>
+
+          <article class="card">
+            <a class="card__media" data-rise="shutter" href="#" draggable="false" data-cursor tabindex="-1" aria-hidden="true"><img draggable="false" src="img/object.webp" alt="Пример объекта" width="580" height="395" loading="lazy" decoding="async"></a>
+            <div class="card__meta">
+              <span class="chip">Резиденция</span>
+              <span class="chip">2025</span>
+            </div>
+            <h3 class="card__title"><a class="roll" href="#" draggable="false"><span class="roll__a">Пример объекта №5</span><span class="roll__b" aria-hidden="true">Пример объекта №5</span></a></h3>
+            <ul class="card__facts selectable"><li>240 м²</li><li>5 спален</li><li>3 этаж</li></ul>
+            <p class="body card__text">Демонстрационная карточка для проверки листания. Настоящие данные подставим из админки после посадки на WordPress.</p>
+            <p class="card__price selectable">120 млн <sup>₽</sup></p>
+          </article>
+
+          <article class="card">
+            <a class="card__media" data-rise="shutter" href="#" draggable="false" data-cursor tabindex="-1" aria-hidden="true"><img draggable="false" src="img/object.webp" alt="Пример объекта" width="580" height="395" loading="lazy" decoding="async"></a>
+            <div class="card__meta">
+              <span class="chip">Апартаменты</span>
+              <span class="chip">2026</span>
+            </div>
+            <h3 class="card__title"><a class="roll" href="#" draggable="false"><span class="roll__a">Пример объекта №6</span><span class="roll__b" aria-hidden="true">Пример объекта №6</span></a></h3>
+            <ul class="card__facts selectable"><li>140 м²</li><li>3 спальни</li><li>18 этаж</li></ul>
+            <p class="body card__text">Демонстрационная карточка для проверки листания. Настоящие данные подставим из админки после посадки на WordPress.</p>
+            <p class="card__price selectable">72 млн <sup>₽</sup></p>
+          </article>
+
+        </div>
+        <div class="slider__bar" aria-hidden="true"><div class="slider__thumb" data-thumb></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ О компании ============ -->
+  <section class="sec sec--surface about" id="about">
+    <div class="wrap">
+      <h2 class="h2--big" data-rise>Экспертные решения<br>в сфере недвижимости</h2>
+
+      <div class="about__in">
+        <div class="about__side" data-rise>
+          <div class="about__portrait">
+            <img draggable="false" src="img/founder.webp" alt="Мария Артемьева, основатель компании АРТДОМ" width="181" height="181" loading="lazy" decoding="async">
+          </div>
+          <blockquote class="about__quote">«Хороший брокер не показывает десять квартир подряд&nbsp;— он приходит с двумя, и одна из них уже именно та».</blockquote>
+          <p class="about__who">Мария Артемьева<span class="about__role">Основатель</span></p>
+        </div>
+
+        <div class="about__main" data-rise>
+          <p class="body">Компания «АРТДОМ» родилась путем объединения усилий ведущих экспертов и лиц руководящего состава крупных московских Агентств. За годы совместной работы сложилась Команда, получившая огромное количество отзывов от благодарных клиентов и, у которой, сложилось собственное понимание целей.</p>
+          <p class="body">Три кита, на которых строится наша работа&nbsp;— это ВЫГОДА, БЕЗОПАСНОСТЬ и ИНТЕРЕСЫ наших клиентов. Наша миссия&nbsp;— предоставить клиентам надежные и качественные услуги в сфере недвижимости, вдохновляя их на осуществление мечты о доме, придавая им уверенность в будущем. Создавая для клиентов безопасную и комфортную среду, мы обеспечиваем профессиональный подход, прозрачность сделок и высокий уровень сервиса.</p>
+          <p class="body">Мы привыкли, что нам доверяют, рекомендуют друзьям и родственникам. Топовые места в рейтинге Российской гильдии риэлторов означают, что мы на правильном пути!</p>
+          <p class="body">Океан недвижимости для нас&nbsp;— родная стихия, мы умеем находить в нем нужные пути, открываем перед клиентами поистине безграничные возможности и помогаем клиентам выбрать идеальное решение для их нужд и желаний.</p>
+          <p class="body">Свяжитесь с нами сегодня, и откройте для себя новый мир возможностей!</p>
+          <a class="btn btn--ghost" href="#contacts" draggable="false">
+            <span class="roll"><span class="roll__a">Узнать больше</span><span class="roll__b" aria-hidden="true">Узнать больше</span></span>
+            <span class="btn__arrow" aria-hidden="true"><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Надёжность: закреплённая сцена на три экрана ============
+       Каркас держит высоту (три экрана), сцена внутри липкая и не двигается,
+       пока каркас проезжает мимо. Слои меняются по доле прокрутки внутри каркаса.
+       ФОТО 2-3 И ЗАГОЛОВКИ 2-3 ВРЕМЕННЫЕ — в макете их нет, заменить. -->
+  <section class="guaranty" data-guaranty aria-label="Надежность и гарантии">
+    <div class="guaranty__stage">
+      <div class="guaranty__bg">
+        <img draggable="false" src="img/garanty.webp" alt="" width="1920" height="963" decoding="async" data-slide="0" data-on="true">
+        <img draggable="false" src="img/uslugi.webp" alt="" width="1920" height="963" loading="lazy" decoding="async" data-slide="1">
+        <img draggable="false" src="img/object.webp" alt="" width="1920" height="963" loading="lazy" decoding="async" data-slide="2">
+      </div>
+      <div class="guaranty__text wrap">
+        <h2 class="h2--big guaranty__title" data-slide="0" data-on="true">Надежность и гарантии</h2>
+        <p class="h2--big guaranty__title" data-slide="1">Проверяем объект<br>до внесения задатка</p>
+        <p class="h2--big guaranty__title" data-slide="2">Сопровождаем<br>до регистрации права</p>
+      </div>
+      <div class="guaranty__steps" aria-hidden="true">
+        <span data-slide="0" data-on="true"></span>
+        <span data-slide="1"></span>
+        <span data-slide="2"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Цифры ============ -->
+  <section class="sec--white stats-sec">
+    <div class="wrap">
+      <ul class="stats">
+        <li class="stats__item" data-rise>
+          <p class="stats__num">14+</p>
+          <p class="stats__label">Лет на рынке премиальной недвижимости</p>
+        </li>
+        <li class="stats__item" data-rise>
+          <p class="stats__num">120+</p>
+          <p class="stats__label">Реализованных объектов в портфеле</p>
+        </li>
+        <li class="stats__item" data-rise>
+          <p class="stats__num">38</p>
+          <p class="stats__label">Млн ₽<br>Средний бюджет сделки</p>
+        </li>
+        <li class="stats__item" data-rise>
+          <p class="stats__num">&lt;1</p>
+          <p class="stats__label">Среднее время ответа, меньше часа</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ Отзывы ============ -->
+  <section class="sec sec--surface reviews">
+    <div class="wrap">
+      <div class="sechead" data-rise>
+        <div class="sechead__text">
+          <h2 class="h2">Честная оценка</h2>
+          <p class="rating">
+            <span>4.9</span>
+            <span class="stars" role="img" aria-label="Оценка 5 из 5">
+              <svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg>
+            </span>
+          </p>
+          <p class="body">на основе <strong>86</strong> отзывов</p>
+        </div>
+        <a class="btn btn--wide" href="#" draggable="false">
+          <span class="roll"><span class="roll__a">Добавить<br>свой отзыв</span><span class="roll__b" aria-hidden="true">Добавить<br>свой отзыв</span></span>
+          <span class="btn__arrow" aria-hidden="true"><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg></span>
+        </a>
+      </div>
+
+      <div class="rule"></div>
+
+      <div class="slider" data-slider data-rise>
+        <div class="slider__track" tabindex="0" role="group" aria-label="Отзывы, лента">
+
+          <article class="review">
+            <div class="review__top">
+              <div class="review__ava" aria-hidden="true">АС</div>
+              <div>
+                <h3 class="review__name">Анна С.</h3>
+                <p class="review__src">Отзыв с Яндекс</p>
+              </div>
+            </div>
+            <p class="stars" role="img" aria-label="5 из 5"><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg></p>
+            <p class="body review__text">Артдом нашли объект, о котором мы даже не думали&nbsp;— и он оказался именно тем домом, который мы искали три года.</p>
+          </article>
+
+          <article class="review">
+            <div class="review__top">
+              <div class="review__ava" aria-hidden="true">СП</div>
+              <div>
+                <h3 class="review__name">Сергей П.</h3>
+                <p class="review__src">Отзыв на сайте</p>
+              </div>
+            </div>
+            <p class="stars" role="img" aria-label="5 из 5"><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg></p>
+            <p class="body review__text">Полное сопровождение сделки заняло три недели вместо обещанных банком двух месяцев&nbsp;— юристы Артдом отработали безупречно.</p>
+          </article>
+
+          <article class="review">
+            <div class="review__top">
+              <div class="review__ava" aria-hidden="true">ОУ</div>
+              <div>
+                <h3 class="review__name">Ольга У.</h3>
+                <p class="review__src">Отзыв с Яндекс</p>
+              </div>
+            </div>
+            <p class="stars" role="img" aria-label="5 из 5"><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg></p>
+            <p class="body review__text">Оценили, что нам не показывали лишнего&nbsp;— всего три просмотра, и в каждом было понятно, зачем именно этот объект.</p>
+          </article>
+
+          <!-- ВНИМАНИЕ: отзывы 4–6 добавил я, в макете их нет — нужны для проверки листания. -->
+          <article class="review">
+            <div class="review__top">
+              <div class="review__ava" aria-hidden="true">ДК</div>
+              <div>
+                <h3 class="review__name">Дмитрий К.</h3>
+                <p class="review__src">Отзыв на сайте</p>
+              </div>
+            </div>
+            <p class="stars" role="img" aria-label="5 из 5"><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg></p>
+            <p class="body review__text">Демонстрационный отзыв для проверки листания ленты. Заменить на настоящий после подключения админки.</p>
+          </article>
+
+          <article class="review">
+            <div class="review__top">
+              <div class="review__ava" aria-hidden="true">ЕМ</div>
+              <div>
+                <h3 class="review__name">Елена М.</h3>
+                <p class="review__src">Отзыв с Яндекс</p>
+              </div>
+            </div>
+            <p class="stars" role="img" aria-label="5 из 5"><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg></p>
+            <p class="body review__text">Демонстрационный отзыв для проверки листания ленты. Заменить на настоящий после подключения админки.</p>
+          </article>
+
+          <article class="review">
+            <div class="review__top">
+              <div class="review__ava" aria-hidden="true">ИВ</div>
+              <div>
+                <h3 class="review__name">Игорь В.</h3>
+                <p class="review__src">Отзыв на сайте</p>
+              </div>
+            </div>
+            <p class="stars" role="img" aria-label="5 из 5"><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg><svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg></p>
+            <p class="body review__text">Демонстрационный отзыв для проверки листания ленты. Заменить на настоящий после подключения админки.</p>
+          </article>
+
+        </div>
+        <div class="slider__bar" aria-hidden="true"><div class="slider__thumb" data-thumb></div></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ Футер ============ -->
+<footer class="ftr" id="contacts">
+  <div class="wrap">
+
+    <div class="ftr__cta">
+      <div data-rise>
+        <h2 class="h2">Готовы найти свой дом?</h2>
+        <p class="body">Оставьте контакт&nbsp;— персональный брокер свяжется с вами и подберёт объекты под ваш запрос.</p>
+        <a class="btn btn--wide" href="#" draggable="false">
+          <span class="roll"><span class="roll__a">Оставить заявку</span><span class="roll__b" aria-hidden="true">Оставить заявку</span></span>
+          <span class="btn__arrow" aria-hidden="true"><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg></span>
+        </a>
+      </div>
+      <div data-rise>
+        <h2 class="h2">Подборка объектов на почту</h2>
+        <p class="body">Раз в неделю&nbsp;— новые лоты, изменения цен и закрытые предложения, которые не публикуются в открытом каталоге. Без спама, отписаться можно в любой момент.</p>
+        <a class="btn btn--wide" href="#" draggable="false">
+          <span class="roll"><span class="roll__a">Подписаться<br>на рассылку</span><span class="roll__b" aria-hidden="true">Подписаться<br>на рассылку</span></span>
+          <span class="btn__arrow" aria-hidden="true"><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="ftr__rule"></div>
+
+    <div class="ftr__mid">
+      <div>
+        <a class="ftr__tel selectable" href="tel:+74951204830">+7&nbsp;495&nbsp;120&nbsp;48&nbsp;30</a>
+        <a class="ftr__mail selectable" href="mailto:info@artdom.ru">info@artdom.ru</a>
+        <p class="ftr__addr selectable">Москва, Пресненская наб., 8</p>
+        <nav class="ftr__soc" aria-label="Мессенджеры и соцсети">
+          <a href="#">Telegram</a>
+          <a href="#">WhatsApp</a>
+          <a href="#">VK</a>
+        </nav>
+      </div>
+      <div>
+        <nav class="ftr__nav" aria-label="Навигация в подвале">
+          <a href="#about">О компании</a>
+          <a href="#objects">Объекты</a>
+          <a href="#services">Услуги</a>
+          <a href="#contacts">Контакты</a>
+        </nav>
+        <nav class="ftr__legal" aria-label="Правовые документы">
+          <a href="#">Политика конфиденциальности</a>
+          <a href="#">Политика использования Cookie</a>
+          <a href="#">Реквизиты</a>
+        </nav>
+      </div>
+    </div>
+
+    <div class="ftr__rule"></div>
+
+    <div class="ftr__bottom">
+      <p>АРТДОМ © 2026</p>
+      <p>Разработано в <a href="https://oxbox.ru" rel="noopener">OXBOX</a></p>
+    </div>
+
+  </div>
+</footer>
+
+<div class="cursor" data-cursor-el data-on="false" aria-hidden="true"><svg viewBox="0 0 30 10"><use href="#i-arrow-lg"></use></svg></div>
+
+<script src="js/main.js"></script>
+</body>
+</html>

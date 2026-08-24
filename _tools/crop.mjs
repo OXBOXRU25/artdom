@@ -1,0 +1,11 @@
+import { createRequire } from 'node:module';
+import fs from 'node:fs';
+const require = createRequire(import.meta.url);
+const { createCanvas, loadImage } = require('@napi-rs/canvas');
+const [src,out,x,y,w,h,k] = [process.argv[2],process.argv[3],...process.argv.slice(4).map(Number)];
+const img = await loadImage(fs.readFileSync(src));
+const cv = createCanvas(w*k,h*k); const ctx = cv.getContext('2d');
+ctx.imageSmoothingEnabled = k < 2;
+ctx.drawImage(img,x,y,w,h,0,0,w*k,h*k);
+fs.writeFileSync(out, cv.toBuffer('image/png'));
+console.log('ok', (w*k)+'x'+(h*k));

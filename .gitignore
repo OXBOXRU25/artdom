@@ -1,0 +1,4 @@
+node_modules/
+wp/
+_tools/node_modules/
+*.log

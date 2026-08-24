@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "artdom",
+      "runtimeExecutable": "D:/AI/nodejs/node.exe",
+      "runtimeArgs": ["D:/AI/Artdom/_tools/serve.mjs"],
+      "port": 4321
+    }
+  ]
+}

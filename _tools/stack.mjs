@@ -1,0 +1,12 @@
+import { createRequire } from 'node:module';
+import fs from 'node:fs';
+const require = createRequire(import.meta.url);
+const { createCanvas, loadImage } = require('@napi-rs/canvas');
+const [out,x,y,w,h,...files] = [process.argv[2],+process.argv[3],+process.argv[4],+process.argv[5],+process.argv[6],...process.argv.slice(7)];
+const labels=['ПОКОЙ','НАВЕДЕНИЕ'];
+const imgs=[]; for(const f of files) imgs.push(await loadImage(fs.readFileSync(f)));
+const cv=createCanvas(w+24, (h+30)*imgs.length+10); const c=cv.getContext('2d');
+c.fillStyle='#5b5f66'; c.fillRect(0,0,cv.width,cv.height);
+imgs.forEach((i,n)=>{ c.drawImage(i,x,y,w,h,12,24+n*(h+30),w,h);
+  c.fillStyle='#fff'; c.font='12px sans-serif'; c.fillText(labels[n]||'',12,16+n*(h+30)); });
+fs.writeFileSync(out, cv.toBuffer('image/png')); console.log('ok '+cv.width+'x'+cv.height);

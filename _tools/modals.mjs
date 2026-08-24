@@ -1,0 +1,16 @@
+import { createRequire } from 'node:module';
+import fs from 'node:fs';
+const require = createRequire(import.meta.url);
+const { createCanvas, loadImage } = require('@napi-rs/canvas');
+const S = process.argv[2], K = 0.62;
+const a = await loadImage(fs.readFileSync(S + '/modal-1.png'));
+const b = await loadImage(fs.readFileSync(S + '/modal-2.png'));
+const W = Math.round(700 * K), H = Math.round(760 * K);
+const cv = createCanvas(W * 2 + 30, H + 26); const c = cv.getContext('2d');
+c.fillStyle = '#4a4f57'; c.fillRect(0, 0, cv.width, cv.height);
+c.drawImage(a, 350, 70, 700, 760, 10, 20, W, H);
+c.drawImage(b, 350, 190, 700, 760, W + 20, 20, W, H);
+c.fillStyle = '#fff'; c.font = '13px sans-serif';
+c.fillText('ЗАЯВКА', 10, 14); c.fillText('ПОДПИСКА', W + 20, 14);
+fs.writeFileSync(S + '/modals.png', cv.toBuffer('image/png'));
+console.log('ok ' + cv.width + 'x' + cv.height);
