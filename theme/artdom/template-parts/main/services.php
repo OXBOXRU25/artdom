@@ -8,8 +8,33 @@
  * @package artdom
  */
 
-$items = artdom_field( 'services_items' );
-$items = is_array( $items ) ? $items : array();
+/* Источник один — раздел «Услуги». Пока услуг нет, показываем повторитель
+   из полей главной, чтобы страница не пустела. Иначе кнопка «Узнать больше»
+   вела бы в никуда: у пункта повторителя нет своей страницы. */
+$posts = get_posts(
+	array(
+		'post_type'      => 'artdom_service',
+		'posts_per_page' => 6,
+		'orderby'        => array( 'menu_order' => 'ASC', 'date' => 'ASC' ),
+	)
+);
+
+if ( $posts ) {
+	$items = array_map(
+		static function ( $p ) {
+			return array(
+				'title'    => get_the_title( $p ),
+				'text'     => (string) get_field( 'svc_lead', $p->ID ),
+				'btn_text' => 'Узнать больше',
+				'btn_link' => get_permalink( $p ),
+			);
+		},
+		$posts
+	);
+} else {
+	$items = artdom_field( 'services_items' );
+	$items = is_array( $items ) ? $items : array();
+}
 $photo = artdom_field( 'services_photo' );
 ?>
   <!-- ============ Услуги ============ -->

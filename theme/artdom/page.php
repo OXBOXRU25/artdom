@@ -1,30 +1,33 @@
 <?php
 /**
- * The template for displaying all pages
+ * Обычная страница: «О компании», правовые документы.
  *
- * This is the template that displays all pages by default.
- * Please note that this is the WordPress construct of pages
- * and that other 'pages' on your WordPress site may use a
- * different template.
+ * Базовый шаблон темы oxboxwise был написан с короткими тегами <? — на боевом
+ * PHP они не выполняются и страница отдаёт исходник. Переписан целиком.
  *
- * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
- *
- * @package oxboxwise
+ * @package artdom
  */
 
 get_header();
+
+while ( have_posts() ) :
+	the_post();
+	set_query_var( 'artdom_head_title', get_the_title() );
+	set_query_var( 'artdom_head_lead', has_excerpt() ? get_the_excerpt() : '' );
 ?>
 
-	<div id="primary" class="content-area">
-		<?php while ( have_posts() ) : the_post();?>
-            <h1><?=get_the_title();?></h1>
-			<div class="text-content">
-                <? the_content();?>
-            </div>
+<main>
+  <?php get_template_part( 'template-parts/page-head' ); ?>
 
-		<? endwhile; ?>
+  <section class="sec sec--white">
+    <div class="wrap prose" data-rise>
+      <?php the_content(); ?>
+    </div>
+  </section>
 
-	</div>
+  <?php get_template_part( 'template-parts/cta-band' ); ?>
+</main>
 
 <?php
+endwhile;
 get_footer();

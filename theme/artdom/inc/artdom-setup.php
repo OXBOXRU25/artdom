@@ -118,3 +118,55 @@ function artdom_acf_notice() {
 	echo 'Сайт работает и показывает тексты из макета, но поля в админке не появятся. Установите плагин.</p></div>';
 }
 add_action( 'admin_notices', 'artdom_acf_notice' );
+
+/**
+ * Перечитать правила адресов, когда состав разделов изменился.
+ *
+ * Новый тип записи без этого отдаёт 404: WordPress держит правила в базе и
+ * сам их не обновляет. На боевом это выглядит как «страницы нет», хотя шаблон
+ * на месте. Сравниваем подпись состава разделов и перечитываем только когда
+ * она изменилась — flush на каждый запрос стоит дорого.
+ */
+function artdom_maybe_flush_rules() {
+	$types = get_post_types( array( 'has_archive' => true ), 'names' );
+	sort( $types );
+	$signature = md5( implode( ',', $types ) . '|' . get_option( 'permalink_structure' ) );
+
+	if ( get_option( 'artdom_routes' ) !== $signature ) {
+		flush_rewrite_rules( false );
+		update_option( 'artdom_routes', $signature, false );
+	}
+}
+add_action( 'init', 'artdom_maybe_flush_rules', 99 );
+
+/**
+ * Один раз наполнить пустой сайт примерами.
+ *
+ * Демонстрационный сайт без содержимого показывает пустые разделы и выглядит
+ * сломанным. Кнопка в админке для этого есть, но требовать нажатия ради того,
+ * чтобы сайт вообще что-то показал, — плохой обмен. Поэтому наполняем сами,
+ * строго один раз: флаг ставится до заполнения, так что удалённое вручную
+ * содержимое обратно не вернётся.
+ */
+function artdom_maybe_seed() {
+	if ( get_option( 'artdom_seeded' ) ) {
+		return;
+	}
+	if ( ! function_exists( 'update_field' ) || ! function_exists( 'artdom_fill_demo' ) ) {
+		return;   // ACF ещё не поднялся — попробуем на следующем запросе
+	}
+
+	$has = 0;
+	foreach ( array( 'artdom_object', 'artdom_review', 'artdom_service' ) as $type ) {
+		$has += (int) wp_count_posts( $type )->publish;
+	}
+	if ( $has > 0 ) {
+		update_option( 'artdom_seeded', 'было своё', false );
+		return;
+	}
+
+	update_option( 'artdom_seeded', gmdate( 'c' ), false );
+	artdom_fill_demo();
+	flush_rewrite_rules( false );
+}
+add_action( 'init', 'artdom_maybe_seed', 100 );

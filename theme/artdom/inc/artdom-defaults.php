@@ -250,3 +250,128 @@ function artdom_stars( $n = 5, $label = '', $tag = 'span' ) {
 	}
 	return $out . '</' . $tag . '>';
 }
+
+/**
+ * Хлебные крошки.
+ *
+ * Собираются из того, где мы находимся, а не из плагина: на сайте четыре типа
+ * страниц, и правил для них меньше, чем настроек у любого готового решения.
+ *
+ * @param array $extra Дополнительные звенья вида array( 'Название' => 'адрес' ).
+ */
+function artdom_crumbs( $extra = array() ) {
+	$items = array( 'Главная' => home_url( '/' ) );
+
+	if ( is_post_type_archive( 'artdom_object' ) || is_tax( 'artdom_object_type' ) ) {
+		$items['Объекты'] = get_post_type_archive_link( 'artdom_object' );
+		if ( is_tax( 'artdom_object_type' ) ) {
+			$items[ single_term_title( '', false ) ] = '';
+		}
+	} elseif ( is_singular( 'artdom_object' ) ) {
+		$items['Объекты'] = get_post_type_archive_link( 'artdom_object' );
+		$items[ get_the_title() ] = '';
+	} elseif ( is_post_type_archive( 'artdom_service' ) ) {
+		$items['Услуги'] = '';
+	} elseif ( is_singular( 'artdom_service' ) ) {
+		$items['Услуги'] = get_post_type_archive_link( 'artdom_service' );
+		$items[ get_the_title() ] = '';
+	} elseif ( is_post_type_archive( 'artdom_review' ) ) {
+		$items['Отзывы'] = '';
+	} elseif ( is_search() ) {
+		$items['Поиск'] = '';
+	} elseif ( is_404() ) {
+		$items['Страница не найдена'] = '';
+	} elseif ( is_page() ) {
+		$parent = wp_get_post_parent_id( get_the_ID() );
+		if ( $parent ) {
+			$items[ get_the_title( $parent ) ] = get_permalink( $parent );
+		}
+		$items[ get_the_title() ] = '';
+	}
+
+	foreach ( $extra as $label => $url ) {
+		$items[ $label ] = $url;
+	}
+
+	$out   = array();
+	$last  = array_key_last( $items );
+	foreach ( $items as $label => $url ) {
+		if ( $url && $label !== $last ) {
+			$out[] = '<a href="' . esc_url( $url ) . '">' . esc_html( $label ) . '</a>';
+		} else {
+			$out[] = '<span aria-current="page">' . esc_html( $label ) . '</span>';
+		}
+	}
+
+	return '<nav class="crumbs" aria-label="Вы здесь">' . implode( '', $out ) . '</nav>';
+}
+
+/**
+ * Склонение слова после числа: 1 объект, 2 объекта, 5 объектов.
+ *
+ * @param int   $n     Число.
+ * @param array $forms Три формы: один, два, пять.
+ */
+function artdom_plural( $n, $forms ) {
+	$n = abs( (int) $n );
+	$i = ( $n % 100 > 4 && $n % 100 < 20 ) ? 2 : array( 2, 0, 1, 1, 1, 2 )[ min( $n % 10, 5 ) ];
+	return $forms[ $i ];
+}
+
+/**
+ * Описание форм: одно на модалку и на страницу контактов.
+ *
+ * Пока описание жило внутри шаблона модалки, вставить ту же форму в страницу
+ * было нечем — пришлось бы копировать, а копии расходятся.
+ */
+function artdom_forms_config() {
+	return array(
+		'lead'      => array(
+			'title'  => 'Оставить заявку',
+			'lead'   => 'Персональный брокер свяжется с вами и подберёт объекты под ваш запрос.',
+			'submit' => 'Отправить',
+			'fields' => array(
+				array( 'name' => 'name',    'label' => 'Как к вам обращаться', 'type' => 'text',     'required' => true,  'autocomplete' => 'name' ),
+				array( 'name' => 'phone',   'label' => 'Телефон',              'type' => 'tel',      'required' => true,  'autocomplete' => 'tel' ),
+				array( 'name' => 'message', 'label' => 'Что ищете',            'type' => 'textarea', 'required' => false, 'autocomplete' => 'off' ),
+			),
+		),
+		'subscribe' => array(
+			'title'  => 'Подборка объектов на почту',
+			'lead'   => 'Раз в неделю — новые лоты и закрытые предложения. Без спама, отписаться можно в любой момент.',
+			'submit' => 'Подписаться',
+			'fields' => array(
+				array( 'name' => 'email', 'label' => 'Ваша почта', 'type' => 'email', 'required' => true, 'autocomplete' => 'email' ),
+			),
+		),
+	);
+}
+
+/**
+ * Кириллица в ярлыках адресов — латиницей.
+ *
+ * Без этого WordPress оставляет русские буквы, и ссылка при копировании
+ * превращается в /objects/%d0%bf%d0%b5%d0%bd... — прочитать и прислать её
+ * невозможно. Отдельный плагин ради двадцати строк ставить незачем.
+ */
+function artdom_translit( $text ) {
+	$map = array(
+		'а' => 'a', 'б' => 'b', 'в' => 'v', 'г' => 'g', 'д' => 'd', 'е' => 'e', 'ё' => 'e',
+		'ж' => 'zh', 'з' => 'z', 'и' => 'i', 'й' => 'y', 'к' => 'k', 'л' => 'l', 'м' => 'm',
+		'н' => 'n', 'о' => 'o', 'п' => 'p', 'р' => 'r', 'с' => 's', 'т' => 't', 'у' => 'u',
+		'ф' => 'f', 'х' => 'h', 'ц' => 'c', 'ч' => 'ch', 'ш' => 'sh', 'щ' => 'sch',
+		'ъ' => '', 'ы' => 'y', 'ь' => '', 'э' => 'e', 'ю' => 'yu', 'я' => 'ya',
+	);
+	$lower = function_exists( 'mb_strtolower' ) ? mb_strtolower( $text, 'UTF-8' ) : strtolower( $text );
+	return strtr( $lower, $map );
+}
+
+/** Ярлык записи собираем уже из латиницы. */
+function artdom_sanitize_title( $title, $raw_title = '', $context = 'save' ) {
+	if ( 'save' !== $context ) {
+		return $title;
+	}
+	$source = $raw_title ? $raw_title : $title;
+	return sanitize_title_with_dashes( artdom_translit( $source ), '', 'save' );
+}
+add_filter( 'sanitize_title', 'artdom_sanitize_title', 9, 3 );

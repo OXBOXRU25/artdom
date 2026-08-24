@@ -638,3 +638,145 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .modal__note.is-ok { color: var(--c-accent); }
 .modal__note.is-bad { color: #c2334d; }
 .is-done .modal__fields, .is-done .modal__submit { opacity: .35; pointer-events: none; transition: opacity var(--dur) var(--ease); }
+
+/* ============================================================
+   ВНУТРЕННИЕ СТРАНИЦЫ
+   Те же токены, что на главной: ничего нового в палитре и шкале,
+   иначе внутрянка читается как другой сайт.
+   ============================================================ */
+
+/* --- Хлебные крошки --- */
+.crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: max(6px, calc(8 * var(--k))); font-family: var(--f-ui); font-size: var(--t-chip); color: var(--c-muted); }
+.crumbs > * + *::before { content: "/"; margin-inline-end: max(6px, calc(8 * var(--k))); color: var(--c-rule); }
+.crumbs a { color: var(--c-muted); transition: color var(--dur) var(--ease); }
+.crumbs a:hover { color: var(--c-ink); }
+.crumbs [aria-current] { color: var(--c-ink); }
+
+/* --- Шапка внутренней страницы --- */
+.pagehead { padding-block: calc(var(--pad-top) * 1.1) calc(var(--pad-bot) * .7); }
+.pagehead__title { margin-block-start: max(14px, calc(20 * var(--k))); max-width: 18ch; }
+.pagehead__lead { margin-block-start: max(12px, calc(18 * var(--k))); max-width: 52ch; color: var(--c-muted); }
+.pagehead__extra { margin-block-start: max(12px, calc(18 * var(--k))); }
+.pagehead__extra .rating { margin-block-start: 0; }
+
+/* --- Фильтр каталога --- */
+.filters { display: flex; flex-wrap: wrap; gap: max(8px, calc(10 * var(--k))); }
+.filters__chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 44px; padding-inline: max(14px, calc(18 * var(--k)));
+  border-radius: var(--r-btn-sm); background: var(--c-chip); color: var(--c-ink-soft);
+  font-family: var(--f-ui); font-size: var(--t-chip);
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.filters__chip:hover { background: var(--c-rule); }
+.filters__chip[aria-current] { background: var(--c-ink); color: var(--c-white); }
+.filters__n { color: var(--c-muted); font-variant-numeric: tabular-nums; }
+.filters__chip[aria-current] .filters__n { color: var(--c-rule); }
+.catalog__count { margin-block-start: max(12px, calc(16 * var(--k))); font-family: var(--f-ui); font-size: var(--t-chip); }
+
+/* --- Сетка карточек ---
+   Та же карточка, что в ленте на главной, но в сетке: три колонки, потом две,
+   потом одна. Разметка общая, поэтому правки вида доезжают в оба места. */
+.grid-cards {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap-card) var(--gutter);
+  margin-block-start: max(24px, calc(40 * var(--k)));
+}
+.grid-cards .card { width: auto; }
+@media (max-width: 1023px) { .grid-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 639px)  { .grid-cards { grid-template-columns: minmax(0, 1fr); } }
+
+/* --- Постраничная навигация --- */
+.pager { margin-block-start: max(28px, calc(48 * var(--k))); }
+.pager .nav-links { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.pager a, .pager .current {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 44px; min-height: 44px; padding-inline: 12px;
+  border-radius: var(--r-btn-sm); font-family: var(--f-ui); font-size: var(--t-nav);
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.pager a { background: var(--c-chip); color: var(--c-ink-soft); }
+.pager a:hover { background: var(--c-rule); }
+.pager .current { background: var(--c-ink); color: var(--c-white); }
+.pager .dots { padding-inline: 4px; color: var(--c-muted); }
+
+/* --- Карточка объекта --- */
+.object__in { display: grid; grid-template-columns: minmax(0, 1fr) calc(430 * var(--k)); gap: var(--gutter); align-items: start; }
+.object__cover img, .object__gallery img { width: 100%; height: auto; border-radius: var(--r-chip); }
+.object__gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: max(10px, calc(14 * var(--k))); margin-block-start: max(10px, calc(14 * var(--k))); }
+.object__text, .object__specs { margin-block-start: max(28px, calc(48 * var(--k))); }
+.object__text .body + .body { margin-block-start: max(10px, calc(14 * var(--k))); }
+.object__text .h2, .object__specs .h2 { margin-block-end: max(14px, calc(20 * var(--k))); }
+
+.specs { border-block-start: 1px solid var(--c-rule); }
+.specs__row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: var(--gutter); padding-block: max(10px, calc(14 * var(--k))); border-block-end: 1px solid var(--c-rule); }
+.specs dt { color: var(--c-muted); font-size: var(--t-body); }
+.specs dd { font-size: var(--t-body); }
+
+/* Липкая панель с ценой. Держится под шапкой: человек листает описание,
+   а цена и кнопка остаются на экране. */
+.object__side { position: sticky; top: calc(var(--hdr-h, 6.5rem) + max(12px, calc(16 * var(--k)))); }
+.pricebox { padding: max(20px, calc(28 * var(--k))); background: var(--c-surface); border-radius: var(--r-chip); }
+.pricebox__price { margin-block-start: max(8px, calc(10 * var(--k))); font-size: var(--t-h2); line-height: 1.05; }
+.pricebox__sub { margin-block-start: max(6px, calc(8 * var(--k))); font-size: var(--t-body); }
+.pricebox .btn { margin-block-start: max(16px, calc(22 * var(--k))); width: 100%; }
+.pricebox__note { margin-block-start: max(10px, calc(14 * var(--k))); font-size: var(--t-chip); }
+
+@media (max-width: 899px) {
+  .object__in { grid-template-columns: minmax(0, 1fr); }
+  .object__side { position: static; }
+  .object__gallery { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* --- Полоса призыва --- */
+.ctaband__in { display: flex; align-items: center; justify-content: space-between; gap: var(--gutter); flex-wrap: wrap; }
+.ctaband__in .body { margin-block-start: max(8px, calc(12 * var(--k))); max-width: 46ch; color: var(--c-muted); }
+
+/* --- Услуги списком --- */
+.svc { display: flex; flex-direction: column; align-items: flex-start; gap: max(10px, calc(14 * var(--k))); padding: max(20px, calc(28 * var(--k))); background: var(--c-surface); border-radius: var(--r-chip); }
+.svc__title { font-size: var(--t-title); line-height: 1.15; }
+.svc__text { color: var(--c-muted); }
+.svc .btn { margin-block-start: auto; }
+
+/* --- Порядок работы --- */
+.steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap-card) var(--gutter); margin-block-start: max(24px, calc(40 * var(--k))); }
+.steps__n { font-family: var(--f-ui); font-size: var(--t-title); color: var(--c-accent); font-variant-numeric: tabular-nums; }
+.steps__title { margin-block-start: max(6px, calc(8 * var(--k))); font-size: var(--t-mid); }
+.steps__item .body { margin-block-start: max(6px, calc(8 * var(--k))); color: var(--c-muted); }
+@media (max-width: 767px) { .steps { grid-template-columns: minmax(0, 1fr); } }
+
+/* --- Текстовые страницы --- */
+.prose { max-width: 68ch; }
+.prose p, .prose ul, .prose ol { font-size: var(--t-body); line-height: 1.55; }
+.prose p + p, .prose ul, .prose ol { margin-block-start: max(10px, calc(14 * var(--k))); }
+.prose h2 { margin-block-start: max(24px, calc(36 * var(--k))); font-size: var(--t-title); }
+.prose h3 { margin-block-start: max(18px, calc(24 * var(--k))); font-size: var(--t-mid); }
+.prose ul, .prose ol { padding-inline-start: 1.2em; }
+.prose li + li { margin-block-start: 4px; }
+.prose a { color: var(--c-accent); text-decoration: underline; text-underline-offset: 3px; }
+
+/* --- Контакты --- */
+.contacts__in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--gutter); align-items: start; }
+.contacts__row { display: grid; gap: 4px; padding-block: max(12px, calc(16 * var(--k))); border-block-end: 1px solid var(--c-rule); }
+.contacts__row:first-child { border-block-start: 1px solid var(--c-rule); }
+.contacts__label { font-family: var(--f-ui); font-size: var(--t-chip); }
+.contacts__big { font-size: var(--t-mail); line-height: 1.2; }
+.contacts__addr { font-size: var(--t-mid); }
+.contacts__soc { display: flex; flex-wrap: wrap; gap: max(10px, calc(14 * var(--k))); font-size: var(--t-mid); }
+.contacts__soc a { color: var(--c-accent); }
+.contacts__text { margin-block-start: max(20px, calc(28 * var(--k))); }
+.contacts__form { padding: max(20px, calc(28 * var(--k))); background: var(--c-surface); border-radius: var(--r-chip); }
+.contacts__form .modal__box { padding: 0; background: none; box-shadow: none; max-width: none; }
+.contacts__form .h2 { margin-block-end: max(14px, calc(20 * var(--k))); }
+@media (max-width: 899px) { .contacts__in { grid-template-columns: minmax(0, 1fr); } }
+
+/* --- Поиск и 404 --- */
+.results { border-block-start: 1px solid var(--c-rule); }
+.results__item { padding-block: max(14px, calc(20 * var(--k))); border-block-end: 1px solid var(--c-rule); }
+.results__title { font-size: var(--t-mid); }
+.results__title a:hover { color: var(--c-accent); }
+.results__item .body { margin-block-start: 4px; color: var(--c-muted); }
+.notfound { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gutter); }
+
+/* Звёзды без заливки — для оценок ниже пяти. */
+.stars svg[data-off] { opacity: .25; }

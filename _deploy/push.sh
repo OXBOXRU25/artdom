@@ -25,7 +25,11 @@ if [ ! -d "$SRC" ]; then echo "  нет папки темы: $SRC"; exit 1; fi
 cd "$SRC" || exit 1
 
 # Код. Корневые php перечислены явно, папки уходят целиком.
-CODE="404.php archive.php comments.php footer.php functions.php header.php index.php page.php search.php sidebar.php single.php style.css css js inc template-parts templates"
+# Корневые php НЕ перечисляем поимённо: новый шаблон (archive-тип.php,
+# single-тип.php) в такой список забыть — секунда, а на сервере он тогда
+# просто не появится, и WordPress молча откатится на шаблон базовой темы.
+# Ровно так и вышло 25.08.2026: каталог отдавал 500, а файла там не было.
+CODE="$(echo *.php) style.css css js inc template-parts templates"
 MEDIA="fonts img video favicon.svg screenshot.png"
 
 WHAT="$CODE"
