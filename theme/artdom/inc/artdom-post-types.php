@@ -256,3 +256,95 @@ function artdom_register_inner_fields() {
 	);
 }
 add_action( 'acf/init', 'artdom_register_inner_fields' );
+
+/**
+ * Поля страницы «О компании».
+ *
+ * Страница из одного текста для агентства премиального сегмента не годится:
+ * она и есть главный аргумент доверия. Поэтому блоки разложены по смыслу —
+ * вводная часть, цифры, принципы, путь, основатель, команда, — и каждый
+ * редактируется отдельно.
+ */
+function artdom_register_about_fields() {
+	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
+		return;
+	}
+
+	acf_add_local_field_group(
+		array(
+			'key'            => 'group_artdom_about',
+			'title'          => 'О компании',
+			'fields'         => array(
+
+				artdom_tab( 'Вводная часть' ),
+				artdom_f( 'ab_intro_title', 'Заголовок', 'textarea', array( 'rows' => 2 ) ),
+				artdom_f( 'ab_intro_text', 'Текст', 'textarea', array( 'rows' => 8, 'instructions' => 'Пустая строка между абзацами разделит их на сайте.' ) ),
+				artdom_f( 'ab_photo', 'Фотография', 'image', array( 'return_format' => 'array', 'preview_size' => 'medium' ) ),
+
+				artdom_tab( 'Принципы' ),
+				artdom_f( 'ab_principles_title', 'Заголовок' ),
+				artdom_f(
+					'ab_principles',
+					'Принципы',
+					'repeater',
+					array(
+						'layout'       => 'block',
+						'button_label' => 'Добавить принцип',
+						'sub_fields'   => array(
+							artdom_f( 'title', 'Название', 'text', array( 'key' => 'field_artdom_pr_title' ) ),
+							artdom_f( 'text', 'Пояснение', 'textarea', array( 'key' => 'field_artdom_pr_text', 'rows' => 3 ) ),
+						),
+					)
+				),
+
+				artdom_tab( 'Путь компании' ),
+				artdom_f( 'ab_path_title', 'Заголовок' ),
+				artdom_f(
+					'ab_path',
+					'Вехи',
+					'repeater',
+					array(
+						'layout'       => 'table',
+						'button_label' => 'Добавить веху',
+						'sub_fields'   => array(
+							artdom_f( 'year', 'Год', 'text', array( 'key' => 'field_artdom_pt_year', 'wrapper' => array( 'width' => 15 ) ) ),
+							artdom_f( 'title', 'Что произошло', 'text', array( 'key' => 'field_artdom_pt_title', 'wrapper' => array( 'width' => 35 ) ) ),
+							artdom_f( 'text', 'Подробнее', 'textarea', array( 'key' => 'field_artdom_pt_text', 'rows' => 2, 'wrapper' => array( 'width' => 50 ) ) ),
+						),
+					)
+				),
+
+				artdom_tab( 'Команда' ),
+				artdom_f( 'ab_team_title', 'Заголовок' ),
+				artdom_f( 'ab_team_lead', 'Подводка', 'textarea', array( 'rows' => 3 ) ),
+				artdom_f(
+					'ab_team',
+					'Сотрудники',
+					'repeater',
+					array(
+						'layout'       => 'table',
+						'button_label' => 'Добавить человека',
+						'sub_fields'   => array(
+							artdom_f( 'name', 'Имя', 'text', array( 'key' => 'field_artdom_tm_name', 'wrapper' => array( 'width' => 30 ) ) ),
+							artdom_f( 'role', 'Должность', 'text', array( 'key' => 'field_artdom_tm_role', 'wrapper' => array( 'width' => 30 ) ) ),
+							artdom_f( 'note', 'Коротко о человеке', 'text', array( 'key' => 'field_artdom_tm_note', 'wrapper' => array( 'width' => 40 ) ) ),
+						),
+					)
+				),
+			),
+			'location'       => array(
+				array(
+					array(
+						'param'    => 'page_template',
+						'operator' => '==',
+						'value'    => 'templates/template-about.php',
+					),
+				),
+			),
+			'hide_on_screen' => array( 'discussion', 'comments', 'custom_fields' ),
+			'active'         => true,
+			'description'    => 'Блоки страницы «О компании». Пустой блок просто не показывается.',
+		)
+	);
+}
+add_action( 'acf/init', 'artdom_register_about_fields' );

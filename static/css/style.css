@@ -794,3 +794,59 @@ textarea.field__input { resize: vertical; min-height: 96px; }
    поэтому там проблемы нет. Меняем ролями: поле белое, панель серая. */
 .contacts__form .field__input { background: var(--c-white); border-color: var(--c-rule); }
 .contacts__form .field__input:hover { background: var(--c-white); border-color: var(--c-muted); }
+
+/* ============================================================
+   СТРАНИЦА «О КОМПАНИИ»
+   ============================================================ */
+
+/* Вводный блок: текст и фотография рядом, как в секции услуг на главной —
+   пропорция та же, поэтому страница читается продолжением, а не вставкой. */
+.abintro__in { display: grid; grid-template-columns: minmax(0, 1fr) calc(710 * var(--k)); gap: var(--gutter); align-items: start; }
+.abintro__text { max-width: 62ch; }
+.abintro__text .h2 { margin-block-end: max(14px, calc(20 * var(--k))); }
+.abintro__text .body + .body { margin-block-start: max(10px, calc(14 * var(--k))); }
+.abintro__media img { width: 100%; height: auto; border-radius: var(--r-chip); }
+@media (max-width: 899px) {
+  .abintro__in { grid-template-columns: minmax(0, 1fr); }
+  .abintro__media { order: -1; }
+}
+
+/* Принципы — те же карточки шагов, но в три колонки. */
+.steps--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 899px) { .steps--three { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 639px) { .steps--three { grid-template-columns: minmax(0, 1fr); } }
+
+/* Основатель: портрет, прямая речь, подпись — по центру и крупно.
+   На главной этот же материал стоит колонкой сбоку; здесь он главный,
+   поэтому занимает всю ширину и набран кеглем заголовка. */
+.founder__in { display: grid; justify-items: center; text-align: center; gap: max(16px, calc(24 * var(--k))); max-width: calc(1100 * var(--k)); margin-inline: auto; }
+.founder__portrait { width: calc(140 * var(--k)); min-width: 96px; }
+.founder__portrait img { width: 100%; height: auto; border-radius: 50%; }
+.founder__quote { font-size: var(--t-title); line-height: 1.3; max-width: 30ch; }
+.founder__who { font-family: var(--f-ui); font-size: var(--t-nav); }
+.founder__who .about__role { display: block; color: var(--c-muted); }
+
+/* Путь компании: год слева, событие справа, всё нанизано на линию. */
+.path { margin-block-start: max(24px, calc(40 * var(--k))); border-block-start: 1px solid var(--c-rule); }
+.path__item { display: grid; grid-template-columns: calc(160 * var(--k)) minmax(0, 1fr); gap: var(--gutter); padding-block: max(16px, calc(26 * var(--k))); border-block-end: 1px solid var(--c-rule); }
+.path__year { font-family: var(--f-ui); font-size: var(--t-title); line-height: 1; color: var(--c-accent); font-variant-numeric: tabular-nums; }
+.path__title { font-size: var(--t-mid); }
+.path__body .body { margin-block-start: max(4px, calc(6 * var(--k))); }
+@media (max-width: 639px) {
+  .path__item { grid-template-columns: minmax(0, 1fr); gap: max(6px, calc(8 * var(--k))); }
+}
+
+/* Команда: инициалы вместо фотографий — честнее, чем стоковые лица,
+   и не разъезжается, когда у половины людей снимков нет. */
+.team { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap-card) var(--gutter); margin-block-start: max(24px, calc(40 * var(--k))); }
+.team__ava {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: calc(64 * var(--k)); min-width: 48px; aspect-ratio: 1;
+  border-radius: 50%; background: var(--c-surface); color: var(--c-muted);
+  font-family: var(--f-ui); font-size: var(--t-body);
+}
+.team__name { margin-block-start: max(10px, calc(14 * var(--k))); font-size: var(--t-mid); }
+.team__role { font-family: var(--f-ui); font-size: var(--t-chip); }
+.team__note { margin-block-start: max(6px, calc(8 * var(--k))); }
+@media (max-width: 899px) { .team { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 639px) { .team { grid-template-columns: minmax(0, 1fr); } }

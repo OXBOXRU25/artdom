@@ -149,7 +149,7 @@ add_action( 'init', 'artdom_maybe_flush_rules', 99 );
  * Создание идемпотентно, поэтому повторный проход ничего не дублирует.
  */
 function artdom_maybe_seed() {
-	$version = 3;
+	$version = 4;
 
 	if ( (int) get_option( 'artdom_seed_version' ) >= $version ) {
 		return;
