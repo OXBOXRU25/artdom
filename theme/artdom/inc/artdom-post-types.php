@@ -348,3 +348,28 @@ function artdom_register_about_fields() {
 	);
 }
 add_action( 'acf/init', 'artdom_register_about_fields' );
+
+/**
+ * Порядок в архивах — заданный руками, а не по дате.
+ *
+ * У услуг порядок содержательный: сперва основная, потом сопутствующие.
+ * Архив по умолчанию сортирует по дате, и список выходил задом наперёд —
+ * последняя созданная услуга оказывалась первой.
+ *
+ * @param WP_Query $query Основной запрос.
+ */
+function artdom_archive_order( $query ) {
+	if ( is_admin() || ! $query->is_main_query() ) {
+		return;
+	}
+
+	if ( $query->is_post_type_archive( 'artdom_service' ) || $query->is_post_type_archive( 'artdom_review' ) ) {
+		$query->set( 'orderby', array( 'menu_order' => 'ASC', 'date' => 'ASC' ) );
+	}
+
+	if ( $query->is_post_type_archive( 'artdom_object' ) || $query->is_tax( 'artdom_object_type' ) ) {
+		$query->set( 'orderby', array( 'menu_order' => 'ASC', 'date' => 'DESC' ) );
+		$query->set( 'posts_per_page', 9 );
+	}
+}
+add_action( 'pre_get_posts', 'artdom_archive_order' );

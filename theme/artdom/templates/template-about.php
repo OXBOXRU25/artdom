@@ -30,7 +30,7 @@ while ( have_posts() ) :
 	set_query_var( 'artdom_head_lead', has_excerpt() ? get_the_excerpt() : '' );
 ?>
 
-<main>
+<main id="main">
   <?php get_template_part( 'template-parts/page-head' ); ?>
 
   <?php if ( $intro_text ) : ?>

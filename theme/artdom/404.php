@@ -11,7 +11,7 @@ set_query_var( 'artdom_head_title', 'Такой страницы нет' );
 set_query_var( 'artdom_head_lead', 'Возможно, объект уже продан или адрес набран с опечаткой. Посмотрите каталог&nbsp;— там всё, что сейчас в работе.' );
 ?>
 
-<main>
+<main id="main">
   <?php get_template_part( 'template-parts/page-head' ); ?>
 
   <section class="sec sec--white">

@@ -21,7 +21,7 @@ set_query_var(
 );
 ?>
 
-<main>
+<main id="main">
   <?php get_template_part( 'template-parts/page-head' ); ?>
 
   <section class="sec sec--surface">

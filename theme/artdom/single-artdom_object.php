@@ -59,7 +59,7 @@ while ( have_posts() ) :
 	set_query_var( 'artdom_head_lead', $address ? $address : trim( $district . ( $district && $metro ? ', метро ' : '' ) . $metro ) );
 ?>
 
-<main>
+<main id="main">
   <?php get_template_part( 'template-parts/page-head' ); ?>
 
   <section class="sec sec--white object">

@@ -23,9 +23,16 @@ set_query_var(
 		? term_description()
 		: 'Квартиры, резиденции и апартаменты в проверенных домах. Часть предложений не публикуется в открытом доступе — о них расскажет брокер.'
 );
+
+/* Кадр в шапке раздела: без него страница каталога начинается со сплошного
+   белого, а первый объект виден только после прокрутки. */
+set_query_var(
+	'artdom_head_figure',
+	array( 'url' => get_template_directory_uri() . '/img/garanty.webp', 'alt' => '' )
+);
 ?>
 
-<main>
+<main id="main">
   <?php get_template_part( 'template-parts/page-head' ); ?>
 
   <section class="sec sec--white catalog">
@@ -45,6 +52,19 @@ set_query_var(
       <div class="rule"></div>
 
       <?php if ( have_posts() ) : ?>
+      <?php
+      /* На первой странице общего каталога первый объект показываем крупно.
+         В категории и на второй странице точка входа не нужна — человек уже
+         выбрал, и лишний акцент только ломает ритм сетки. */
+      $artdom_lead = ! is_paged() && ! is_tax() && $total > 3;
+      $artdom_i    = 0;
+      ?>
+      <?php if ( $artdom_lead ) : ?>
+        <?php
+        the_post();
+        get_template_part( 'template-parts/object-lead' );
+        ?>
+      <?php endif; ?>
       <div class="grid-cards">
         <?php
         while ( have_posts() ) :
