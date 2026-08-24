@@ -851,96 +851,8 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 @media (max-width: 899px) { .team { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 639px) { .team { grid-template-columns: minmax(0, 1fr); } }
 
-/* ============================================================
-   ВНУТРЯНКА: ВТОРОЙ ЗАХОД ПО ВИДУ
-   Три слабых места: одинаковые сетки из трёх карточек, плоские
-   секции без единого изображения и отсутствие акцента. Правим их,
-   не трогая язык главной.
-   ============================================================ */
-
-/* --- Шапка страницы: асимметрия и акцентная черта --- */
-.pagehead__in { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gutter); align-items: end; }
-.pagehead--media .pagehead__in { grid-template-columns: minmax(0, 1fr) calc(620 * var(--k)); }
-.pagehead__text { max-width: 22ch; }
-.pagehead--media .pagehead__text { max-width: none; }
-.pagehead__title {
-  margin-block-start: max(14px, calc(20 * var(--k)));
-  max-width: 18ch;
-  text-wrap: balance;          /* не оставляет одинокое слово на последней строке */
-}
-/* Тонкая черта акцентом над заголовком: единственная деталь, которая отличает
-   внутреннюю шапку от обычного текста, и её достаточно. */
-.pagehead__title::before {
-  content: ""; display: block;
-  width: calc(64 * var(--k)); min-width: 44px; height: var(--dp);
-  margin-block-end: max(16px, calc(24 * var(--k)));
-  background: var(--c-accent);
-}
-.pagehead__lead { margin-block-start: max(12px, calc(18 * var(--k))); max-width: 52ch; color: var(--c-muted); }
-.pagehead__figure { align-self: stretch; }
-.pagehead__figure img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--r-chip); }
-@media (max-width: 899px) {
-  .pagehead--media .pagehead__in { grid-template-columns: minmax(0, 1fr); }
-  .pagehead__figure { display: none; }   /* на телефоне это лишний экран до сути */
-}
-
-/* --- Услуги редакционным списком --- */
-.svclist { border-block-start: var(--dp) solid var(--c-rule); }
-.svclist__item { border-block-end: var(--dp) solid var(--c-rule); }
-.svclist__link {
-  display: grid;
-  grid-template-columns: calc(120 * var(--k)) minmax(0, 1fr) calc(90 * var(--k));
-  align-items: center; gap: var(--gutter);
-  padding-block: max(20px, calc(34 * var(--k)));
-  padding-inline: max(10px, calc(16 * var(--k)));
-  margin-inline: calc(-1 * max(10px, calc(16 * var(--k))));
-  transition: background-color var(--dur) var(--ease);
-}
-.svclist__link:hover { background: var(--c-surface); }
-.svclist__n {
-  font-family: var(--f-ui); font-size: var(--t-title); line-height: 1;
-  color: var(--c-rule); font-variant-numeric: tabular-nums;
-  transition: color var(--dur) var(--ease);
-}
-.svclist__link:hover .svclist__n { color: var(--c-accent); }
-.svclist__body { display: grid; gap: max(6px, calc(10 * var(--k))); }
-.svclist__title { font-size: var(--t-h2); line-height: 1.1; }
-.svclist__text { max-width: 56ch; }
-.svclist__go {
-  justify-self: end; position: relative; display: block;
-  width: calc(46 * var(--k)); min-width: 30px;
-  height: calc(12 * var(--k)); min-height: 8px;
-  overflow-x: clip; color: var(--c-ink);
-}
-.svclist__go svg { position: absolute; inset-block: 0; inset-inline-start: 0; width: 100%; height: 100%; transition: transform .55s var(--ease); }
-.svclist__go svg:nth-child(2) { transform: translateX(-165%); }
-.svclist__link:hover .svclist__go svg:nth-child(1) { transform: translateX(165%); }
-.svclist__link:hover .svclist__go svg:nth-child(2) { transform: translateX(0); }
-@media (max-width: 767px) {
-  .svclist__link { grid-template-columns: calc(56 * var(--k)) minmax(0, 1fr); gap: max(12px, calc(16 * var(--k))); }
-  .svclist__go { display: none; }
-  .svclist__title { font-size: var(--t-title); }
-}
-
-/* --- Текущий раздел в меню ---
-   Человек должен видеть, где он. Подчёркивание, а не цвет: цветом у нас
-   говорит только акцент, и разбрасываться им незачем. */
-.nav .current-menu-item > a,
-.nav .current_page_parent > a,
-.nav .current-menu-parent > a {
-  background-image: linear-gradient(currentColor, currentColor);
-  background-repeat: no-repeat;
-  background-position: 0 100%;
-  background-size: 100% var(--dp);
-  padding-block-end: 4px;
-}
-
-/* --- Каскад появления ---
-   Элементы списка проявляются с небольшим сдвигом друг за другом. Всё разом
-   выглядит как перерисовка страницы, а не как движение. */
-.svclist__item[data-rise] { transition-delay: calc(var(--i, 0) * 60ms); }
-
-/* --- Ссылка «к содержимому» для клавиатуры --- */
+/* Ссылка «К содержимому» для клавиатуры: спрятана над экраном и выезжает
+   только при получении фокуса. Без этого правила она видна всем в углу. */
 .skip {
   position: absolute; inset-inline-start: max(20px, calc(44 * var(--k))); inset-block-start: -100px;
   z-index: 50; padding: 12px 18px;
@@ -949,28 +861,3 @@ textarea.field__input { resize: vertical; min-height: 96px; }
   transition: inset-block-start .2s var(--ease);
 }
 .skip:focus-visible { inset-block-start: 12px; }
-
-/* Кадр в шапке не должен быть выше текста настолько, чтобы над крошками
-   зияла пустая треть экрана. Держим пропорцию и потолок. */
-.pagehead__figure { aspect-ratio: 3 / 2; max-height: calc(340 * var(--k)); }
-.pagehead--media .pagehead__in { align-items: end; }
-
-/* --- Первый объект каталога полосой ---
-   Кадр слева на три пятых, данные справа. Пропорция взята от карточки на
-   главной, поэтому полоса читается её увеличенной версией, а не новым
-   компонентом. */
-.leadcard {
-  display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
-  gap: var(--gutter); align-items: center;
-  margin-block-start: max(24px, calc(40 * var(--k)));
-}
-.leadcard__media { display: block; overflow: hidden; border-radius: var(--r-chip); }
-.leadcard__media img { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; }
-.leadcard__body { display: grid; justify-items: start; gap: max(8px, calc(12 * var(--k))); }
-.leadcard__title { font-size: var(--t-h2); line-height: 1.08; }
-.leadcard__text { max-width: 46ch; }
-.leadcard__price { font-size: var(--t-title); line-height: 1; }
-.leadcard + .grid-cards { margin-block-start: max(28px, calc(52 * var(--k))); }
-@media (max-width: 899px) {
-  .leadcard { grid-template-columns: minmax(0, 1fr); gap: max(14px, calc(20 * var(--k))); }
-}
