@@ -163,10 +163,22 @@ while ( have_posts() ) :
     </div>
   </section>
 
-  <?php if ( is_array( $artdom_map ) && ! empty( $artdom_map['url'] ) ) : ?>
+  <?php
+  /* Карта: сперва то, что загрузили в админке, иначе точечная Россия из темы.
+     Файл отдаётся картинкой, а не вставляется в разметку: внутри 28 784
+     кружка, и в документе это были бы 28 784 узла DOM на каждой загрузке
+     страницы. Как <img> браузер рисует его в отдельном документе и кеширует. */
+  $artdom_map_src = is_array( $artdom_map ) && ! empty( $artdom_map['url'] )
+    ? $artdom_map['url']
+    : get_template_directory_uri() . '/img/russia-dots.svg';
+  $artdom_map_alt = is_array( $artdom_map ) && ! empty( $artdom_map['alt'] )
+    ? $artdom_map['alt']
+    : 'Карта России: города, где мы закрывали сделки';
+  ?>
+  <?php if ( $artdom_map_src ) : ?>
   <section class="cmap">
     <div class="wrap cmap__in" data-rise>
-      <img class="cmap__img" src="<?php echo esc_url( $artdom_map['url'] ); ?>" alt="<?php echo esc_attr( $artdom_map['alt'] ? $artdom_map['alt'] : 'Карта городов, где мы работаем' ); ?>" loading="lazy" decoding="async">
+      <img class="cmap__img" src="<?php echo esc_url( $artdom_map_src ); ?>" alt="<?php echo esc_attr( $artdom_map_alt ); ?>" width="4096" height="2229" loading="lazy" decoding="async">
       <?php if ( artdom_field( 'ct_map_caption' ) ) : ?>
       <p class="cmap__caption"><?php echo esc_html( artdom_field( 'ct_map_caption' ) ); ?></p>
       <?php endif; ?>

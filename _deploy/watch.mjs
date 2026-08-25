@@ -19,6 +19,11 @@ const DRY = process.argv.includes('--dry');
 const WAIT = 2000;
 
 const CODE = /\.(php|css|js)$/i;
+/* Медиа возим отдельно: гонять их на каждую правку стиля — полтора мегабайта
+   впустую. Но и забывать нельзя: новая картинка иначе просто не появится на
+   сервере, а выглядеть это будет как сломанная вёрстка. Увидели медиафайл —
+   зовём полную выкладку. */
+const MEDIA = /\.(svg|webp|jpg|jpeg|png|mp4|webm|woff2)$/i;
 const SEP = String.fromCharCode(92);   // обратный слеш, собранный кодом:
 // в heredoc он не переживает передачу и молча ломает регулярку.
 const пропустить = (f) => f.includes('.git') || f.includes('node_modules');
@@ -27,6 +32,7 @@ const время = () => new Date().toTimeString().slice(0, 8);
 let таймер = null;
 let занят = false;
 let накопилось = new Set();
+let медиа = false;
 
 function выложить() {
   if (занят) { таймер = setTimeout(выложить, WAIT); return; }
@@ -38,14 +44,16 @@ function выложить() {
   if (DRY) { console.log(`[${время()}] --dry: заливку пропускаю`); return; }
 
   занят = true;
-  const p = spawn(BASH, [PUSH], { stdio: ['ignore', 'pipe', 'pipe'] });
+  const режим = медиа ? ['all'] : [];
+  медиа = false;
+  const p = spawn(BASH, [PUSH].concat(режим), { stdio: ['ignore', 'pipe', 'pipe'] });
   let хвост = '';
   p.stdout.on('data', d => { хвост += d; });
   p.stderr.on('data', d => { хвост += d; });
   p.on('close', code => {
     занят = false;
     if (code === 0) {
-      console.log(`[${время()}] выложено. На сайте Ctrl+F5`);
+      console.log(`[${время()}] выложено${режим.length ? ' вместе с медиа' : ''}. На сайте Ctrl+F5`);
     } else {
       console.log(`[${время()}] НЕ ВЫЛОЖЕНО, код ${code}`);
       console.log(хвост.trim().split('\n').map(s => '    ' + s).join('\n'));
@@ -59,7 +67,9 @@ console.log(`  правки уезжают на artdom.oxboxdigital.ru сами,
 console.log(`  остановить — Ctrl+C\n`);
 
 watch(SRC, { recursive: true }, (тип, файл) => {
-  if (!файл || пропустить(файл) || !CODE.test(файл)) return;
+  if (!файл || пропустить(файл)) return;
+  if (!CODE.test(файл) && !MEDIA.test(файл)) return;
+  if (MEDIA.test(файл)) медиа = true;
   накопилось.add(файл.split(SEP).join('/'));
   clearTimeout(таймер);
   таймер = setTimeout(выложить, WAIT);
