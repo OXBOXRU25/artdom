@@ -1047,13 +1047,16 @@ body.is-sheet .hdr--solid { background: transparent; }
   /* Отрицательные поля вытягивают карточки за контейнер почти к краям блока,
      оставляя ровно --edge. */
   margin-inline: calc(-1 * (var(--gutter) - var(--edge)));
-  margin-block-end: var(--edge);
+  /* Снизу половина отступа: сбоку между карточкой и разделителем видно тоже
+     половину — разделитель стоит посередине зазора. Целый --edge снизу
+     выглядел вдвое больше бокового, что заказчик и заметил. */
+  margin-block-end: calc(var(--edge) / 2);
 }
 /* Разделитель — тем же цветом, что линии ниже в подвале, и уведён вниз на
    собственный нижний отступ, чтобы дойти до горизонтальной линии. */
 .fnext::before {
   content: ""; position: absolute;
-  inset-block: 0 calc(-1 * var(--edge));
+  inset-block: 0 calc(-1 * var(--edge) / 2);
   inset-inline-start: 50%;
   width: var(--dp); background: rgba(255, 255, 255, .3);
 }
@@ -1073,13 +1076,18 @@ body.is-sheet .hdr--solid { background: transparent; }
    Слой лежит под содержимым, поэтому текст не мигает вместе с ним. */
 .fnext__card::before {
   content: ""; position: absolute; inset: 0; z-index: 0;
-  background: #16181c;
+  background: #1b1d22;   /* цвет подсветки снят с референса */
   border-radius: max(8px, calc(14 * var(--k)));
   opacity: 0;
-  transition: opacity .75s var(--ease);
+  /* Слой не просто светлеет, а слегка разрастается до своей области — это и
+     читается как «возникло из ниоткуда и заполнило». Разница с чистым
+     затуханием небольшая, но именно она отличает жест от смены цвета. */
+  transform: scale(.97);
+  transform-origin: center;
+  transition: opacity .45s var(--ease), transform .45s var(--ease);
 }
 .fnext__card > * { position: relative; z-index: 1; }
-.fnext__card:hover::before { opacity: 1; }
+.fnext__card:hover::before { opacity: 1; transform: scale(1); }
 
 .fnext__word {
   font-size: clamp(24px, calc(70 * var(--k)), 70px);
@@ -1110,7 +1118,9 @@ body.is-sheet .hdr--solid { background: transparent; }
   background: var(--c-black);
   color: var(--c-white);
   opacity: 0; transform: scale(.9);
-  transition: opacity .75s var(--ease), transform .75s var(--ease);
+  /* Кружок идёт следом за подсветкой: небольшая задержка делает отклик
+     последовательным, а не вспыхнувшим разом. */
+  transition: opacity .45s var(--ease) .08s, transform .45s var(--ease) .08s;
 }
 .fnext__circle svg { width: 21%; height: auto; }   /* вдвое меньше прежнего */
 .fnext__card:hover .fnext__circle { opacity: 1; transform: scale(1); }
