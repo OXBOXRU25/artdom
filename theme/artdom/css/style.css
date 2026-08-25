@@ -1097,3 +1097,19 @@ body.is-sheet .hdr--solid { background: transparent; }
   .fnext__word { color: var(--c-white); }
   .fnext__text { color: #8b8e99; }
 }
+
+/* Белое растворение по краям карты.
+   Отдельным слоем поверх картинки, а не фильтром: filter: blur заставил бы
+   браузер размывать всю карту целиком на каждом кадре, а радиальный градиент
+   рисуется бесплатно. Сам файл при этом не тронут — карту можно заменить,
+   и растворение останется. */
+.cmap__stage { position: relative; }
+.cmap__stage::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(115% 88% at 50% 50%,
+      rgba(255, 255, 255, 0) 42%,
+      rgba(255, 255, 255, .55) 68%,
+      var(--c-white) 88%),
+    linear-gradient(to right, var(--c-white), rgba(255, 255, 255, 0) 12%, rgba(255, 255, 255, 0) 88%, var(--c-white));
+}

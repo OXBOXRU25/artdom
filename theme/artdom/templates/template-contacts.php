@@ -178,7 +178,11 @@ while ( have_posts() ) :
   <?php if ( $artdom_map_src ) : ?>
   <section class="cmap">
     <div class="wrap cmap__in" data-rise>
-      <img class="cmap__img" src="<?php echo esc_url( $artdom_map_src ); ?>" alt="<?php echo esc_attr( $artdom_map_alt ); ?>" width="2048" height="1115" loading="lazy" decoding="async">
+      <?php /* Обёртка нужна ради белого растворения по краям: оно кладётся
+               поверх карты отдельным слоем и не трогает сам файл. */ ?>
+      <div class="cmap__stage">
+        <img class="cmap__img" src="<?php echo esc_url( $artdom_map_src ); ?>" alt="<?php echo esc_attr( $artdom_map_alt ); ?>" width="4096" height="2229" loading="lazy" decoding="async">
+      </div>
       <?php if ( artdom_field( 'ct_map_caption' ) ) : ?>
       <p class="cmap__caption"><?php echo esc_html( artdom_field( 'ct_map_caption' ) ); ?></p>
       <?php endif; ?>
