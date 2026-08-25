@@ -1038,29 +1038,48 @@ body.is-sheet .hdr--solid { background: transparent; }
   position: relative;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  /* Зазор маленький нарочно: у референса подсветка карточки почти касается
-     разделителя. Большой зазор превращал пару в два отдельных блока. */
-  gap: max(8px, calc(14 * var(--k)));
-  margin-block-end: max(28px, calc(52 * var(--k)));
+  /* Один отступ на все три места: между карточками, от краёв чёрного блока и
+     снизу до линии. Записан токеном, потому что из него ещё вычитается поле
+     контейнера — разъедутся, если задать числами порознь. */
+  --edge: max(8px, calc(14 * var(--k)));
+
+  gap: var(--edge);
+  /* Отрицательные поля вытягивают карточки за контейнер почти к краям блока,
+     оставляя ровно --edge. */
+  margin-inline: calc(-1 * (var(--gutter) - var(--edge)));
+  margin-block-end: var(--edge);
 }
 /* Разделитель — тем же цветом, что линии ниже в подвале, и уведён вниз на
    собственный нижний отступ, чтобы дойти до горизонтальной линии. */
 .fnext::before {
   content: ""; position: absolute;
-  inset-block: 0 calc(-1 * max(28px, calc(52 * var(--k))));
+  inset-block: 0 calc(-1 * var(--edge));
   inset-inline-start: 50%;
   width: var(--dp); background: rgba(255, 255, 255, .3);
 }
 .fnext__card {
   display: flex; flex-direction: column; justify-content: space-between;
   aspect-ratio: 704 / 473;
-  padding: max(18px, calc(40 * var(--k)));
-  border-radius: 0;
-  background: transparent;
+  /* Боковое поле добирает то, что съел отрицательный отступ выше: текст в
+     карточке встаёт ровно в ту же вертикаль, что «Готовы найти свой дом?»
+     и телефон ниже. */
+  padding: max(20px, calc(48 * var(--k))) calc(var(--gutter) - var(--edge));
+  position: relative;
   color: var(--c-white);
-  transition: background-color var(--dur) var(--ease), border-radius var(--dur) var(--ease);
 }
-.fnext__card:hover { background: #16181c; border-radius: max(8px, calc(14 * var(--k))); }
+/* Подсветка — отдельным слоем, который проявляется прозрачностью, а не
+   перекрашиванием фона. Перекраска читается как щелчок, проявление — как
+   «возникло из ниоткуда и заполнило область», ровно это и есть у референса.
+   Слой лежит под содержимым, поэтому текст не мигает вместе с ним. */
+.fnext__card::before {
+  content: ""; position: absolute; inset: 0; z-index: 0;
+  background: #16181c;
+  border-radius: max(8px, calc(14 * var(--k)));
+  opacity: 0;
+  transition: opacity .75s var(--ease);
+}
+.fnext__card > * { position: relative; z-index: 1; }
+.fnext__card:hover::before { opacity: 1; }
 
 .fnext__word {
   font-size: clamp(24px, calc(70 * var(--k)), 70px);
@@ -1091,9 +1110,9 @@ body.is-sheet .hdr--solid { background: transparent; }
   background: var(--c-black);
   color: var(--c-white);
   opacity: 0; transform: scale(.9);
-  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+  transition: opacity .75s var(--ease), transform .75s var(--ease);
 }
-.fnext__circle svg { width: 42%; height: auto; }
+.fnext__circle svg { width: 21%; height: auto; }   /* вдвое меньше прежнего */
 .fnext__card:hover .fnext__circle { opacity: 1; transform: scale(1); }
 
 @media (max-width: 767px) {
@@ -1131,4 +1150,9 @@ body.is-sheet .hdr--solid { background: transparent; }
 /* Линия под карточками — во всю ширину чёрного блока. Отрицательные поля
    ровно на общий отступ контейнера: линия выходит за него и упирается в
    края экрана, а сами карточки остаются на месте. */
-.ftr__rule--full { margin-inline: calc(-1 * var(--gutter)); }
+.ftr__rule--full {
+  margin-inline: calc(-1 * var(--gutter));
+  /* Свой верхний отступ снимаем: у .ftr__rule он 36px и перебивал маленький
+     зазор, заданный карточками. Расстояние снизу задаёт блок карточек. */
+  margin-block-start: 0;
+}
