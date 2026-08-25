@@ -395,46 +395,63 @@ a[draggable="false"], img { -webkit-user-drag: none; }   /* НЕ наследу�
    Каркас высотой в три экрана, сцена внутри липкая. У CSS-липкости нет
    собственного диапазона: она держит блок ровно пока каркас в кадре,
    и отпускает сама — досчитывать конец не нужно. */
-.guaranty { position: relative; height: 300svh; }
-.guaranty__stage { position: sticky; inset-block-start: 0; height: 100svh; overflow: hidden; display: grid; place-items: center; }
-.guaranty__bg { position: absolute; inset: 0; }
-.guaranty__bg img {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-  opacity: 0; transition: opacity .9s var(--ease), transform 1.6s var(--ease);
-  transform: scale(1.06);
-}
-.guaranty__bg img[data-on="true"] { opacity: 1; transform: scale(1); }
-/* Затемнение одно на все слои, иначе на перекрёстном переходе оно удваивается */
-.guaranty__bg::after { content: ""; position: absolute; inset: 0; background: var(--c-scrim); }
+/* Каркас — по экрану на кадр; проезд внутри закрепления выходит на один
+   экран на каждый переход. Ровно столько же, сколько было раньше: длина
+   секции тут ни при чём, дело было в том, что смена шла порогом. */
+.guaranty { position: relative; height: calc(var(--slides) * 100svh); }
+.guaranty__stage { position: sticky; inset-block-start: 0; height: 100svh; overflow: hidden; }
 
-/* Мягкое пятно под заголовком: на светлом кадре белый текст падал до 2.23:1
-   в самых ярких 5% площади. Радиальный градиент вместо filter: blur — тот
-   рисует целый слой, а градиент браузеру ничего не стоит. На тёмных кадрах
-   его не видно, зато текст читается на любой фотографии. */
-.guaranty__stage::before {
-  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background: radial-gradient(ellipse 68% 42% at 50% 50%,
-              rgba(18, 20, 24, .40) 0%, rgba(18, 20, 24, .28) 45%, rgba(18, 20, 24, 0) 72%);
+/* Панель кадра. Каждая обрезана по краям сцены и приезжает снизу; следующая
+   в разметке лежит выше предыдущей, поэтому закрывает её сама, без z-index.
+   Без скрипта видна первая, остальные уведены за нижний край. */
+.guaranty__slide { position: absolute; inset: 0; overflow: hidden; transform: translate3d(0, 100%, 0); }
+.guaranty__slide[data-slide="0"] { transform: none; }
+
+.guaranty__media { position: absolute; inset: 0; }
+.guaranty__media img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Затемнение и мягкое пятно под заголовком — отдельным слоем, НЕ на кадре:
+   иначе увеличение фотографии растягивало бы и градиент. Пятно нужно
+   потому, что на светлом кадре белый текст падал до 2.23:1 в самых ярких
+   5% площади. Радиальный градиент вместо filter: blur — тот рисует целый
+   слой, а градиент браузеру ничего не стоит. */
+.guaranty__veil {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 68% 42% at 50% 50%,
+      rgba(18, 20, 24, .40) 0%, rgba(18, 20, 24, .28) 45%, rgba(18, 20, 24, 0) 72%),
+    var(--c-scrim);
 }
 
-.guaranty__text { position: relative; z-index: 2; width: 100%; display: grid; place-items: center; }
-.guaranty__title {
-  grid-area: 1 / 1; margin: 0; color: var(--c-white); text-align: center;
-  opacity: 0; transform: translateY(26px);
-  transition: opacity .7s var(--ease), transform .7s var(--ease);
+/* Текст панели. Скрипт смещает его навстречу ходу панели ровно на её ход,
+   поэтому на экране он стоит неподвижно, а открывается снизу вверх вместе
+   с фотографией — как строка, которую проявляют. */
+/* Текст стоит от ФИКСИРОВАННОЙ линии, а не по центру панели. Иначе заголовки
+   с разным числом строк центрируются каждый по-своему, и на переходе — где
+   шторка проходит сквозь текст — строки соседних кадров не совпадают по
+   высоте и читаются вперемешку. От линии же первая строка у всех на одном
+   месте, а лишние строки уходят вниз. У референса ровно так: 378 из 900,
+   то есть 42% высоты сцены. */
+.guaranty__content {
+  position: absolute; inset: 0;
+  display: grid; align-content: start; justify-items: center;
+  padding-block-start: 40svh;
 }
-.guaranty__title[data-on="true"] { opacity: 1; transform: none; }
+.guaranty__title { margin: 0; color: var(--c-white); text-align: center; }
 
 .guaranty__steps {
-  position: absolute; z-index: 2; inset-block-end: calc(48 * var(--k));
-  display: flex; gap: 10px;
+  position: absolute; z-index: 3; inset-block-end: calc(48 * var(--k));
+  inset-inline: 0; display: flex; justify-content: center; gap: 10px;
 }
+/* Полоска наливается по ходу прокрутки: долю пишет скрипт в --fill, заливка
+   идёт первым слоем фона поверх приглушённого. Ни лишнего узла, ни
+   псевдоэлемента. */
 .guaranty__steps span {
   width: 34px; height: 3px; border-radius: 2px;
-  background: rgba(255, 255, 255, .35);
-  transition: background-color .5s var(--ease);
+  background:
+    linear-gradient(var(--c-white), var(--c-white)) left center / calc(var(--fill, 0) * 100%) 100% no-repeat,
+    rgba(255, 255, 255, .35);
 }
-.guaranty__steps span[data-on="true"] { background: var(--c-white); }
 
 @media (max-width: 860px) {
   .guaranty__steps { inset-block-end: 28px; }

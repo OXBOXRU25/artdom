@@ -257,37 +257,133 @@
     window.addEventListener("blur", hide);
   }
 
-  /* ---------- Закреплённая сцена: фото и заголовок меняются по прокрутке ----------
-     Считаем долю проезда каркаса мимо липкой сцены прямо через getBoundingClientRect.
-     IntersectionObserver тут не годится по той же причине, что и в появлении блоков:
-     при F5 на середине страницы прокрутка восстанавливается ПОСЛЕ скриптов. */
+  /* ---------- Закреплённая сцена: панели приезжают снизу ----------
+     Построение снято с mimcocapital.com. Замеры при экране 900 (V — высота
+     сцены, T — сколько секции ещё осталось заехать, d — ход текущего
+     перехода):
+
+       въезд:  кадр   = scale(1 + 0.45*T/V) translateY(-0.25*T)
+               текст  = translateY(-T)
+       смена:  уходящая панель = translateY(-d/4), её текст = translateY(+d/4)
+               приходящая      = translateY(V-d),  её текст = translateY(-(V-d))
+               кадр приходящей = scale(1 + 0.40*(V-d)/V)
+
+     Всё линейно по прокрутке — никаких кривых и длительностей. Суть в двух
+     вещах. Первая: текст смещается НАВСТРЕЧУ ходу своей панели ровно на её
+     ход, поэтому на экране он неподвижен и просто открывается снизу вверх.
+     Вторая: уходящая панель уезжает на ЧЕТВЕРТИ скорости приходящей — от
+     этого у смены появляется глубина, а не эффект сдвинутой бумаги.
+
+     Считаем через getBoundingClientRect, а не наблюдателем: тот отдаёт
+     результат асинхронно, а браузер восстанавливает прокрутку ПОСЛЕ
+     скриптов — при F5 на середине сцена стояла бы в стартовом положении. */
   Array.prototype.forEach.call(document.querySelectorAll("[data-guaranty]"), function (sec) {
     var stage = sec.querySelector(".guaranty__stage");
-    var marks = sec.querySelectorAll("[data-slide]");
-    var count = sec.querySelectorAll(".guaranty__bg [data-slide]").length;
-    var current = -1;
+    var steps = sec.querySelectorAll(".guaranty__steps span");
+    var части = Array.prototype.map.call(sec.querySelectorAll(".guaranty__slide"), function (s) {
+      return {
+        панель: s,
+        кадр: s.querySelector(".guaranty__media"),
+        текст: s.querySelector(".guaranty__content")
+      };
+    });
+    var count = части.length;
+    if (!count || !stage) return;
 
-    function update() {
-      var travel = sec.offsetHeight - stage.offsetHeight;
-      if (travel <= 0 || !count) return;
+    var ВЪЕЗД_МАСШТАБ = 0.45;   /* насколько крупнее приезжает первый кадр */
+    var ВЪЕЗД_ЛАГ    = 0.25;    /* и насколько отстаёт от прокрутки */
+    var СМЕНА_МАСШТАБ = 0.40;   /* насколько крупнее приезжает следующий кадр */
+    var УХОД_ЛАГ      = 0.25;   /* доля скорости, с которой уезжает предыдущий */
 
-      var p = (-sec.getBoundingClientRect().top) / travel;
-      if (p < 0) p = 0;
-      if (p > 0.9999) p = 0.9999;                 /* иначе на самом низу индекс уедет за последний */
+    var тихо = window.matchMedia
+      && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var ждём = false;
 
-      var i = Math.floor(p * count);
-      if (i === current) return;
-      current = i;
+    function поставить(ч, панельY, текстY, масштаб, кадрY) {
+      ч.панель.style.transform = "translate3d(0," + панельY.toFixed(2) + "px,0)";
+      ч.текст.style.transform = "translate3d(0," + текстY.toFixed(2) + "px,0)";
+      /* Порядок важен: сдвиг записан ДО увеличения, поэтому считается в
+         координатах родителя и на масштаб не умножается. */
+      ч.кадр.style.transform =
+        "translate3d(0," + кадрY.toFixed(2) + "px,0) scale(" + масштаб.toFixed(4) + ")";
+    }
 
-      for (var n = 0; n < marks.length; n++) {
-        if (+marks[n].dataset.slide === i) marks[n].dataset.on = "true";
-        else marks[n].removeAttribute("data-on");
+    function заливка(P) {
+      for (var n = 0; n < steps.length; n++) {
+        var f = P - n;
+        if (f < 0) f = 0;
+        if (f > 1) f = 1;
+        steps[n].style.setProperty("--fill", f.toFixed(3));
       }
+    }
+
+    function draw() {
+      ждём = false;
+      var V = stage.offsetHeight;
+      if (!V) return;
+
+      var верх = sec.getBoundingClientRect().top;
+
+      /* Въезд: секция ещё не дошла до верха экрана, работает только первая
+         панель — остальные ждут за нижним краем. */
+      if (верх > 0) {
+        var T = верх > V ? V : верх;
+        for (var n = 0; n < count; n++) {
+          if (n === 0) {
+            поставить(части[0], 0, -T, 1 + ВЪЕЗД_МАСШТАБ * (T / V), -ВЪЕЗД_ЛАГ * T);
+          } else {
+            поставить(части[n], V, -V, 1 + СМЕНА_МАСШТАБ, 0);
+          }
+        }
+        заливка(1 - T / V);
+        return;
+      }
+
+      var проезд = (count - 1) * V;
+      var u = -верх;
+      if (u > проезд) u = проезд;
+
+      var i = count > 1 ? Math.floor(u / V) : 0;
+      if (i > count - 2) i = count - 2;
+      if (i < 0) i = 0;
+      var d = count > 1 ? u - i * V : 0;
+      if (d < 0) d = 0;
+      if (d > V) d = V;
+      /* Человеку, попросившему убрать анимацию, отдаём чистую смену без
+         промежуточных положений. */
+      if (тихо) d = d < V / 2 ? 0 : V;
+
+      for (var m = 0; m < count; m++) {
+        if (m < i) {
+          поставить(части[m], -УХОД_ЛАГ * V, УХОД_ЛАГ * V, 1, 0);
+        } else if (m === i) {
+          поставить(части[m], -УХОД_ЛАГ * d, УХОД_ЛАГ * d, 1, 0);
+        } else if (m === i + 1) {
+          поставить(части[m], V - d, -(V - d), 1 + СМЕНА_МАСШТАБ * ((V - d) / V), 0);
+        } else {
+          поставить(части[m], V, -V, 1 + СМЕНА_МАСШТАБ, 0);
+        }
+      }
+      заливка(1 + u / V);
+    }
+
+    /* Склеиваем в кадр: событий прокрутки приходит больше, чем браузер
+       успевает нарисовать, а работы здесь на девять узлов. */
+    function update() {
+      if (ждём) return;
+      ждём = true;
+      requestAnimationFrame(draw);
     }
 
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
-    update();
+    window.addEventListener("load", update);
+    /* Пока вкладка скрыта, кадры не рисуются и rAF не срабатывает — на
+       возврате состояние догоняем принудительно. */
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden) draw();
+    });
+    draw();
   });
 
   /* ---------- Меню на телефоне ---------- */
