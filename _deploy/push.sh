@@ -47,8 +47,16 @@ scp -q -i "$KEY" -o StrictHostKeyChecking=accept-new -r $WHAT "$HOST:$DEST/" || 
 }
 
 # Права: файлы приезжают от root, веб-серверу нужно их читать.
-ssh -i "$KEY" -o StrictHostKeyChecking=accept-new "$HOST" \
-  "chown -R www-data:www-data $DEST && find $DEST -type d -exec chmod 755 {} + && find $DEST -type f -exec chmod 644 {} +" || {
+#
+# Заодно один раз включаем сжатие для SVG. По умолчанию nginx его не жмёт, и
+# точечная карта едет мегабайтом вместо полутора сотен килобайт. Проверка на
+# наличие файла делает шаг однократным: перечитывание конфига на каждой
+# выкладке стоило бы дороже, чем сам выигрыш.
+#
+# -n обязателен: без него ssh забирает стандартный ввод, и запущенный из
+# сторожа скрипт зависает, ожидая того, чего никто не введёт.
+ssh -n -i "$KEY" -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 "$HOST" \
+  "chown -R www-data:www-data $DEST && find $DEST -type d -exec chmod 755 {} + && find $DEST -type f -exec chmod 644 {} + ; if [ ! -f /etc/nginx/conf.d/gzip-svg.conf ]; then echo 'gzip_types image/svg+xml;' > /etc/nginx/conf.d/gzip-svg.conf && nginx -t >/dev/null 2>&1 && systemctl reload nginx && echo '  сжатие SVG включено'; fi" || {
   echo "  права поправить не вышло"; exit 1;
 }
 
