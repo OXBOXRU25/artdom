@@ -604,10 +604,20 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .is-bad .field__input { border-color: #c2334d; background: var(--c-white); }
 
 /* --- Согласие --- */
-.check { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; align-items: start; }
+/* Текст согласия на 15% мельче основного: это правовая приписка, а не
+   часть разговора с клиентом. Высоту его строки держим в токене — от неё
+   считается вертикальное положение квадратика. */
+.check {
+  --t-check: calc(var(--t-body) * .85);
+  --line-check: calc(var(--t-check) * 1.45);
+  display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; align-items: start;
+}
 .check__box {
   appearance: none; -webkit-appearance: none;
-  inline-size: 22px; block-size: 22px; margin: 2px 0 0;
+  inline-size: 22px; block-size: 22px;
+  /* Центр квадратика совпадает с центром первой строки: раньше стоял
+     сдвиг в 2px на глаз, и текст сидел выше. */
+  margin: calc((var(--line-check) - 22px) / 2) 0 0;
   border: var(--dp) solid var(--c-rule); border-radius: 4px;
   background: var(--c-white); cursor: pointer;
   display: grid; place-items: center;
@@ -622,7 +632,7 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .check__box:checked { background: var(--c-accent); border-color: var(--c-accent); }
 .check__box:checked::after { opacity: 1; }
 .check__box:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
-.check__label { font-size: var(--t-body); line-height: 1.45; color: var(--c-muted); cursor: pointer; }
+.check__label { font-size: var(--t-check); line-height: 1.45; color: var(--c-muted); cursor: pointer; }
 .check__label a { color: var(--c-accent); text-decoration: underline; text-underline-offset: 2px; }
 .check .field__error { grid-column: 2; }
 .check.is-bad .check__box { border-color: #c2334d; }
