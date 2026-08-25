@@ -860,7 +860,15 @@ textarea.field__input { resize: vertical; min-height: 96px; }
    прозрачной, иначе поверх серого ляжет её белая полоса. */
 body.is-sheet { background: var(--c-surface); }
 body.is-sheet .hdr--solid { background: transparent; }
-.sheet { background: var(--c-white); margin-inline: max(8px, calc(16 * var(--k))); }
+/* Белый лист начинается не сразу под шапкой: у референса над ним 240px
+   серого при ширине 1440, и эта полоса — часть композиции, а не пустота.
+   Считаем от неё: 240 при масштабе 0.75 это 320 макетных, минус высота
+   самой шапки. */
+.sheet {
+  background: var(--c-white);
+  margin-inline: max(8px, calc(16 * var(--k)));
+  margin-block-start: max(40px, calc(229 * var(--k)));
+}
 
 /* --- Центральная шапка --- */
 .chero { padding-block: max(48px, calc(92 * var(--k))) max(36px, calc(70 * var(--k))); }
@@ -1145,7 +1153,7 @@ body.is-sheet .hdr--solid { background: transparent; }
    Амплитуда небольшая нарочно: движение должно замечаться, а не мешать. */
 .chip__dot { position: relative; }
 .chip__dot::after {
-  content: ; position: absolute; inset: -3px;
+  content: ""; position: absolute; inset: -3px;
   border-radius: 50%;
   background: var(--c-accent);
   animation: artdom-breath 3s ease-in-out infinite;
