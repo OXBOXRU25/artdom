@@ -51,7 +51,9 @@ $legal   = artdom_field( 'opt_legal', true );
       </a>
       <?php endforeach; ?>
     </nav>
-    <div class="ftr__rule"></div>
+    <?php /* Эта линия тянется до краёв чёрного блока, а не до полей контейнера:
+             она замыкает карточки, а не текстовые колонки ниже. */ ?>
+    <div class="ftr__rule ftr__rule--full"></div>
     <?php endif; ?>
 
     <div class="ftr__cta">

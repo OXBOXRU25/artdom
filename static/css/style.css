@@ -1038,7 +1038,9 @@ body.is-sheet .hdr--solid { background: transparent; }
   position: relative;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: max(28px, calc(56 * var(--k)));
+  /* Зазор маленький нарочно: у референса подсветка карточки почти касается
+     разделителя. Большой зазор превращал пару в два отдельных блока. */
+  gap: max(8px, calc(14 * var(--k)));
   margin-block-end: max(28px, calc(52 * var(--k)));
 }
 /* Разделитель — тем же цветом, что линии ниже в подвале, и уведён вниз на
@@ -1125,3 +1127,8 @@ body.is-sheet .hdr--solid { background: transparent; }
 /* Линия под колонками — того же цвета и толщины, что вертикальный разделитель
    между ними. */
 .ccols__rule { height: var(--dp); background: var(--c-rule); margin-block-start: max(28px, calc(64 * var(--k))); }
+
+/* Линия под карточками — во всю ширину чёрного блока. Отрицательные поля
+   ровно на общий отступ контейнера: линия выходит за него и упирается в
+   края экрана, а сами карточки остаются на месте. */
+.ftr__rule--full { margin-inline: calc(-1 * var(--gutter)); }
