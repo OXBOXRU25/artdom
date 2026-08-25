@@ -38,7 +38,6 @@ if ( $reviews->have_posts() ) :
           <p class="body">на основе <strong><?php echo esc_html( $count ); ?></strong> отзывов</p>
           <?php endif; ?>
         </div>
-        <?php artdom_btn( artdom_field( 'reviews_btn_text' ), artdom_field( 'reviews_btn_link' ), 'btn btn--wide' ); ?>
       </div>
 
       <div class="rule"></div>
@@ -54,6 +53,15 @@ if ( $reviews->have_posts() ) :
           ?>
         </div>
         <div class="slider__bar" aria-hidden="true"><div class="slider__thumb" data-thumb></div></div>
+      </div>
+
+      <?php
+      /* Кнопка стоит в разметке ПОСЛЕ ленты — так она и читается на телефоне:
+         сперва отзывы, потом бегунок, потом призыв. На широком экране сетка
+         поднимает её обратно в шапку секции, справа от заголовка. */
+      ?>
+      <div class="reviews__cta" data-rise>
+        <?php artdom_btn( artdom_field( 'reviews_btn_text' ), artdom_field( 'reviews_btn_link' ), 'btn btn--wide' ); ?>
       </div>
     </div>
   </section>

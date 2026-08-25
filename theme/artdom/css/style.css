@@ -228,7 +228,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .logo.on-dark, .hdr__burger.on-dark {
   mix-blend-mode: normal;
   color: var(--c-white);
-  filter: drop-shadow(0 0 1.2px rgba(0, 0, 0, .85)) drop-shadow(0 2px 7px rgba(0, 0, 0, .45));
+  filter: drop-shadow(0 0 1.2px rgba(0, 0, 0, .42)) drop-shadow(0 2px 7px rgba(0, 0, 0, .22));
 }
 
 .hdr__spacer { display: block; }
@@ -255,7 +255,11 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .hdr__burger { display: none; }
 
 /* --- Hero ----------------------------------------------------------------- */
-.hero { position: relative; min-height: calc(1040 * var(--k)); display: flex; align-items: flex-end; overflow: hidden; }
+/* Ровно один экран, а не макетные 1040: иначе на невысоком мониторе снизу
+   выглядывала полторы строки следующей секции, а на высоком оставался
+   лишний воздух. svh, а не vh: на телефоне это высота при ВИДИМЫХ панелях
+   браузера, то есть ровно то, что человек видит при открытии. */
+.hero { position: relative; min-height: 100svh; display: flex; align-items: flex-end; overflow: hidden; }
 .hero__bg { position: absolute; inset: 0; }
 .hero__bg img, .hero__bg video { width: 100%; height: 100%; object-fit: cover; }
 /* Ровное затемнение по всему кадру плюс отдельная тень под шапкой.
@@ -516,6 +520,29 @@ a[draggable="false"], img { -webkit-user-drag: none; }   /* НЕ наследу�
 .stats__label { margin-block-start: auto; font-size: var(--t-mid); line-height: 1.44; color: var(--c-muted); }
 
 /* --- Отзывы ------------------------------------------------------------------ */
+/* Кнопка «Добавить отзыв» лежит в разметке после ленты, чтобы на телефоне
+   читаться в правильном порядке: отзывы, бегунок, призыв. На широком экране
+   сетка возвращает её в первую строку справа от заголовка. Сделано сеткой,
+   а не порядком во флексе: кнопка и заголовок лежат в РАЗНЫХ контейнерах,
+   и order через границу контейнера не работает. */
+.reviews > .wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: max(16px, calc(32 * var(--k)));
+}
+.reviews > .wrap > .sechead { grid-column: 1; }
+.reviews__cta { grid-column: 2; grid-row: 1; justify-self: end; }
+.reviews > .wrap > .rule, .reviews > .wrap > .slider { grid-column: 1 / -1; }
+
+@media (max-width: 860px) {
+  .reviews > .wrap { grid-template-columns: minmax(0, 1fr); }
+  /* grid-row: auto возвращает кнопку на её место в разметке — под ленту. */
+  .reviews__cta {
+    grid-column: 1; grid-row: auto; justify-self: stretch;
+    margin-block-start: max(22px, calc(34 * var(--k)));
+  }
+}
 .rating { display: flex; align-items: center; gap: calc(8 * var(--k)); margin-block-start: calc(12 * var(--k)); font-size: var(--t-body); }
 .stars { display: inline-flex; gap: 2px; color: var(--c-accent); }
 .stars svg { width: 1em; height: 1em; }
@@ -624,7 +651,6 @@ html.rise-failsafe.rise-failsafe [data-rise="shutter"] {
      и положение логотипа с бургером — они стоят вне её. Пока число сидело
      на самой .hdr, --hdr-h на телефоне врал на 12px. */
   :root { --k: calc(1180px / 1920); --pad-top: 48px; --pad-bot: 56px; --gutter: 20px; --gap-card: 20px; --hdr-pad: 18px; }
-  .hero { min-height: 88svh; }
   .hero__in { grid-template-columns: 1fr; gap: 32px; padding-block-end: 40px; }
   .hero__title { max-width: none; }
   .sechead { flex-direction: column; }
@@ -635,11 +661,15 @@ html.rise-failsafe.rise-failsafe [data-rise="shutter"] {
   .stats { grid-template-columns: 1fr; }
   .stats__item { border-inline: none; border-block-start: var(--dp) solid var(--c-rule); min-height: 0; padding-inline: 0; }
   .stats__item:last-child { border-inline-end: none; border-block-end: var(--dp) solid var(--c-rule); }
+  /* Правая граница второго и четвёртого блока осталась от двухколоночной
+     раскладки: там она разделяла колонки, здесь колонка одна и линия
+     висит сбоку ни к чему. Специфичность у неё выше общего правила, так
+     что снимать надо тем же селектором. */
+  .stats__item:nth-child(2), .stats__item:nth-child(4) { border-inline-end: none; }
   .stats__label { margin-block-start: 12px; }
-  /* Экспертные решения: порядок разметки — заголовок, портрет с цитатой,
-     текст, кнопка. Перестановка «сперва текст» снята: у портрета роль
-     подписи под заголовком, а не иллюстрации в конце. */
-  .about__main { margin-block-start: 40px; }
+  /* Экспертные решения: сперва основной текст, портрет с цитатой под ним */
+  .about__main { order: 1; }
+  .about__side { order: 2; margin-block-start: 40px; }
   .about__quote { max-width: none; }
   /* Цифры: линейка не должна лежать вплотную к числу и подписи */
   .stats__item { padding-block: 28px 30px; }
