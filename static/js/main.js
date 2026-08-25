@@ -504,3 +504,56 @@
   tick();
   setInterval(tick, 1000);
 })();
+
+/* Белая пилюля, которая ездит по меню.
+   Одна на всё меню: переезжает под курсор и возвращается на текущий раздел,
+   когда указатель уходит. Отдельная заливка у каждого пункта давала бы
+   мгновенное переключение — а нужен один непрерывный жест.
+   Создаётся скриптом: без него текущий раздел просто залит белым, и меню
+   выглядит правильно даже когда скрипт не поднялся. */
+(function () {
+  var nav = document.querySelector(".nav");
+  if (!nav) return;
+
+  var links = Array.prototype.slice.call(nav.querySelectorAll("a"));
+  if (!links.length) return;
+
+  var pill = document.createElement("span");
+  pill.className = "nav__pill";
+  pill.setAttribute("aria-hidden", "true");
+  nav.insertBefore(pill, nav.firstChild);
+  nav.classList.add("has-pill");
+
+  var active = nav.querySelector(".current-menu-item > a")
+    || nav.querySelector(".current_page_parent > a")
+    || nav.querySelector(".current-menu-parent > a");
+
+  var поставить = function (el, плавно) {
+    links.forEach(function (a) { a.classList.toggle("is-on", a === el); });
+    if (!el) { pill.style.opacity = "0"; return; }
+    var n = nav.getBoundingClientRect();
+    var r = el.getBoundingClientRect();
+    if (!плавно) pill.style.transition = "none";
+    pill.style.opacity = "1";
+    pill.style.width = r.width + "px";
+    pill.style.transform = "translateX(" + (r.left - n.left) + "px)";
+    if (!плавно) {
+      /* Читаем layout, чтобы браузер применил позицию до возврата перехода —
+         иначе первая же наводка проедет от нуля через всё меню. */
+      void pill.offsetWidth;
+      pill.style.transition = "";
+    }
+  };
+
+  links.forEach(function (a) {
+    a.addEventListener("pointerenter", function () { поставить(a, true); });
+    a.addEventListener("focus", function () { поставить(a, true); });
+  });
+  nav.addEventListener("pointerleave", function () { поставить(active, true); });
+  nav.addEventListener("focusout", function (e) {
+    if (!nav.contains(e.relatedTarget)) поставить(active, true);
+  });
+
+  поставить(active, false);
+  window.addEventListener("resize", function () { поставить(nav.querySelector("a.is-on") || active, false); });
+})();

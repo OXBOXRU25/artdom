@@ -155,7 +155,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 /* --- Шапка ---------------------------------------------------------------- */
 .hdr {
   position: absolute; inset-block-start: 0; inset-inline: 0; z-index: 20;
-  padding-block: calc(38 * var(--k));
+  /* Вдвое ближе к верху, чем было: прежние 38 макетных пикселей оставляли
+     шапку висеть посреди пустоты. */
+  padding-block: calc(19 * var(--k));
   color: var(--c-white);
   pointer-events: none;                 /* пустая полоса не должна глотать клики */
 }
@@ -1187,42 +1189,59 @@ body.is-sheet .hdr--solid { background: transparent; }
 .hdr__in > .logo { justify-self: start; }
 .hdr__right { justify-self: end; gap: max(14px, calc(24 * var(--k))); }
 
+/* Группа — одна сплошная тёмная плашка, а не набор отдельных кнопок.
+   Подсветку текущего пункта возит белая пилюля: она одна на всё меню и
+   переезжает с пункта на пункт, поэтому движение читается как один жест. */
 .nav {
+  position: relative;
   display: inline-flex; align-items: center;
-  gap: max(3px, calc(4 * var(--k)));
-  padding: max(2px, calc(3 * var(--k)));
-  border-radius: max(8px, calc(12 * var(--k)));
+  gap: 0;
+  padding: max(3px, calc(4 * var(--k)));
+  border-radius: max(9px, calc(13 * var(--k)));
+  background: var(--c-ink-soft);
 }
 
-/* Пункт — тёмная пилюля. Высота 40 вместо 36 у референса: 36 не дотягивает
-   до минимальной зоны нажатия, а разница на глаз не читается. */
+/* Пилюля создаётся скриптом: без него подсветка остаётся заливкой самого
+   пункта, и меню выглядит правильно даже когда скрипт не поднялся. */
+.nav__pill {
+  position: absolute; inset-block: max(3px, calc(4 * var(--k)));
+  inset-inline-start: 0; width: 0;
+  border-radius: max(6px, calc(9 * var(--k)));
+  background: var(--c-white);
+  opacity: 0; z-index: 0; pointer-events: none;
+  transition: transform .45s var(--ease), width .45s var(--ease), opacity .25s var(--ease);
+}
+
 .nav a {
+  position: relative; z-index: 1;
   display: inline-flex; align-items: center; justify-content: center;
   min-height: 40px;
   padding-inline: max(14px, calc(20 * var(--k)));
   margin: 0;
-  border-radius: max(5px, calc(8 * var(--k)));
-  background: var(--c-ink-soft);
+  border-radius: max(6px, calc(9 * var(--k)));
+  background: transparent;
   color: var(--c-white);
   font-family: var(--f-ui);
   font-size: clamp(12px, calc(16 * var(--k)), 15px);
   line-height: 1;
   letter-spacing: normal;
-  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
-}
-.nav a:hover { background: #34373f; }
-
-/* Текущий раздел — вывернутая пилюля. Подчёркивание отсюда убрано: у пилюли
-   есть собственная заливка, и две пометки разом читаются как ошибка. */
-.nav .current-menu-item > a,
-.nav .current_page_parent > a,
-.nav .current-menu-parent > a {
-  background: var(--c-white);
-  color: var(--c-ink);
-  background-image: none;
-  padding-block-end: 0;
+  /* Та же длительность, что у пилюли: иначе текст темнеет позже, чем под него
+     приезжает белое, и на середине пути читается провал. */
+  transition: color .45s var(--ease);
 }
 .nav a::after { display: none; }
+
+/* Пункт, под которым сейчас стоит пилюля. Класс ставит скрипт — так не
+   приходится воевать со специфичностью между «текущий» и «под курсором». */
+.nav a.is-on { color: var(--c-ink); }
+
+/* Без скрипта: текущий раздел просто залит белым. */
+.nav:not(.has-pill) .current-menu-item > a,
+.nav:not(.has-pill) .current_page_parent > a,
+.nav:not(.has-pill) .current-menu-parent > a {
+  background: var(--c-white);
+  color: var(--c-ink);
+}
 
 /* Кнопка призыва справа. У референса она оранжевая с чёрным текстом; у нас
    акцент синий, поэтому текст белый — по контрасту это 4.5:1. */
