@@ -722,22 +722,8 @@
   if (!тёмные.length) return;
 
   var было = null;
-  var наверху = null;
 
-  /* В стартовой позиции главной подложка известна заранее и она тёмная,
-     поэтому выворот там ничего не решает, а лишь слегка приглушает белый:
-     замер даёт 0.81 вместо единицы. Метим корень классом и красим логотип
-     с бургером в чистый белый; при первом же движении класс снимается и
-     дальше работает наложение. */
-  var верхПроверить = function () {
-    var v = (window.scrollY || 0) < 4;
-    if (v === наверху) return;
-    наверху = v;
-    document.documentElement.classList.toggle("at-top", v);
-  };
-
-  var смотреть = function () {
-    верхПроверить();
+  var смотреть = function () {
     var h = hdr.getBoundingClientRect();
     var линия = h.bottom - Math.min(12, h.height / 4);
     var надо = тёмные.some(function (el) {
@@ -747,6 +733,11 @@
     if (надо !== было) {
       было = надо;
       hdr.classList.toggle("on-dark", надо);
+      /* Логотип и бургер стоят ВНЕ шапки, поэтому метим их отдельно. */
+      Array.prototype.forEach.call(
+        document.querySelectorAll(".logo, .hdr__burger"),
+        function (el) { el.classList.toggle("on-dark", надо); }
+      );
     }
   };
 
