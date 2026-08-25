@@ -70,6 +70,12 @@
      Пол в 12px: ниже стрелка перестаёт читаться на телефоне. */
   --arrow-w:  max(12px, calc(16.8 * var(--k)));
 
+  /* Линии в подвале. Одно значение на все три места — горизонтали и
+     вертикаль, — иначе при первой же правке одного они разойдутся.
+     Было .3: на чёрном это светло-серый, и линии спорили с текстом.
+     Разделитель должен подсказывать границу, а не объявлять её. */
+  --c-rule-dark: rgba(255, 255, 255, .14);
+
   /* Верхнее поле шапки. Одним токеном на три места: сама шапка, логотип и
      бургер — оба последних стоят вне её и позиционируются сами. Пока число
      было вписано порознь, логотип центрировался на 35.7px, а бургер на 42:
@@ -525,7 +531,7 @@ a[draggable="false"], img { -webkit-user-drag: none; }   /* НЕ наследу�
 .ftr__cta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(60 * var(--k)); }
 .ftr__cta .body { color: var(--c-white); max-width: calc(570 * var(--k)); margin-block-start: calc(16 * var(--k)); }
 .ftr__cta .btn { margin-block-start: calc(38 * var(--k)); }
-.ftr__rule { height: var(--dp); background: rgba(255, 255, 255, .3); margin-block: calc(48 * var(--k)); }
+.ftr__rule { height: var(--dp); background: var(--c-rule-dark); margin-block: calc(48 * var(--k)); }
 .ftr__mid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(60 * var(--k)); }
 .ftr a.ftr__tel { display: flex; width: fit-content; font-size: var(--t-h2); line-height: 1.1; }
 .ftr a.ftr__mail { display: flex; width: fit-content; font-size: var(--t-mail); line-height: 1.3; margin-block-start: calc(10 * var(--k)); }
@@ -1299,7 +1305,7 @@ body.is-sheet .hdr--solid { background: transparent; }
   content: ""; position: absolute;
   inset-block: 0;
   inset-inline-start: 50%;
-  width: var(--dp); background: rgba(255, 255, 255, .3);
+  width: var(--dp); background: var(--c-rule-dark);
 }
 /* Ниже 860 все три блока встают в одну колонку — делить нечего. */
 @media (max-width: 860px) { .ftr__split::before { display: none; } }
