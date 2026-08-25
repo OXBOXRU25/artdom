@@ -1166,3 +1166,98 @@ body.is-sheet .hdr--solid { background: transparent; }
      зазор, заданный карточками. Расстояние снизу задаёт блок карточек. */
   margin-block-start: 0;
 }
+
+/* ============================================================
+   ШАПКА: МЕНЮ ГРУППОЙ ПИЛЮЛЬ
+   Замеры референса при 1440: группа 480x40 по центру, пункт 93.6x36,
+   радиус 6, кегль 12, зазор между пунктами 3, кнопка справа 143x40
+   с радиусом 8. У нас пункты шире — русские слова длиннее, поэтому
+   ширина не фиксированная, а от текста.
+   ============================================================ */
+
+/* Три колонки: логотип слева, меню строго по центру, правая группа справа.
+   При flex со space-between меню съезжало бы вслед за длиной телефона. */
+.hdr__in {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: max(16px, calc(24 * var(--k)));
+  justify-content: unset;
+}
+.hdr__in > .logo { justify-self: start; }
+.hdr__right { justify-self: end; gap: max(14px, calc(24 * var(--k))); }
+
+.nav {
+  display: inline-flex; align-items: center;
+  gap: max(3px, calc(4 * var(--k)));
+  padding: max(2px, calc(3 * var(--k)));
+  border-radius: max(8px, calc(12 * var(--k)));
+}
+
+/* Пункт — тёмная пилюля. Высота 40 вместо 36 у референса: 36 не дотягивает
+   до минимальной зоны нажатия, а разница на глаз не читается. */
+.nav a {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 40px;
+  padding-inline: max(14px, calc(20 * var(--k)));
+  margin: 0;
+  border-radius: max(5px, calc(8 * var(--k)));
+  background: var(--c-ink-soft);
+  color: var(--c-white);
+  font-family: var(--f-ui);
+  font-size: clamp(12px, calc(16 * var(--k)), 15px);
+  line-height: 1;
+  letter-spacing: normal;
+  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.nav a:hover { background: #34373f; }
+
+/* Текущий раздел — вывернутая пилюля. Подчёркивание отсюда убрано: у пилюли
+   есть собственная заливка, и две пометки разом читаются как ошибка. */
+.nav .current-menu-item > a,
+.nav .current_page_parent > a,
+.nav .current-menu-parent > a {
+  background: var(--c-white);
+  color: var(--c-ink);
+  background-image: none;
+  padding-block-end: 0;
+}
+.nav a::after { display: none; }
+
+/* Кнопка призыва справа. У референса она оранжевая с чёрным текстом; у нас
+   акцент синий, поэтому текст белый — по контрасту это 4.5:1. */
+.hdr__cta {
+  display: inline-flex; align-items: center; gap: max(7px, calc(10 * var(--k)));
+  min-height: 40px;
+  padding-inline: max(14px, calc(21 * var(--k)));
+  border-radius: max(6px, calc(11 * var(--k)));
+  background: var(--c-accent);
+  color: var(--c-white);
+  font-family: var(--f-ui);
+  font-size: clamp(12px, calc(16 * var(--k)), 15px);
+  line-height: 1;
+  white-space: nowrap;
+  transition: background-color var(--dur) var(--ease);
+}
+.hdr__cta:hover { background: #3f5cc4; }
+.hdr__cta-dot { width: .5em; height: .5em; border-radius: 50%; background: currentColor; flex: none; }
+
+/* Телефон рядом с кнопкой остаётся текстом: у агентства это первый способ
+   связи, и убирать его из шапки ради чистоты композиции — потеря. */
+.hdr__tel { font-size: clamp(13px, calc(17 * var(--k)), 16px); }
+
+@media (max-width: 1180px) {
+  /* Меню скрыто, но в сетке остаются три элемента: логотип, правая группа
+     и бургер. На двух колонках третий уезжал на вторую строку. */
+  .hdr__in { grid-template-columns: 1fr auto auto; }
+  .nav { display: none; }
+}
+
+/* На телефоне правая группа была спрятана целиком. Кнопку возвращаем — у
+   референса она видна и на узком, — а телефон убираем: он есть в меню и
+   вдвоём с кнопкой они не помещаются. */
+@media (max-width: 1180px) {
+  .hdr__right { display: flex; }
+  .hdr__tel { display: none; }
+  .hdr__cta { min-height: 40px; padding-inline: 14px; font-size: 13px; }
+}
