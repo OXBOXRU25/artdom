@@ -395,25 +395,15 @@ a[draggable="false"], img { -webkit-user-drag: none; }   /* НЕ наследу�
    Каркас высотой в три экрана, сцена внутри липкая. У CSS-липкости нет
    собственного диапазона: она держит блок ровно пока каркас в кадре,
    и отпускает сама — досчитывать конец не нужно. */
-/* Высота каркаса задаёт, сколько прокрутки уходит на один кадр. Было 300svh
-   на три слайда, то есть проезд 200svh и по две трети экрана на кадр —
-   заказчик назвал это «долго и нудно», и он прав: при пороговой смене эти
-   две трети экрана вообще ничего не делали. Теперь 45svh на кадр, и внутри
-   них движение идёт непрерывно. Число выведено из --slides, поэтому
-   четвёртый кадр из админки удлинит каркас сам. */
-.guaranty { position: relative; height: calc(100svh + var(--slides) * 45svh); }
+.guaranty { position: relative; height: 300svh; }
 .guaranty__stage { position: sticky; inset-block-start: 0; height: 100svh; overflow: hidden; display: grid; place-items: center; }
 .guaranty__bg { position: absolute; inset: 0; }
-/* Кадры лежат стопкой в порядке разметки, поэтому следующий закрывает
-   предыдущий сам, без z-index. Переход — шторкой снизу вверх: значения
-   ведёт скрипт по доле прокрутки, поэтому переходов тут нет намеренно —
-   они дрались бы с ним за одно и то же свойство. Без скрипта виден первый
-   кадр, остальные закрыты. */
 .guaranty__bg img {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-  clip-path: inset(100% 0 0 0);
+  opacity: 0; transition: opacity .9s var(--ease), transform 1.6s var(--ease);
+  transform: scale(1.06);
 }
-.guaranty__bg img[data-slide="0"] { clip-path: inset(0); }
+.guaranty__bg img[data-on="true"] { opacity: 1; transform: scale(1); }
 /* Затемнение одно на все слои, иначе на перекрёстном переходе оно удваивается */
 .guaranty__bg::after { content: ""; position: absolute; inset: 0; background: var(--c-scrim); }
 
@@ -427,36 +417,24 @@ a[draggable="false"], img { -webkit-user-drag: none; }   /* НЕ наследу�
               rgba(18, 20, 24, .40) 0%, rgba(18, 20, 24, .28) 45%, rgba(18, 20, 24, 0) 72%);
 }
 
-/* Окно переката: уходящий заголовок уезжает вверх за край, приходящий
-   приходит снизу. Ось названа явно — по горизонтали резать нечего, а
-   отрицательный трекинг у крупного кегля иначе съел бы последнюю букву.
-   Пара clip + visible не схлопывается в auto, это делает только hidden. */
-.guaranty__text {
-  position: relative; z-index: 2; width: 100%;
-  display: grid; place-items: center;
-  overflow-y: clip; overflow-x: visible;
-}
+.guaranty__text { position: relative; z-index: 2; width: 100%; display: grid; place-items: center; }
 .guaranty__title {
   grid-area: 1 / 1; margin: 0; color: var(--c-white); text-align: center;
-  opacity: 0; transform: translateY(100%);
+  opacity: 0; transform: translateY(26px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
 }
-.guaranty__title[data-slide="0"] { opacity: 1; transform: none; }
+.guaranty__title[data-on="true"] { opacity: 1; transform: none; }
 
 .guaranty__steps {
   position: absolute; z-index: 2; inset-block-end: calc(48 * var(--k));
   display: flex; gap: 10px;
 }
-/* Полоска не переключается, а наливается по ходу прокрутки: долю пишет
-   скрипт в --fill. Заливка — первым слоем фона поверх приглушённого, так
-   что лишнего узла и псевдоэлемента не нужно. Именно она и отвечает на
-   «динамично»: она реагирует на каждый пиксель, а не раз в две трети
-   экрана. */
 .guaranty__steps span {
   width: 34px; height: 3px; border-radius: 2px;
-  background:
-    linear-gradient(var(--c-white), var(--c-white)) left center / calc(var(--fill, 0) * 100%) 100% no-repeat,
-    rgba(255, 255, 255, .35);
+  background: rgba(255, 255, 255, .35);
+  transition: background-color .5s var(--ease);
 }
+.guaranty__steps span[data-on="true"] { background: var(--c-white); }
 
 @media (max-width: 860px) {
   .guaranty__steps { inset-block-end: 28px; }
