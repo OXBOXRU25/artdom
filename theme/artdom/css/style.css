@@ -417,7 +417,13 @@ a[draggable="false"], img { -webkit-user-drag: none; }   /* НЕ наследу�
 .review__text { margin-block-start: calc(22 * var(--k)); }
 
 /* --- Футер -------------------------------------------------------------------- */
-.ftr { background: var(--c-black); color: var(--c-white); padding-block: calc(52 * var(--k)) calc(44 * var(--k)); }
+/* Верхнее поле подвала вынесено в токен: от него отсчитывается отрицательный
+   отступ карточек, и вдвоём они разъедутся, если задать числами порознь. */
+.ftr {
+  --ftr-top: calc(52 * var(--k));
+  background: var(--c-black); color: var(--c-white);
+  padding-block: var(--ftr-top) calc(44 * var(--k));
+}
 .ftr__cta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(60 * var(--k)); }
 .ftr__cta .body { color: var(--c-white); max-width: calc(570 * var(--k)); margin-block-start: calc(16 * var(--k)); }
 .ftr__cta .btn { margin-block-start: calc(38 * var(--k)); }
@@ -782,7 +788,9 @@ textarea.field__input { resize: vertical; min-height: 96px; }
    На главной она белым текстом лежит поверх тёмного видео. Внутри страницы
    фон белый, и в прежнем виде шапка была невидима — белым по белому.
    Здесь она встаёт в поток и красится в основной цвет. */
-.hdr--solid { position: relative; color: var(--c-ink); background: var(--c-white); }
+/* Внутри страницы шапка липкая, а не фиксированная: так она остаётся в
+   потоке и не требует компенсировать свою высоту отступом сверху. */
+.hdr--solid { position: sticky; inset-block-start: 0; color: var(--c-ink); background: var(--c-white); }
 .hdr--solid .btn { --btn-bg: var(--c-accent); --btn-fg: var(--c-white); }
 .pagehead { padding-block-start: max(24px, calc(30 * var(--k))); }
 
@@ -869,7 +877,9 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 /* Серый фон и белый лист поверх него. Шапка при этом обязана стать
    прозрачной, иначе поверх серого ляжет её белая полоса. */
 body.is-sheet { background: var(--c-surface); }
-body.is-sheet .hdr--solid { background: transparent; }
+/* Раньше было transparent: при липкой шапке содержимое просвечивало бы
+   насквозь. Красим в цвет страницы. */
+body.is-sheet .hdr--solid { background: var(--c-surface); }
 /* Белый лист начинается не сразу под шапкой: у референса над ним 240px
    серого при ширине 1440, и эта полоса — часть композиции, а не пустота.
    Считаем от неё: 240 при масштабе 0.75 это 320 макетных, минус высота
@@ -1067,6 +1077,10 @@ body.is-sheet .hdr--solid { background: transparent; }
   /* Отрицательные поля вытягивают карточки за контейнер почти к краям блока,
      оставляя ровно --edge. */
   margin-inline: calc(-1 * (var(--gutter) - var(--edge)));
+  /* Сверху подвал даёт своё поле в 39px, и до карточек выходило втрое
+     больше, чем с боков. Вытягиваем их наверх и оставляем ту же половину
+     отступа, что видно сбоку и снизу. */
+  margin-block-start: calc(var(--edge) / 2 - var(--ftr-top));
   /* Снизу половина отступа: сбоку между карточкой и разделителем видно тоже
      половину — разделитель стоит посередине зазора. Целый --edge снизу
      выглядел вдвое больше бокового, что заказчик и заметил. */
@@ -1298,3 +1312,25 @@ body.is-sheet .hdr--solid { background: transparent; }
   .hdr__tel { display: none; }
   .hdr__cta { min-height: 40px; padding-inline: 14px; font-size: 13px; }
 }
+
+/* --- Плавающая шапка ---
+   На главной она лежит поверх видео и держится фиксированной, чтобы меню и
+   кнопка связи были под рукой на всей странице. Пока видно первый экран,
+   фона у неё нет — пилюли и кнопка несут свой. Как только страница
+   уезжает на светлое, добавляем подложку и перекрашиваем логотип с
+   телефоном, иначе белое по белому исчезает. */
+.hdr:not(.hdr--solid) { position: fixed; }
+.hdr { transition: background-color .35s var(--ease), color .35s var(--ease); }
+.hdr.is-stuck {
+  background: rgba(255, 255, 255, .92);
+  backdrop-filter: blur(10px);
+  color: var(--c-ink);
+}
+@supports not (backdrop-filter: blur(10px)) {
+  .hdr.is-stuck { background: var(--c-white); }
+}
+
+/* Прозрачная шапка нарочно не ловит клики: пустая полоса во всю ширину иначе
+   глотает нажатия по всему, что под ней проезжает. Но когда подложка видна,
+   она обязана ловить — иначе человек кликает «сквозь» неё в скрытое. */
+.hdr.is-stuck, .hdr--solid { pointer-events: auto; }

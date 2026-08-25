@@ -557,3 +557,38 @@
   поставить(active, false);
   window.addEventListener("resize", function () { поставить(nav.querySelector("a.is-on") || active, false); });
 })();
+
+/* Подложка у плавающей шапки на главной.
+   Пока виден первый экран, шапка лежит на тёмном видео и фон ей не нужен:
+   пилюли и кнопка несут свой. Дальше страница уходит на светлое, и белый
+   логотип с белым телефоном пропали бы — включаем подложку и тёмный цвет.
+   Считаем по scroll, а не через IntersectionObserver: тот отдаёт результат
+   асинхронно и только при отрисовке кадра, поэтому при перезагрузке на
+   середине страницы шапка на миг остаётся прозрачной. */
+(function () {
+  var hdr = document.querySelector(".hdr");
+  if (!hdr || hdr.classList.contains("hdr--solid")) return;
+
+  var порог = function () {
+    var hero = document.querySelector(".hero");
+    /* Чуть раньше низа первого экрана: к моменту, когда под шапку заезжает
+       светлое, она уже должна быть с подложкой. */
+    return hero ? hero.offsetHeight - hdr.offsetHeight * 2 : 200;
+  };
+
+  var t = порог();
+  var было = null;
+
+  var смотреть = function () {
+    var надо = window.scrollY > t;
+    if (надо !== было) {
+      было = надо;
+      hdr.classList.toggle("is-stuck", надо);
+    }
+  };
+
+  window.addEventListener("scroll", смотреть, { passive: true });
+  window.addEventListener("resize", function () { t = порог(); смотреть(); });
+  window.addEventListener("load", function () { t = порог(); смотреть(); });
+  смотреть();
+})();
