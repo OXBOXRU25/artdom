@@ -46,7 +46,7 @@ $legal   = artdom_field( 'opt_legal', true );
         <span class="fnext__word"><?php echo esc_html( mb_strtoupper( $artdom_n['label'] ) ); ?></span>
         <span class="fnext__bottom">
           <span class="fnext__text"><?php echo esc_html( $artdom_n['text'] ); ?></span>
-          <span class="fnext__circle" aria-hidden="true"><svg viewBox="0 0 32 16"><use href="#i-arrow-xl"></use></svg></span>
+          <span class="fnext__circle" aria-hidden="true"><svg viewBox="0 0 24 16"><use href="#i-arrow-xl"></use></svg></span>
         </span>
       </a>
       <?php endforeach; ?>

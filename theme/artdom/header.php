@@ -39,7 +39,7 @@ $u = get_template_directory_uri();
     <!-- Стрелка для кружка: короткая, с крупной головкой. Толщина 3 при
          ширине холста 32 — на экране это около двух с половиной пикселей,
          линия читается плотной и не выглядит волоском. -->
-    <symbol id="i-arrow-xl" viewBox="0 0 32 16"><path d="M3 8h23M19.5 2.5 29 8l-9.5 5.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-arrow-xl" viewBox="0 0 24 16"><path d="M3 8h14.5M13.5 3 21 8l-7.5 5" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-arrow-lg" viewBox="0 0 30 10"><path d="M0 5h27M22.5 1.2 28.4 5l-5.9 3.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-close" viewBox="0 0 22 22"><path d="M1 1l20 20M21 1L1 21" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
   </defs>
