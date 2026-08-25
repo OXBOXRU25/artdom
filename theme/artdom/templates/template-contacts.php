@@ -124,6 +124,17 @@ while ( have_posts() ) :
   <?php
   $artdom_map     = artdom_field( 'ct_map' );
   $artdom_map_url = artdom_field( 'ct_map_url' );
+  /* Ссылка должна быть всегда: строка «Смотреть на Яндекс.Картах» — часть
+     блока, а не украшение. Пока точный адрес точки не задан в админке,
+     ведём на поиск по нашему же адресу — это работает и без ключа к API. */
+  if ( ! $artdom_map_url ) {
+    /* Экранирующих последовательностей здесь нет намеренно: обратный слеш
+       не переживает передачу через оболочку и молча выпадает, превращая
+       регулярку в бессмыслицу. chr(10) и chr(13) делают то же самое надёжно. */
+    $artdom_addr_raw   = str_replace( chr( 13 ), '', (string) artdom_field( 'ct_address' ) );
+    $artdom_addr_parts = array_filter( array_map( 'trim', explode( chr( 10 ), $artdom_addr_raw ) ) );
+    $artdom_map_url    = 'https://yandex.ru/maps/?text=' . rawurlencode( implode( ', ', $artdom_addr_parts ) );
+  }
   ?>
 
   <section class="caddr">
@@ -180,7 +191,7 @@ while ( have_posts() ) :
         <?php if ( ! $artdom_n[1] ) { continue; } ?>
         <a class="cnext__item" href="<?php echo esc_url( $artdom_n[1] ); ?>">
           <span class="cnext__word"><?php echo esc_html( mb_strtoupper( $artdom_n[0] ) ); ?></span>
-          <span class="cnext__go" aria-hidden="true"><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg></span>
+          <span class="cnext__go" aria-hidden="true"><svg viewBox="0 0 64 16"><use href="#i-arrow-xl"></use></svg><svg viewBox="0 0 64 16"><use href="#i-arrow-xl"></use></svg></span>
         </a>
         <?php endforeach; ?>
       </div>

@@ -31,6 +31,12 @@ $u = get_template_directory_uri();
     <symbol id="i-plus" viewBox="0 0 12 12"><path d="M6 .8v10.4M.8 6h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
     <symbol id="i-star" viewBox="0 0 20 19"><path d="M10 0l2.47 6.33 6.78.36-5.29 4.26 1.78 6.55L10 13.86 4.26 17.5l1.78-6.55L.75 6.69l6.78-.36z" fill="currentColor"/></symbol>
     <symbol id="i-burger" viewBox="0 0 26 16"><path d="M0 1h26M0 8h26M0 15h26" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <!-- Стрелка для крупных мест. Прежняя нарисована под кнопку в 23px:
+         в увеличении её волосок в 1.1 и мелкая головка выглядят неряшливо.
+         Здесь пропорции пересчитаны на большой размер: древко толще,
+         головка длиннее и с углом 34 градуса, стыки скруглены — при
+         масштабировании линия остаётся цельной. -->
+    <symbol id="i-arrow-xl" viewBox="0 0 64 16"><path d="M3 8h55.5M49.8 1.6 59.4 8l-9.6 6.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-arrow-lg" viewBox="0 0 30 10"><path d="M0 5h27M22.5 1.2 28.4 5l-5.9 3.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-close" viewBox="0 0 22 22"><path d="M1 1l20 20M21 1L1 21" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
   </defs>
