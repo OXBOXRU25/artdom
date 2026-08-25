@@ -199,6 +199,22 @@ function artdom_register_fields() {
 					)
 				),
 				artdom_f(
+					'opt_next',
+					'Переход в разделы (в подвале)',
+					'repeater',
+					array(
+						'layout'       => 'block',
+						'max'          => 3,
+						'button_label' => 'Добавить раздел',
+						'instructions' => 'Крупные карточки над подвалом. Пусто — покажем «Объекты» и «Услуги».',
+						'sub_fields'   => array(
+							artdom_f( 'label', 'Название', 'text', array( 'key' => 'field_artdom_nx_label', 'wrapper' => array( 'width' => 30 ) ) ),
+							artdom_f( 'url', 'Ссылка', 'text', array( 'key' => 'field_artdom_nx_url', 'wrapper' => array( 'width' => 70 ) ) ),
+							artdom_f( 'text', 'Пояснение', 'textarea', array( 'key' => 'field_artdom_nx_text', 'rows' => 2 ) ),
+						),
+					)
+				),
+				artdom_f(
 					'opt_legal',
 					'Правовые документы',
 					'repeater',

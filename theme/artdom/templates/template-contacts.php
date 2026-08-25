@@ -174,30 +174,6 @@ while ( have_posts() ) :
   </section>
   <?php endif; ?>
 
-  <?php
-  /* Переход в соседние разделы. У референса эта полоса чёрная, но у нас
-     чёрный подвал стоит сразу под ней — два чёрных блока подряд сливаются
-     в одно пятно. Поэтому те же огромные слова, но по белому. */
-  $artdom_next = array(
-    array( 'Объекты', get_post_type_archive_link( 'artdom_object' ) ),
-    array( 'Услуги', get_post_type_archive_link( 'artdom_service' ) ),
-  );
-  ?>
-  <section class="cnext">
-    <div class="wrap">
-      <p class="cnext__label"><?php echo esc_html( artdom_field( 'ct_next_title' ) ); ?></p>
-      <div class="cnext__grid">
-        <?php foreach ( $artdom_next as $artdom_n ) : ?>
-        <?php if ( ! $artdom_n[1] ) { continue; } ?>
-        <a class="cnext__item" href="<?php echo esc_url( $artdom_n[1] ); ?>">
-          <span class="cnext__word"><?php echo esc_html( mb_strtoupper( $artdom_n[0] ) ); ?></span>
-          <span class="cnext__go" aria-hidden="true"><svg viewBox="0 0 64 16"><use href="#i-arrow-xl"></use></svg><svg viewBox="0 0 64 16"><use href="#i-arrow-xl"></use></svg></span>
-        </a>
-        <?php endforeach; ?>
-      </div>
-    </div>
-  </section>
-
 </main>
 
 <?php

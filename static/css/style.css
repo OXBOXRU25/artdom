@@ -437,7 +437,7 @@ a[draggable="false"], img { -webkit-user-drag: none; }   /* НЕ наследу�
    и его перебивает ЛЮБОЕ именное правило для отдельной ссылки. Без этого
    общее .ftr a = (0,1,1) молча выигрывало у .ftr__soc a и у .btn--wide —
    в этом проекте я наступил на это трижды. */
-.ftr :where(a:not(.btn)) {
+.ftr :where(a:not(.btn, .fnext__card)) {
   min-height: 48px; min-width: 44px; display: inline-flex; align-items: center;
   padding-inline: 8px; margin-inline: -8px;
   margin-block: calc((1.5em - 48px) / 2);   /* цель 48, а ритм считается по шрифту */
@@ -446,7 +446,7 @@ a[draggable="false"], img { -webkit-user-drag: none; }   /* НЕ наследу�
 /* Ховер в подвале — цветом, а не подчёркиванием: в макете он и показан так,
    голубым WhatsApp. Оттенок осветлён под тёмный фон: 7.50:1 против ровно 4.50
    у фирменного #4d6dd9, то есть у акцента на каждой подложке своя роль. */
-.ftr :where(a:not(.btn)):hover { color: var(--c-accent-dark); }
+.ftr :where(a:not(.btn, .fnext__card)):hover { color: var(--c-accent-dark); }
 .ftr a.ftr__tel, .ftr a.ftr__mail { transition: color var(--dur) var(--ease); }
 
 .ftr__bottom { display: flex; align-items: center; justify-content: space-between; gap: 20px; font-family: var(--f-ui); font-size: var(--t-nav); }
@@ -1021,42 +1021,79 @@ body.is-sheet .hdr--solid { background: transparent; }
 .cmap__img { width: 100%; max-width: calc(1344 * var(--k)); height: auto; }
 .cmap__caption { margin-block-start: max(12px, calc(20 * var(--k))); font-size: var(--t-chip); color: var(--c-muted); text-align: center; max-width: 44ch; }
 
-/* --- Переход в соседние разделы ---
-   У референса полоса чёрная, но у нас чёрный подвал стоит сразу под ней.
-   Два чёрных блока подряд сливаются в одно пятно на пол-экрана, поэтому
-   здесь те же огромные слова, но по белому. */
-.cnext { padding-block: max(28px, calc(48 * var(--k))) max(48px, calc(96 * var(--k))); border-block-start: var(--dp) solid var(--c-rule); }
-.cnext__label { font-family: var(--f-ui); font-size: var(--t-chip); text-transform: uppercase; color: var(--c-muted); }
-.cnext__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: max(16px, calc(40 * var(--k))); margin-block-start: max(12px, calc(20 * var(--k))); }
-/* Волосяная линия между пунктами — тот же приём, что делит колонки выше.
-   Без неё стрелка первого пункта упирается в слово второго, и пара
-   читается одной строкой «ОБЪЕКТЫ - УСЛУГИ». */
-.cnext__item + .cnext__item { border-inline-start: var(--dp) solid var(--c-rule); padding-inline-start: max(16px, calc(40 * var(--k))); }
-.cnext__item {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: max(12px, calc(24 * var(--k)));
-  padding-block: max(10px, calc(16 * var(--k)));
-  color: var(--c-ink);
-  transition: color var(--dur) var(--ease);
-}
-.cnext__item:hover { color: var(--c-accent); }
-.cnext__word { font-size: clamp(34px, calc(120 * var(--k)), 120px); line-height: 1; font-weight: 600; letter-spacing: normal; }
-.cnext__go {
-  position: relative; display: block; flex: none;
-  width: calc(72 * var(--k)); min-width: 40px;
-  height: calc(18 * var(--k)); min-height: 10px;
-  overflow-x: clip; color: inherit;
-}
-.cnext__go svg { position: absolute; inset-block: 0; inset-inline-start: 0; width: 100%; height: 100%; transition: transform .55s var(--ease); }
-.cnext__go svg:nth-child(2) { transform: translateX(-165%); }
-.cnext__item:hover .cnext__go svg:nth-child(1) { transform: translateX(165%); }
-.cnext__item:hover .cnext__go svg:nth-child(2) { transform: translateX(0); }
-
 @media (max-width: 899px) {
   .caddr__in { grid-template-columns: minmax(0, 1fr); gap: max(20px, calc(28 * var(--k))); }
   .caddr__claim { max-width: 100%; font-size: clamp(20px, 6vw, 28px); }
-  .cnext__grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
-  .cnext__item + .cnext__item { border-inline-start: 0; padding-inline-start: 0; }
-  .cnext__item { border-block-end: var(--dp) solid var(--c-rule); }
-  .cnext__word { font-size: clamp(30px, 11vw, 56px); }
+}
+
+/* --- Карточки перехода в подвале ---
+   Пропорции референса: карточка занимает ровно половину ширины, отношение
+   сторон 704:630. Слово вверху, пояснение внизу слева, стрелка в кружке
+   внизу справа. По наведению карточка светлеет и получает скругление —
+   это единственный способ показать её границу на чёрном фоне. */
+.fnext {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--dp);
+  margin-block-end: max(28px, calc(52 * var(--k)));
+}
+.fnext__card {
+  display: flex; flex-direction: column; justify-content: space-between;
+  aspect-ratio: 704 / 630;
+  padding: max(18px, calc(40 * var(--k)));
+  border-radius: 0;
+  background: transparent;
+  color: var(--c-white);
+  transition: background-color var(--dur) var(--ease), border-radius var(--dur) var(--ease);
+}
+.fnext__card:hover { background: #16181c; border-radius: max(8px, calc(14 * var(--k))); }
+
+/* Соседей разделяем волосяной линией: на чёрном фоне у карточек нет
+   собственных границ, и без неё пара читается одним полем. */
+.fnext__card + .fnext__card { box-shadow: calc(-1 * var(--dp)) 0 0 0 #23252b; }
+.fnext__card:hover + .fnext__card,
+.fnext__card:has(+ .fnext__card:hover) { box-shadow: none; }
+
+.fnext__word {
+  font-size: clamp(30px, calc(88 * var(--k)), 88px);
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: normal;
+  color: #8b8e99;
+  transition: color var(--dur) var(--ease);
+}
+.fnext__card:hover .fnext__word { color: var(--c-white); }
+
+.fnext__bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: max(16px, calc(32 * var(--k))); }
+.fnext__text {
+  max-width: 34ch;
+  font-size: var(--t-body); line-height: 1.4;
+  color: #8b8e99;
+  transition: color var(--dur) var(--ease);
+}
+.fnext__card:hover .fnext__text { color: var(--c-white); }
+
+/* Кружок со стрелкой: 60px при 1440, то есть 80 макетных. */
+.fnext__circle {
+  position: relative; flex: none; overflow: hidden;
+  display: grid; place-items: center;
+  width: max(44px, calc(80 * var(--k))); aspect-ratio: 1;
+  border: var(--dp) solid #33363d;
+  border-radius: 50%;
+  color: #8b8e99;
+  transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.fnext__circle svg { position: absolute; width: 42%; height: auto; transition: transform .55s var(--ease); }
+.fnext__circle svg:nth-child(2) { transform: translateX(-190%); }
+.fnext__card:hover .fnext__circle { border-color: var(--c-accent); background: var(--c-accent); color: var(--c-white); }
+.fnext__card:hover .fnext__circle svg:nth-child(1) { transform: translateX(190%); }
+.fnext__card:hover .fnext__circle svg:nth-child(2) { transform: translateX(0); }
+
+@media (max-width: 767px) {
+  .fnext { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .fnext__card { aspect-ratio: auto; gap: max(24px, calc(40 * var(--k))); padding-inline: 0; }
+  .fnext__card + .fnext__card { box-shadow: 0 calc(-1 * var(--dp)) 0 0 #23252b; }
+  .fnext__card:hover { background: transparent; border-radius: 0; }
+  .fnext__word { color: var(--c-white); }
+  .fnext__text { color: #8b8e99; }
 }

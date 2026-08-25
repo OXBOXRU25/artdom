@@ -19,6 +19,41 @@ $legal   = artdom_field( 'opt_legal', true );
 <footer class="ftr" id="contacts">
   <div class="wrap">
 
+    <?php
+    /* Крупные карточки перехода. Живут в подвале, а не на отдельной странице:
+       так они есть в любом разделе и не спорят с чёрным фоном — они его часть. */
+    $artdom_next = artdom_field( 'opt_next', true );
+    if ( ! is_array( $artdom_next ) || ! $artdom_next ) {
+      $artdom_next = array(
+        array(
+          'label' => 'Объекты',
+          'url'   => get_post_type_archive_link( 'artdom_object' ),
+          'text'  => 'Квартиры, резиденции и апартаменты в проверенных домах. Часть предложений не публикуется.',
+        ),
+        array(
+          'label' => 'Услуги',
+          'url'   => get_post_type_archive_link( 'artdom_service' ),
+          'text'  => 'От подбора объекта до регистрации права: покупка, новостройки, ипотека, юристы, оценка.',
+        ),
+      );
+    }
+    $artdom_next = array_values( array_filter( $artdom_next, static function ( $n ) { return ! empty( $n['url'] ) && ! empty( $n['label'] ); } ) );
+    ?>
+    <?php if ( $artdom_next ) : ?>
+    <nav class="fnext" aria-label="Основные разделы">
+      <?php foreach ( $artdom_next as $artdom_n ) : ?>
+      <a class="fnext__card" href="<?php echo esc_url( $artdom_n['url'] ); ?>">
+        <span class="fnext__word"><?php echo esc_html( mb_strtoupper( $artdom_n['label'] ) ); ?></span>
+        <span class="fnext__bottom">
+          <span class="fnext__text"><?php echo esc_html( $artdom_n['text'] ); ?></span>
+          <span class="fnext__circle" aria-hidden="true"><svg viewBox="0 0 64 16"><use href="#i-arrow-xl"></use></svg><svg viewBox="0 0 64 16"><use href="#i-arrow-xl"></use></svg></span>
+        </span>
+      </a>
+      <?php endforeach; ?>
+    </nav>
+    <div class="ftr__rule"></div>
+    <?php endif; ?>
+
     <div class="ftr__cta">
       <div data-rise>
         <h2 class="h2"><?php echo esc_html( artdom_field( 'cta1_title' ) ); ?></h2>
