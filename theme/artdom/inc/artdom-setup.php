@@ -149,7 +149,7 @@ add_action( 'init', 'artdom_maybe_flush_rules', 99 );
  * Создание идемпотентно, поэтому повторный проход ничего не дублирует.
  */
 function artdom_maybe_seed() {
-	$version = 4;
+	$version = 5;
 
 	if ( (int) get_option( 'artdom_seed_version' ) >= $version ) {
 		return;
@@ -165,6 +165,7 @@ function artdom_maybe_seed() {
 	artdom_drop_old_demo();
 	artdom_fill_demo();
 	artdom_drop_duplicates();
+	artdom_trim_contacts();
 	flush_rewrite_rules( false );
 }
 add_action( 'init', 'artdom_maybe_seed', 100 );
@@ -223,5 +224,38 @@ function artdom_drop_duplicates() {
 			}
 			$seen[ $post->post_title ] = true;
 		}
+	}
+}
+
+/**
+ * Убрать с контактов раздел «Как добраться».
+ *
+ * Текст лежит в содержимом страницы, а оно уже сохранено в базе — правки в
+ * исходных данных на существующий сайт не действуют. Отсюда отдельный проход.
+ * Режем по заголовку: всё от него до следующего заголовка того же уровня.
+ */
+function artdom_trim_contacts() {
+	$page = get_page_by_path( 'contacts' );
+	if ( ! $page ) {
+		return;
+	}
+
+	$content = (string) $page->post_content;
+	if ( false === mb_strpos( $content, 'Как добраться' ) ) {
+		return;
+	}
+
+	$parts = explode( '<h3>', $content );
+	$kept  = array();
+	foreach ( $parts as $part ) {
+		if ( 0 === mb_strpos( $part, 'Как добраться' ) ) {
+			continue;
+		}
+		$kept[] = $part;
+	}
+
+	$new = trim( implode( '<h3>', $kept ) );
+	if ( $new !== $content ) {
+		wp_update_post( array( 'ID' => $page->ID, 'post_content' => $new ) );
 	}
 }

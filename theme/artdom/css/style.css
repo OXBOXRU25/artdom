@@ -1034,7 +1034,7 @@ body.is-sheet .hdr--solid { background: transparent; }
 }
 .fnext__card {
   display: flex; flex-direction: column; justify-content: space-between;
-  aspect-ratio: 704 / 630;
+  aspect-ratio: 704 / 473;   /* высота на четверть меньше исходных 630 */
   padding: max(18px, calc(40 * var(--k)));
   border-radius: 0;
   background: transparent;
@@ -1050,7 +1050,7 @@ body.is-sheet .hdr--solid { background: transparent; }
 .fnext__card:has(+ .fnext__card:hover) { box-shadow: none; }
 
 .fnext__word {
-  font-size: clamp(30px, calc(88 * var(--k)), 88px);
+  font-size: clamp(24px, calc(70 * var(--k)), 70px);   /* на пятую часть мельче */
   line-height: 1;
   font-weight: 600;
   letter-spacing: normal;
@@ -1094,3 +1094,23 @@ body.is-sheet .hdr--solid { background: transparent; }
 }
 
 
+
+/* Пульс у точки в плашке: расходящееся кольцо, а не заливка — так сама точка
+   остаётся чёткой, а движение читается краем глаза и не отвлекает от текста.
+   Анимируются только transform и opacity, раскладку это не трогает. */
+.chip__dot { position: relative; }
+.chip__dot::after {
+  content: ""; position: absolute; inset: -2px;
+  border: var(--dp) solid var(--c-accent);
+  border-radius: 50%;
+  animation: artdom-ping 2.4s var(--ease) infinite;
+}
+@keyframes artdom-ping {
+  from { transform: scale(1);   opacity: .7; }
+  70%  { opacity: 0; }
+  to   { transform: scale(3.2); opacity: 0; }
+}
+
+/* Линия под колонками — того же цвета и толщины, что вертикальный разделитель
+   между ними. */
+.ccols__rule { height: var(--dp); background: var(--c-rule); margin-block-start: max(28px, calc(64 * var(--k))); }

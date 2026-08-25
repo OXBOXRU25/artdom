@@ -47,12 +47,19 @@ $started = time();
       <label class="field__label" for="<?php echo esc_attr( $fid ); ?>">
         <?php echo esc_html( $field['label'] ); ?><?php echo $field['required'] ? '<span aria-hidden="true"> *</span>' : ''; ?>
       </label>
+      <?php
+      /* Пример заполнения серым: он показывает не только формат, но и то,
+         какие подробности нам полезны. Пустое поле человек заполняет как
+         придётся, а с примером — по образцу. */
+      $ph = isset( $field['placeholder'] ) ? $field['placeholder'] : '';
+      ?>
       <?php if ( 'textarea' === $field['type'] ) : ?>
-      <textarea class="field__input" id="<?php echo esc_attr( $fid ); ?>" name="<?php echo esc_attr( $field['name'] ); ?>" rows="3" autocomplete="off"></textarea>
+      <textarea class="field__input" id="<?php echo esc_attr( $fid ); ?>" name="<?php echo esc_attr( $field['name'] ); ?>" rows="3" autocomplete="off" placeholder="<?php echo esc_attr( $ph ); ?>"></textarea>
       <?php else : ?>
       <input class="field__input" id="<?php echo esc_attr( $fid ); ?>" name="<?php echo esc_attr( $field['name'] ); ?>"
              type="<?php echo esc_attr( $field['type'] ); ?>"
              autocomplete="<?php echo esc_attr( $field['autocomplete'] ); ?>"
+             placeholder="<?php echo esc_attr( $ph ); ?>"
              <?php echo $field['required'] ? 'required' : ''; ?>>
       <?php endif; ?>
       <span class="field__error" aria-live="polite"></span>

@@ -118,8 +118,11 @@ while ( have_posts() ) :
       </div>
 
     </div>
+    <?php /* Горизонтальная линия продолжает вертикальный разделитель колонок:
+             тот же цвет, та же толщина, та же ширина — граница блока читается
+             как одна рамка, а не как две разные детали. */ ?>
+    <div class="wrap"><div class="ccols__rule"></div></div>
   </section>
-
 
   <?php
   $artdom_map_url = artdom_field( 'ct_map_url' );

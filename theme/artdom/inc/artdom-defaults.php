@@ -350,9 +350,9 @@ function artdom_forms_config() {
 			'lead'   => 'Персональный брокер свяжется с вами и подберёт объекты под ваш запрос.',
 			'submit' => 'Отправить',
 			'fields' => array(
-				array( 'name' => 'name',    'label' => 'Как к вам обращаться', 'type' => 'text',     'required' => true,  'autocomplete' => 'name' ),
-				array( 'name' => 'phone',   'label' => 'Телефон',              'type' => 'tel',      'required' => true,  'autocomplete' => 'tel' ),
-				array( 'name' => 'message', 'label' => 'Что ищете',            'type' => 'textarea', 'required' => false, 'autocomplete' => 'off' ),
+				array( 'name' => 'name',    'label' => 'Как к вам обращаться', 'type' => 'text',     'required' => true,  'autocomplete' => 'name',  'placeholder' => 'Иван Петров' ),
+				array( 'name' => 'phone',   'label' => 'Телефон',              'type' => 'tel',      'required' => true,  'autocomplete' => 'tel',   'placeholder' => '+7 999 123 45 67' ),
+				array( 'name' => 'message', 'label' => 'Что ищете',            'type' => 'textarea', 'required' => false, 'autocomplete' => 'off',   'placeholder' => 'Трёхкомнатная в Хамовниках, бюджет до 200 млн, окна во двор' ),
 			),
 		),
 		'subscribe' => array(
@@ -360,7 +360,7 @@ function artdom_forms_config() {
 			'lead'   => 'Раз в неделю — новые лоты и закрытые предложения. Без спама, отписаться можно в любой момент.',
 			'submit' => 'Подписаться',
 			'fields' => array(
-				array( 'name' => 'email', 'label' => 'Ваша почта', 'type' => 'email', 'required' => true, 'autocomplete' => 'email' ),
+				array( 'name' => 'email', 'label' => 'Ваша почта', 'type' => 'email', 'required' => true, 'autocomplete' => 'email', 'placeholder' => 'name@domain.ru' ),
 			),
 		),
 	);
