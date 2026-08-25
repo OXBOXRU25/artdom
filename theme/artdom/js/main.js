@@ -479,3 +479,28 @@
   window.addEventListener("load", checkRise);
   checkRise();
 })();
+
+/* Часы в блоке адреса: показываем московское время независимо от того, где
+   находится посетитель. Intl сам знает про переходы и смещения — считать
+   разницу руками не нужно и опасно. */
+(function () {
+  var el = document.querySelector("[data-clock]");
+  if (!el) return;
+
+  var fmt;
+  try {
+    fmt = new Intl.DateTimeFormat("ru-RU", {
+      timeZone: "Europe/Moscow",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false
+    });
+  } catch (e) {
+    return;                       /* нет поддержки зоны — лучше прочерк, чем чужое время */
+  }
+
+  var tick = function () { el.textContent = fmt.format(new Date()); };
+  tick();
+  setInterval(tick, 1000);
+})();

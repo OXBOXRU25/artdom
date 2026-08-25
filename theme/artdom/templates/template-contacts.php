@@ -120,6 +120,73 @@ while ( have_posts() ) :
     </div>
   </section>
 
+
+  <?php
+  $artdom_map     = artdom_field( 'ct_map' );
+  $artdom_map_url = artdom_field( 'ct_map_url' );
+  ?>
+
+  <section class="caddr">
+    <div class="wrap caddr__in">
+
+      <figure class="caddr__photo" data-rise="shutter">
+        <?php artdom_img( artdom_field( 'ct_photo' ), 'uslugi.webp', 'Офис АРТДОМ', array( 680, 358 ) ); ?>
+      </figure>
+
+      <div class="caddr__text selectable" data-rise>
+        <p class="caddr__org"><?php echo esc_html( artdom_field( 'ct_org' ) ); ?></p>
+        <p class="caddr__lines"><?php echo artdom_lines( artdom_field( 'ct_address' ) ); ?></p>
+        <?php if ( $artdom_map_url ) : ?>
+        <p class="caddr__link">Смотреть на <a href="<?php echo esc_url( $artdom_map_url ); ?>" target="_blank" rel="noopener">Яндекс.Картах</a></p>
+        <?php endif; ?>
+      </div>
+
+      <div class="caddr__side" data-rise>
+        <p class="caddr__clock">
+          <span><?php echo esc_html( artdom_field( 'ct_tz' ) ); ?></span>
+          <time data-clock aria-live="off">&mdash;&mdash;:&mdash;&mdash;</time>
+        </p>
+        <p class="caddr__claim"><?php echo artdom_lines( artdom_field( 'ct_claim' ) ); ?></p>
+      </div>
+
+    </div>
+  </section>
+
+  <?php if ( is_array( $artdom_map ) && ! empty( $artdom_map['url'] ) ) : ?>
+  <section class="cmap">
+    <div class="wrap cmap__in" data-rise>
+      <img class="cmap__img" src="<?php echo esc_url( $artdom_map['url'] ); ?>" alt="<?php echo esc_attr( $artdom_map['alt'] ? $artdom_map['alt'] : 'Карта городов, где мы работаем' ); ?>" loading="lazy" decoding="async">
+      <?php if ( artdom_field( 'ct_map_caption' ) ) : ?>
+      <p class="cmap__caption"><?php echo esc_html( artdom_field( 'ct_map_caption' ) ); ?></p>
+      <?php endif; ?>
+    </div>
+  </section>
+  <?php endif; ?>
+
+  <?php
+  /* Переход в соседние разделы. У референса эта полоса чёрная, но у нас
+     чёрный подвал стоит сразу под ней — два чёрных блока подряд сливаются
+     в одно пятно. Поэтому те же огромные слова, но по белому. */
+  $artdom_next = array(
+    array( 'Объекты', get_post_type_archive_link( 'artdom_object' ) ),
+    array( 'Услуги', get_post_type_archive_link( 'artdom_service' ) ),
+  );
+  ?>
+  <section class="cnext">
+    <div class="wrap">
+      <p class="cnext__label"><?php echo esc_html( artdom_field( 'ct_next_title' ) ); ?></p>
+      <div class="cnext__grid">
+        <?php foreach ( $artdom_next as $artdom_n ) : ?>
+        <?php if ( ! $artdom_n[1] ) { continue; } ?>
+        <a class="cnext__item" href="<?php echo esc_url( $artdom_n[1] ); ?>">
+          <span class="cnext__word"><?php echo esc_html( mb_strtoupper( $artdom_n[0] ) ); ?></span>
+          <span class="cnext__go" aria-hidden="true"><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg></span>
+        </a>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <?php

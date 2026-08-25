@@ -373,3 +373,63 @@ function artdom_archive_order( $query ) {
 	}
 }
 add_action( 'pre_get_posts', 'artdom_archive_order' );
+
+/**
+ * Поля страницы контактов: адрес, фотография, карта.
+ */
+function artdom_register_contacts_fields() {
+	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
+		return;
+	}
+
+	acf_add_local_field_group(
+		array(
+			'key'            => 'group_artdom_contacts',
+			'title'          => 'Адрес и карта',
+			'fields'         => array(
+				artdom_f( 'ct_photo', 'Фотография офиса', 'image', array( 'return_format' => 'array', 'preview_size' => 'medium', 'instructions' => 'Горизонтальная, примерно 3:1.6.' ) ),
+				artdom_f( 'ct_org', 'Название организации', 'text' ),
+				artdom_f( 'ct_address', 'Адрес построчно', 'textarea', array( 'rows' => 4, 'instructions' => 'Перенос строки в поле станет переносом на сайте.' ) ),
+				artdom_f( 'ct_map_url', 'Ссылка на Яндекс.Карты', 'text', array( 'instructions' => 'Откроется в новой вкладке. Пусто — ссылки не будет.' ) ),
+				artdom_f( 'ct_claim', 'Заявление справа', 'textarea', array( 'rows' => 3 ) ),
+				artdom_f(
+					'ct_map',
+					'Карта',
+					'image',
+					array(
+						'return_format' => 'array',
+						'preview_size'  => 'medium',
+						'library'       => 'all',
+						'instructions'  => 'SVG или PNG с прозрачным фоном. Пусто — блок карты не показывается вовсе.',
+					)
+				),
+				artdom_f( 'ct_map_caption', 'Подпись под картой', 'text' ),
+			),
+			'location'       => array(
+				array(
+					array( 'param' => 'page_template', 'operator' => '==', 'value' => 'templates/template-contacts.php' ),
+				),
+			),
+			'hide_on_screen' => array( 'discussion', 'comments', 'custom_fields' ),
+			'active'         => true,
+		)
+	);
+}
+add_action( 'acf/init', 'artdom_register_contacts_fields' );
+
+/**
+ * Разрешить загрузку SVG — только администратору.
+ *
+ * SVG это исполняемый формат: внутри может лежать скрипт. Поэтому право
+ * даётся не всем, кто умеет загружать файлы, а только тем, кто и так может
+ * править код темы.
+ *
+ * @param array $mimes Разрешённые типы.
+ */
+function artdom_allow_svg( $mimes ) {
+	if ( current_user_can( 'edit_themes' ) || current_user_can( 'manage_options' ) ) {
+		$mimes['svg'] = 'image/svg+xml';
+	}
+	return $mimes;
+}
+add_filter( 'upload_mimes', 'artdom_allow_svg' );

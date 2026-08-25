@@ -329,9 +329,178 @@
     history.replaceState(null, "", id);
   });
 
+  /* ---------- Формы ----------
+     Открытие и закрытие держит нативный <dialog>: Esc, перехват фокуса и
+     подложка у него свои. Нам остаётся отправка и разбор ответа. */
+  var forms = document.querySelectorAll("[data-form]");
+
+  if (forms.length && window.ARTDOM) {
+
+    var openDialog = function (kind) {
+      var dlg = document.getElementById("form-" + kind);
+      if (!dlg) return;
+      if (typeof dlg.showModal === "function") dlg.showModal();
+      else dlg.setAttribute("open", "");            /* очень старый браузер: хотя бы покажем */
+      var first = dlg.querySelector(".field__input");
+      if (first) first.focus();
+    };
+
+    document.addEventListener("click", function (e) {
+      var opener = e.target.closest("[data-form-open]");
+      if (opener) {
+        e.preventDefault();
+        openDialog(opener.getAttribute("data-form-open"));
+        return;
+      }
+      var closer = e.target.closest("[data-form-close]");
+      if (closer) {
+        var d = closer.closest("dialog");
+        if (d) d.close();
+      }
+    });
+
+    /* Клик по подложке: у dialog она принадлежит самому элементу,
+       поэтому цель события — сам dialog, а не его содержимое. */
+    Array.prototype.forEach.call(document.querySelectorAll("dialog.modal"), function (dlg) {
+      dlg.addEventListener("click", function (e) {
+        if (e.target === dlg) dlg.close();
+      });
+    });
+
+    var showError = function (field, text) {
+      var box = field.closest(".field, .check");
+      if (!box) return;
+      box.classList.add("is-bad");
+      var slot = box.querySelector(".field__error");
+      if (slot) slot.textContent = text;
+      field.setAttribute("aria-invalid", "true");
+    };
+
+    var clearErrors = function (form) {
+      Array.prototype.forEach.call(form.querySelectorAll(".is-bad"), function (b) {
+        b.classList.remove("is-bad");
+        var slot = b.querySelector(".field__error");
+        if (slot) slot.textContent = "";
+      });
+      Array.prototype.forEach.call(form.querySelectorAll("[aria-invalid]"), function (f) {
+        f.removeAttribute("aria-invalid");
+      });
+    };
+
+    /* Проверка на стороне браузера — только чтобы не гонять заведомо пустое.
+       Настоящая проверка всё равно на сервере: сюда можно не заходить вовсе. */
+    var validate = function (form) {
+      var kind = form.getAttribute("data-form");
+      var bad = null;
+
+      if (kind === "subscribe") {
+        var mail = form.elements.email;
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(mail.value.trim())) {
+          showError(mail, "Проверьте адрес почты."); bad = bad || mail;
+        }
+      } else {
+        var nm = form.elements.name;
+        if (nm.value.trim().length < 2) { showError(nm, "Как к вам обращаться?"); bad = bad || nm; }
+        var ph = form.elements.phone;
+        if (ph.value.replace(/\D/g, "").length < 10) { showError(ph, "Проверьте номер телефона."); bad = bad || ph; }
+      }
+
+      var consent = form.elements.consent;
+      if (!consent.checked) { showError(consent, "Нужно ваше согласие."); bad = bad || consent; }
+
+      return bad;
+    };
+
+    Array.prototype.forEach.call(forms, function (form) {
+      var note = form.querySelector(".modal__note");
+      var submit = form.querySelector(".modal__submit");
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();                 /* method="dialog" закрыл бы окно молча */
+        clearErrors(form);
+        if (note) { note.textContent = ""; note.className = "modal__note"; }
+
+        var bad = validate(form);
+        if (bad) { bad.focus(); return; }
+
+        var data = new FormData(form);
+        data.append("action", "artdom_form");
+        data.append("nonce", window.ARTDOM.nonce);
+        data.append("page", location.href);
+
+        form.classList.add("is-sending");
+        if (submit) submit.disabled = true;
+
+        fetch(window.ARTDOM.ajax, { method: "POST", body: data, credentials: "same-origin" })
+          .then(function (r) { return r.json(); })
+          .then(function (res) {
+            if (res && res.success) {
+              form.classList.add("is-done");
+              if (note) { note.className = "modal__note is-ok"; note.textContent = res.data.message; }
+              form.reset();
+              setTimeout(function () {
+                var d = form.closest("dialog");
+                if (d) d.close();
+                form.classList.remove("is-done");
+                if (note) { note.textContent = ""; note.className = "modal__note"; }
+              }, 2600);
+            } else {
+              var msg = (res && res.data && res.data.message) || "Не получилось отправить. Попробуйте ещё раз.";
+              var fieldName = res && res.data && res.data.field;
+              var target = fieldName && form.elements[fieldName];
+              if (target) showError(target, msg);
+              else if (note) { note.className = "modal__note is-bad"; note.textContent = msg; }
+            }
+          })
+          .catch(function () {
+            if (note) { note.className = "modal__note is-bad"; note.textContent = "Нет связи с сервером. Попробуйте позже."; }
+          })
+          .then(function () {
+            form.classList.remove("is-sending");
+            if (submit) submit.disabled = false;
+          });
+      });
+
+      /* Ошибку убираем, как только человек начал править поле */
+      form.addEventListener("input", function (e) {
+        var box = e.target.closest(".is-bad");
+        if (!box) return;
+        box.classList.remove("is-bad");
+        var slot = box.querySelector(".field__error");
+        if (slot) slot.textContent = "";
+        e.target.removeAttribute("aria-invalid");
+      });
+    });
+  }
+
   /* ---------- Запуск ---------- */
   window.addEventListener("scroll", checkRise, { passive: true });
   window.addEventListener("resize", checkRise);
   window.addEventListener("load", checkRise);
   checkRise();
+})();
+
+/* Часы в блоке адреса: показываем московское время независимо от того, где
+   находится посетитель. Intl сам знает про переходы и смещения — считать
+   разницу руками не нужно и опасно. */
+(function () {
+  var el = document.querySelector("[data-clock]");
+  if (!el) return;
+
+  var fmt;
+  try {
+    fmt = new Intl.DateTimeFormat("ru-RU", {
+      timeZone: "Europe/Moscow",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false
+    });
+  } catch (e) {
+    return;                       /* нет поддержки зоны — лучше прочерк, чем чужое время */
+  }
+
+  var tick = function () { el.textContent = fmt.format(new Date()); };
+  tick();
+  setInterval(tick, 1000);
 })();

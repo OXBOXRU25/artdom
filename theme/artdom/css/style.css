@@ -982,3 +982,83 @@ body.is-sheet .hdr--solid { background: transparent; }
   .chero__title { max-width: 100%; font-size: clamp(28px, 9vw, 44px); }
   .chero__lead { max-width: 100%; }
 }
+
+/* --- Адрес: фотография, строки адреса, часы и заявление ---
+   Три колонки в тех же пропорциях, что у референса: 340 / 340 / 632
+   при внутренней ширине листа 1312 на экране 1440. */
+.caddr { padding-block: 0 max(40px, calc(80 * var(--k))); }
+.caddr__in {
+  display: grid;
+  grid-template-columns: minmax(0, 26fr) minmax(0, 26fr) minmax(0, 48fr);
+  gap: max(20px, calc(43 * var(--k)));
+  align-items: start;
+}
+.caddr__photo img { width: 100%; height: auto; aspect-ratio: 340 / 179; object-fit: cover; }
+.caddr__text { font-size: var(--t-body); line-height: 1.45; color: var(--c-ink-soft); }
+.caddr__org { color: var(--c-ink); }
+.caddr__lines { margin-block-start: max(10px, calc(16 * var(--k))); }
+.caddr__link { margin-block-start: max(14px, calc(24 * var(--k))); color: var(--c-ink); }
+.caddr__link a {
+  color: var(--c-muted);
+  text-decoration: underline; text-underline-offset: 3px;
+  transition: color var(--dur) var(--ease);
+}
+.caddr__link a:hover { color: var(--c-accent); }
+
+.caddr__clock { display: flex; flex-wrap: wrap; align-items: baseline; gap: max(8px, calc(12 * var(--k))); font-size: var(--t-body); color: var(--c-muted); }
+.caddr__clock time { color: var(--c-ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+.caddr__claim {
+  margin-block-start: max(20px, calc(56 * var(--k)));
+  font-size: clamp(20px, calc(37 * var(--k)), 34px);
+  line-height: 1.3;
+  letter-spacing: normal;
+  max-width: 22ch;
+}
+
+/* --- Карта --- */
+.cmap { padding-block: 0 max(40px, calc(80 * var(--k))); }
+.cmap__in { display: grid; justify-items: center; }
+.cmap__img { width: 100%; max-width: calc(1344 * var(--k)); height: auto; }
+.cmap__caption { margin-block-start: max(12px, calc(20 * var(--k))); font-size: var(--t-chip); color: var(--c-muted); text-align: center; max-width: 44ch; }
+
+/* --- Переход в соседние разделы ---
+   У референса полоса чёрная, но у нас чёрный подвал стоит сразу под ней.
+   Два чёрных блока подряд сливаются в одно пятно на пол-экрана, поэтому
+   здесь те же огромные слова, но по белому. */
+.cnext { padding-block: max(28px, calc(48 * var(--k))) max(48px, calc(96 * var(--k))); border-block-start: var(--dp) solid var(--c-rule); }
+.cnext__label { font-family: var(--f-ui); font-size: var(--t-chip); text-transform: uppercase; color: var(--c-muted); }
+.cnext__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: max(16px, calc(40 * var(--k))); margin-block-start: max(12px, calc(20 * var(--k))); }
+/* Волосяная линия между пунктами — тот же приём, что делит колонки выше.
+   Без неё стрелка первого пункта упирается в слово второго, и пара
+   читается одной строкой «ОБЪЕКТЫ - УСЛУГИ». */
+.cnext__item + .cnext__item { border-inline-start: var(--dp) solid var(--c-rule); padding-inline-start: max(16px, calc(40 * var(--k))); }
+.cnext__item {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: max(12px, calc(24 * var(--k)));
+  padding-block: max(10px, calc(16 * var(--k)));
+  /* Не цветом линий: на белом это 1.35:1, слова физически не читаются.
+     Приглушённый серый даёт 5.4:1 и остаётся спокойным. */
+  color: var(--c-muted);
+  transition: color var(--dur) var(--ease);
+}
+.cnext__item:hover { color: var(--c-ink); }
+.cnext__word { font-size: clamp(34px, calc(120 * var(--k)), 120px); line-height: 1; font-weight: 600; letter-spacing: normal; }
+.cnext__go {
+  position: relative; display: block; flex: none;
+  width: calc(46 * var(--k)); min-width: 28px;
+  height: calc(12 * var(--k)); min-height: 8px;
+  overflow-x: clip; color: var(--c-ink);
+}
+.cnext__go svg { position: absolute; inset-block: 0; inset-inline-start: 0; width: 100%; height: 100%; transition: transform .55s var(--ease); }
+.cnext__go svg:nth-child(2) { transform: translateX(-165%); }
+.cnext__item:hover .cnext__go svg:nth-child(1) { transform: translateX(165%); }
+.cnext__item:hover .cnext__go svg:nth-child(2) { transform: translateX(0); }
+
+@media (max-width: 899px) {
+  .caddr__in { grid-template-columns: minmax(0, 1fr); gap: max(20px, calc(28 * var(--k))); }
+  .caddr__claim { max-width: 100%; font-size: clamp(20px, 6vw, 28px); }
+  .cnext__grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .cnext__item + .cnext__item { border-inline-start: 0; padding-inline-start: 0; }
+  .cnext__item { border-block-end: var(--dp) solid var(--c-rule); }
+  .cnext__word { font-size: clamp(30px, 11vw, 56px); }
+}
