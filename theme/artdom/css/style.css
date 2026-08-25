@@ -1290,14 +1290,19 @@ body.is-sheet .hdr--solid { background: transparent; }
      выглядел вдвое больше бокового, что заказчик и заметил. */
   margin-block-end: calc(var(--edge) / 2);
 }
-/* Разделитель — тем же цветом, что линии ниже в подвале, и уведён вниз на
-   собственный нижний отступ, чтобы дойти до горизонтальной линии. */
-.fnext::before {
+/* Вертикальный разделитель на весь подвал: от карточек до последней
+   горизонтали. Живёт на обёртке .ftr__split, а не на карточках, — иначе он
+   обрывался на первой же линии, хотя ниже стоят ещё два двухколоночных
+   блока и делить их нужно так же. Цвет и толщина те же, что у горизонталей. */
+.ftr__split { position: relative; }
+.ftr__split::before {
   content: ""; position: absolute;
-  inset-block: 0 calc(-1 * var(--edge) / 2);
+  inset-block: 0;
   inset-inline-start: 50%;
   width: var(--dp); background: rgba(255, 255, 255, .3);
 }
+/* Ниже 860 все три блока встают в одну колонку — делить нечего. */
+@media (max-width: 860px) { .ftr__split::before { display: none; } }
 .fnext__card {
   display: flex; flex-direction: column; justify-content: space-between;
   aspect-ratio: 704 / 473;
