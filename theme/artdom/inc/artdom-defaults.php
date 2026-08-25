@@ -203,9 +203,11 @@ function artdom_tel( $phone ) {
  */
 function artdom_btn( $text, $link = '#', $class = 'btn btn--wide', $attrs = array() ) {
 	$html = artdom_lines( $text );
+	/* Стрелка та же, что в кружках подвала, и того же размера: на сайте один
+	   рисунок стрелки, а не тонкий волосок в кнопках и плотный в кружках. */
 	$arrow = '<span class="btn__arrow" aria-hidden="true">'
-		. '<svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg>'
-		. '<svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg></span>';
+		. '<svg viewBox="0 0 24 16"><use href="#i-arrow-xl"></use></svg>'
+		. '<svg viewBox="0 0 24 16"><use href="#i-arrow-xl"></use></svg></span>';
 
 	$extra = '';
 	foreach ( $attrs as $k => $v ) {

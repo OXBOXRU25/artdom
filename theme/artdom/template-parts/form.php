@@ -87,7 +87,7 @@ $started = time();
 
   <button class="btn btn--wide modal__submit" type="submit">
     <span class="roll"><span class="roll__a"><?php echo esc_html( $f['submit'] ); ?></span><span class="roll__b" aria-hidden="true"><?php echo esc_html( $f['submit'] ); ?></span></span>
-    <span class="btn__arrow" aria-hidden="true"><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg><svg viewBox="0 0 23 6"><use href="#i-arrow"></use></svg></span>
+    <span class="btn__arrow" aria-hidden="true"><svg viewBox="0 0 24 16"><use href="#i-arrow-xl"></use></svg><svg viewBox="0 0 24 16"><use href="#i-arrow-xl"></use></svg></span>
   </button>
 
   <p class="modal__note" role="status" aria-live="polite"></p>

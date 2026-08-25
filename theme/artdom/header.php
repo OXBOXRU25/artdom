@@ -27,20 +27,16 @@ $u = get_template_directory_uri();
 <!-- ============ Иконки одним спрайтом ============ -->
 <svg class="vh" aria-hidden="true">
   <defs>
-    <symbol id="i-arrow" viewBox="0 0 23 6"><path d="M0 3h21M17.6.6 21.4 3l-3.8 2.4" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-plus" viewBox="0 0 12 12"><path d="M6 .8v10.4M.8 6h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
     <symbol id="i-star" viewBox="0 0 20 19"><path d="M10 0l2.47 6.33 6.78.36-5.29 4.26 1.78 6.55L10 13.86 4.26 17.5l1.78-6.55L.75 6.69l6.78-.36z" fill="currentColor"/></symbol>
     <symbol id="i-burger" viewBox="0 0 26 16"><path d="M0 1h26M0 8h26M0 15h26" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
-    <!-- Стрелка для крупных мест. Прежняя нарисована под кнопку в 23px:
-         в увеличении её волосок в 1.1 и мелкая головка выглядят неряшливо.
-         Здесь пропорции пересчитаны на большой размер: древко толще,
-         головка длиннее и с углом 34 градуса, стыки скруглены — при
-         масштабировании линия остаётся цельной. -->
-    <!-- Стрелка для кружка: короткая, с крупной головкой. Толщина 3 при
-         ширине холста 32 — на экране это около двух с половиной пикселей,
-         линия читается плотной и не выглядит волоском. -->
+    <!-- Единственная стрелка на сайте: кнопки, кружки в подвале и круглый
+         курсор берут её же. Короткая, с крупной головкой; толщина 3.4 при
+         ширине холста 24 — линия читается плотной на любом размере и не
+         выглядит волоском. Прежние две (тонкая 23x6 для кнопок и 30x10 для
+         курсора) убраны: три стрелки разного рисунка на одном сайте — это
+         три разных сайта. -->
     <symbol id="i-arrow-xl" viewBox="0 0 24 16"><path d="M3 8h14.5M13.5 3 21 8l-7.5 5" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-    <symbol id="i-arrow-lg" viewBox="0 0 30 10"><path d="M0 5h27M22.5 1.2 28.4 5l-5.9 3.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-close" viewBox="0 0 22 22"><path d="M1 1l20 20M21 1L1 21" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
   </defs>
 </svg>
@@ -94,10 +90,19 @@ $u = get_template_directory_uri();
 </header>
 
 <!-- ============ Меню на телефоне ============ -->
+<?php
+/* Построение снято с trionn.com: чёрное полотно, пункты крупным капсом по
+   центру, под ними волосяная линия с плюсом на середине, ниже — связь и
+   призыв. Кнопка «Оставить заявку» переехала сюда из шапки: на узком экране
+   она рядом с бургером спорила с логотипом, а здесь стоит там же, где у
+   человека уже открыт список действий. */
+?>
 <div class="menu" id="menu" data-open="false" inert>
   <button class="menu__close" type="button" data-menu-close aria-label="Закрыть меню">
     <svg viewBox="0 0 22 22" aria-hidden="true"><use href="#i-close"></use></svg>
   </button>
+
+  <div class="menu__in">
       <?php
       wp_nav_menu(
         array(
@@ -112,6 +117,23 @@ $u = get_template_directory_uri();
         )
       );
       ?>
-  <?php $artdom_phone = artdom_field( 'opt_phone', true ); ?>
-  <a class="selectable" href="tel:<?php echo esc_attr( artdom_tel( $artdom_phone ) ); ?>"><?php echo esc_html( str_replace( ' ', "\u{00a0}", $artdom_phone ) ); ?></a>
+
+    <?php /* Разделитель с плюсом на середине. Плюс нарисован фоном самого
+             узла, поэтому линия под ним закрыта без лишней разметки. */ ?>
+    <div class="menu__rule"><span class="menu__plus" aria-hidden="true"></span></div>
+
+    <div class="menu__foot">
+      <?php
+      $artdom_phone = artdom_field( 'opt_phone', true );
+      $artdom_mail  = artdom_field( 'opt_email', true );
+      ?>
+      <?php if ( $artdom_phone ) : ?>
+      <a class="menu__tel selectable" href="tel:<?php echo esc_attr( artdom_tel( $artdom_phone ) ); ?>"><?php echo esc_html( str_replace( ' ', "\u{00a0}", $artdom_phone ) ); ?></a>
+      <?php endif; ?>
+      <?php if ( $artdom_mail ) : ?>
+      <a class="menu__mail selectable" href="mailto:<?php echo esc_attr( $artdom_mail ); ?>"><?php echo esc_html( $artdom_mail ); ?></a>
+      <?php endif; ?>
+      <?php artdom_btn( 'Оставить заявку', '#', 'btn btn--wide menu__btn', array( 'data-form-open' => 'lead' ) ); ?>
+    </div>
+  </div>
 </div>

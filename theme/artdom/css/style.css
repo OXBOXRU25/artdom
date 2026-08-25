@@ -63,6 +63,13 @@
   --r-btn-sm: 999px;                           /* 213x43: полная пилюля */
   --r-chip:   3px;                             /* замер по PSD: 128x33, R=2..3 */
 
+  /* Ширина стрелки — одна на весь сайт: кнопки, кружки в подвале и круглый
+     курсор берут её отсюда. Число выведено из кружка в подвале: 21% от его
+     80 макетных пикселей. Записано токеном именно потому, что живёт в трёх
+     местах — порознь они разъедутся при первой же правке одного из них.
+     Пол в 12px: ниже стрелка перестаёт читаться на телефоне. */
+  --arrow-w:  max(12px, calc(16.8 * var(--k)));
+
   /* --- Движение --- */
   --ease: cubic-bezier(.16, 1, .3, 1);
   --dur:  .55s;
@@ -122,10 +129,13 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   font-size: var(--t-mid); line-height: 1.22;
   transition: background-color var(--dur) var(--ease), transform var(--dur) var(--ease);
 }
+/* Ширина — общий токен, тот же, что у кружков в подвале. Высота не задаётся
+   числом: её держит пропорция холста 24:16, иначе рисунок поплывёт при
+   правке ширины. */
 .btn__arrow {
   flex: none; position: relative; display: block;
-  width: calc(23 * var(--k)); min-width: 18px;
-  height: calc(6 * var(--k)); min-height: 5px;
+  width: var(--arrow-w);
+  aspect-ratio: 24 / 16;
   overflow-x: clip; overflow-y: visible;
 }
 .btn__arrow svg {
@@ -171,8 +181,11 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
    наложению не с чем смешиваться, кроме её собственного прозрачного фона.
    Белый плюс разностное наложение: на белом даёт чёрный, на чёрном белый,
    и так в каждой точке — без списков тёмных блоков и порогов прокрутки. */
+/* z-index выше бургерного меню (40): логотип остаётся на виду и над открытым
+   меню, а разностное наложение само делает его белым на чёрном полотне —
+   отдельного правила на состояние «меню открыто» не требуется. */
 .logo {
-  position: fixed; z-index: 21;
+  position: fixed; z-index: 41;
   inset-block-start: calc(19 * var(--k));
   inset-inline-start: var(--gutter);
   display: inline-flex; align-items: center; gap: calc(13 * var(--k));
@@ -485,7 +498,8 @@ a[draggable="false"], img { -webkit-user-drag: none; }   /* НЕ наследу�
   transition: scale .45s var(--ease), opacity .45s var(--ease);
 }
 .cursor[data-on="true"] { scale: 1; opacity: 1; }
-.cursor svg { width: 30px; }
+/* Та же доля от круга, что у кружков в подвале: 21% от диаметра. */
+.cursor svg { width: 18px; height: auto; }
 .has-cursor [data-cursor] { cursor: none; }   /* прячем системный только когда свой реально поднялся */
 @media (hover: none), (pointer: coarse) { .cursor { display: none; } }
 
@@ -523,9 +537,6 @@ html.rise-failsafe.rise-failsafe [data-rise="shutter"] {
 @media (max-width: 860px) {
   :root { --k: calc(1180px / 1920); --pad-top: 48px; --pad-bot: 56px; --gutter: 20px; --gap-card: 20px; }
   .hdr { padding-block: 18px; }
-  .hdr__right { display: none; }
-  .hdr__burger { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; margin-inline-end: -8px; pointer-events: auto; }
-  .hdr__burger svg { width: 26px; }
   .hero { min-height: 88svh; }
   .hero__in { grid-template-columns: 1fr; gap: 32px; padding-block-end: 40px; }
   .hero__title { max-width: none; }
@@ -548,23 +559,117 @@ html.rise-failsafe.rise-failsafe [data-rise="shutter"] {
   .ftr__bottom { flex-direction: column; align-items: flex-start; gap: 8px; }
 }
 
-/* --- Меню на телефоне --------------------------------------------------------- */
+/* --- Меню на телефоне ---------------------------------------------------------
+   Построение снято с trionn.com: чёрное полотно раскрывается сверху вниз,
+   пункты крупным капсом по центру появляются один за другим, под ними
+   волосяная линия с плюсом на середине, ниже — связь и призыв.
+
+   Полотно раскрывается обрезкой, а не сдвигом: при сдвиге содержимое едет
+   вместе с фоном и появление пунктов внутри него не читается — они уже
+   стоят на местах к моменту, когда панель доехала. С обрезкой фон открывает
+   область, а пункты проявляются в ней. */
 .menu {
   position: fixed; inset: 0; z-index: 40; background: var(--c-black); color: var(--c-white);
-  display: grid; align-content: center; gap: 10px; padding: 24px var(--gutter);
-  transform: translateY(-100%); transition: transform .5s var(--ease), visibility .5s;
+  display: grid; align-content: safe center; justify-items: center;
+  padding: 92px var(--gutter) 40px;
+  overflow-y: auto;
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path .5s var(--ease), visibility .5s;
   visibility: hidden;
 }
-.menu[data-open="true"] { transform: none; visibility: visible; }
-/* Меню WordPress приходит обёрнутым в nav — display:contents возвращает
-   его пункты в сетку .menu прямыми детьми, как было в статике. */
+.menu[data-open="true"] { clip-path: inset(0); visibility: visible; }
 /* Меню WordPress приходит голыми <li> внутри <nav>. display: contents убирает
    их из раскладки и заодно из-под маркера списка, а ссылка становится прямым
-   потомком сетки — ровно как было в статике. */
-.nav li, .ftr__nav li, .menu__nav li, .menu__nav { display: contents; }
-.menu a { font-size: clamp(24px, 7vw, 40px); min-height: 56px; display: flex; align-items: center; }
-.menu__close { position: absolute; inset-block-start: 14px; inset-inline-end: var(--gutter); width: 48px; height: 48px; display: grid; place-items: center; }
-.menu__close svg { width: 22px; }
+   потомком сетки — ровно как было в статике. Сам .menu__nav из этого списка
+   исключён: он держит собственную сетку, и её шаг отличается от расстояния
+   до разделителя ниже. */
+.nav li, .ftr__nav li, .menu__nav li { display: contents; }
+
+.menu__in { width: 100%; display: grid; justify-items: center; }
+.menu__nav { display: grid; justify-items: center; width: 100%; }
+.menu__nav a {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 48px;
+  font-size: clamp(30px, 9.4vw, 44px);
+  line-height: 1.05;
+  font-weight: 400;
+  /* Отрицательный трекинг — замер референса: −0.04em на капсе. Дальше он не
+     наследуется никуда, потому что задан только на самой ссылке. */
+  letter-spacing: -.04em;
+  text-transform: uppercase;
+  color: var(--c-white);
+  text-align: center;
+}
+
+/* Разделитель. Плюс на середине — фон самого узла: две полоски градиентом
+   поверх чёрного квадрата, который и закрывает линию под собой. Так не
+   нужен ни лишний узел, ни псевдоэлемент. */
+.menu__rule {
+  position: relative;
+  width: 100%; height: var(--dp);
+  background: rgba(255, 255, 255, .22);
+  margin-block: max(30px, calc(56 * var(--k)));
+}
+.menu__plus {
+  position: absolute; inset-block-start: 50%; inset-inline-start: 50%;
+  width: 22px; height: 22px; margin: -11px 0 0 -11px;
+  background:
+    linear-gradient(var(--c-white), var(--c-white)) center / 10px 1px no-repeat,
+    linear-gradient(var(--c-white), var(--c-white)) center / 1px 10px no-repeat var(--c-black);
+}
+
+.menu__foot {
+  display: grid; justify-items: center; text-align: center;
+  letter-spacing: normal;
+}
+.menu__tel {
+  font-size: clamp(20px, 6.4vw, 26px); line-height: 1.2;
+  min-height: 44px; display: inline-flex; align-items: center;
+}
+.menu__mail {
+  font-size: clamp(14px, 4.2vw, 17px); line-height: 1.3; color: #8b8e99;
+  min-height: 44px; display: inline-flex; align-items: center;
+}
+.menu__btn { margin-block-start: max(14px, calc(22 * var(--k))); }
+
+/* Появление: каждая строка поднимается на 20px и проявляется, следующая
+   стартует на 85мс позже. Пункты идут первыми, разделитель и связь —
+   следом, поэтому взгляд успевает пройти сверху вниз.
+
+   Шаг снят с референса перебором кадров: у них на 180мс в движении два
+   пункта, на 380мс — четвёртый. Это около 110мс на шаг при длительности
+   ~0.4с. У нас пунктов пятеро, и на их шаге хвост уезжал бы за полторы
+   секунды, поэтому шаг 85 при более длинной кривой: строки успевают
+   разойтись по времени, а всё меню встаёт к 1.2с. */
+@keyframes artdom-menu-rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: none; }
+}
+.menu__nav a, .menu__rule, .menu__foot > * { opacity: 0; }
+.menu[data-open="true"] :where(.menu__nav a, .menu__rule, .menu__foot > *) {
+  animation: artdom-menu-rise .6s var(--ease) both;
+}
+.menu[data-open="true"] .menu__nav li:nth-child(1) > a { animation-delay: .10s; }
+.menu[data-open="true"] .menu__nav li:nth-child(2) > a { animation-delay: .185s; }
+.menu[data-open="true"] .menu__nav li:nth-child(3) > a { animation-delay: .27s; }
+.menu[data-open="true"] .menu__nav li:nth-child(4) > a { animation-delay: .355s; }
+.menu[data-open="true"] .menu__nav li:nth-child(5) > a { animation-delay: .44s; }
+.menu[data-open="true"] .menu__nav li:nth-child(6) > a { animation-delay: .525s; }
+.menu[data-open="true"] .menu__rule { animation-delay: .55s; }
+.menu[data-open="true"] .menu__foot > :nth-child(1) { animation-delay: .59s; }
+.menu[data-open="true"] .menu__foot > :nth-child(2) { animation-delay: .64s; }
+.menu[data-open="true"] .menu__foot > :nth-child(3) { animation-delay: .69s; }
+
+/* Закрытие — кружком на месте бургера: он и стоял ровно здесь, поэтому
+   палец возвращается туда же, откуда открывал. */
+.menu__close {
+  position: absolute; inset-block-start: 18px; inset-inline-end: var(--gutter);
+  width: 48px; height: 48px; display: grid; place-items: center;
+  border: var(--dp) solid rgba(255, 255, 255, .35); border-radius: 50%;
+  transition: border-color var(--dur) var(--ease), rotate var(--dur) var(--ease);
+}
+.menu__close:hover { border-color: var(--c-white); rotate: 90deg; }
+.menu__close svg { width: 18px; }
 body.is-locked { overflow: hidden; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -616,7 +721,11 @@ body.is-locked { overflow: hidden; }
   width: 100%;
   transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
 }
-.field__input::placeholder { color: var(--c-muted); }
+/* Пример заполнения на 15% мельче введённого текста: он подсказка, а не
+   содержимое поля, и разница в кегле отделяет одно от другого раньше, чем
+   человек прочитает. em считается от кегля самого поля, поэтому доля
+   держится на любой ширине. */
+.field__input::placeholder { color: var(--c-muted); font-size: .85em; }
 .field__input:hover { background: color-mix(in srgb, var(--c-surface) 88%, var(--c-accent)); }
 .field__input:focus-visible { outline: none; border-color: var(--c-accent); background: var(--c-white); }
 textarea.field__input { resize: vertical; min-height: 96px; }
@@ -902,7 +1011,9 @@ body.is-sheet .hdr--solid { background: transparent; }
    самой шапки. */
 .sheet {
   background: var(--c-white);
-  margin-inline: max(8px, calc(16 * var(--k)));
+  /* Боковых полей нет: лист идёт от края до края, серым остаётся только
+     полоса сверху. С полями лист читался карточкой, лежащей на странице, —
+     а он и есть страница. */
   margin-block-start: max(30px, calc(172 * var(--k)));   /* на четверть выше */
 }
 
@@ -1172,17 +1283,29 @@ body.is-sheet .hdr--solid { background: transparent; }
      последовательным, а не вспыхнувшим разом. */
   transition: opacity .45s var(--ease) .08s, transform .45s var(--ease) .08s;
 }
-.fnext__circle svg { width: 21%; height: auto; }   /* вдвое меньше прежнего */
+.fnext__circle svg { width: var(--arrow-w); height: auto; }   /* общий токен со стрелкой в кнопках */
 .fnext__card:hover .fnext__circle { opacity: 1; transform: scale(1); }
 
 @media (max-width: 767px) {
-  .fnext { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  /* Вытягивание за контейнер снимаем: на телефоне карточки стоят колонкой и
+     обязаны сесть в ту же вертикаль, что «Готовы найти свой дом?» и телефон
+     ниже. С отрицательными полями «ОБЪЕКТЫ» уезжали влево на разницу между
+     полем контейнера и зазором карточек — 11px, и это было видно. */
+  .fnext { grid-template-columns: minmax(0, 1fr); gap: 0; margin-inline: 0; }
   .fnext::before { display: none; }
-  .fnext__card { aspect-ratio: auto; gap: max(24px, calc(40 * var(--k))); padding-inline: 0; }
+  /* Карточка идёт от края до края чёрного блока, а текст держит поле
+     контейнера: тогда линия между карточками доходит до краёв — как та, что
+     лежит под ними, — а слова остаются в общей вертикали. */
+  .fnext__card {
+    aspect-ratio: auto; gap: max(24px, calc(40 * var(--k)));
+    margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter);
+  }
   .fnext__card + .fnext__card { border-block-start: var(--dp) solid rgba(255, 255, 255, .3); }
   .fnext__card:hover { background: transparent; border-radius: 0; }
   .fnext__word { color: var(--c-white); }
-  .fnext__text { color: #8b8e99; }
+  /* Наведения на телефоне нет, поэтому приглушённый текст так и остался бы
+     приглушённым навсегда. Показываем сразу в полном цвете. */
+  .fnext__text { color: var(--c-white); }
   /* На телефоне наведения нет — кружок показываем всегда. */
   .fnext__circle { opacity: 1; transform: none; }
 }
@@ -1321,20 +1444,20 @@ body.is-sheet .hdr--solid { background: transparent; }
    связи, и убирать его из шапки ради чистоты композиции — потеря. */
 .hdr__tel { font-size: clamp(13px, calc(17 * var(--k)), 16px); }
 
+/* Ниже 1180 в шапке остаются только логотип и бургер. Меню, телефон и
+   кнопка призыва переезжают внутрь бургерного меню: втроём с логотипом они
+   не помещаются, а кнопка вплотную к бургеру спорила с ним за нажатие.
+   В сетке при этом два элемента — распорка под логотип и сам бургер. */
 @media (max-width: 1180px) {
-  /* Меню скрыто, но в сетке остаются три элемента: логотип, правая группа
-     и бургер. На двух колонках третий уезжал на вторую строку. */
-  .hdr__in { grid-template-columns: 1fr auto auto; }
-  .nav { display: none; }
-}
-
-/* На телефоне правая группа была спрятана целиком. Кнопку возвращаем — у
-   референса она видна и на узком, — а телефон убираем: он есть в меню и
-   вдвоём с кнопкой они не помещаются. */
-@media (max-width: 1180px) {
-  .hdr__right { display: flex; }
-  .hdr__tel { display: none; }
-  .hdr__cta { min-height: 40px; padding-inline: 14px; font-size: 13px; }
+  .hdr__in { grid-template-columns: 1fr auto; }
+  .nav, .hdr__right { display: none; }
+  /* Бургер поднят сюда с 860: без него в полосе от 861 до 1180 не осталось
+     бы вообще ни одной ссылки на разделы. */
+  .hdr__burger {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 48px; height: 48px; margin-inline-end: -8px; pointer-events: auto;
+  }
+  .hdr__burger svg { width: 26px; }
 }
 
 /* --- Плавающая шапка ---

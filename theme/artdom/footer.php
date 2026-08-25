@@ -125,7 +125,7 @@ $legal   = artdom_field( 'opt_legal', true );
   </div>
 </footer>
 
-<div class="cursor" data-cursor-el data-on="false" aria-hidden="true"><svg viewBox="0 0 30 10"><use href="#i-arrow-lg"></use></svg></div>
+<div class="cursor" data-cursor-el data-on="false" aria-hidden="true"><svg viewBox="0 0 24 16"><use href="#i-arrow-xl"></use></svg></div>
 
 <?php get_template_part( 'template-parts/form-modal' ); ?>
 
