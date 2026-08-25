@@ -393,7 +393,6 @@ function artdom_register_contacts_fields() {
 				artdom_f( 'ct_map_url', 'Ссылка на Яндекс.Карты', 'text', array( 'instructions' => 'Откроется в новой вкладке. Пусто — ссылки не будет.' ) ),
 				artdom_f( 'ct_claim', 'Заявление справа', 'textarea', array( 'rows' => 3 ) ),
 				artdom_f(
-					'ct_map',
 					'Карта',
 					'image',
 					array(
@@ -403,7 +402,6 @@ function artdom_register_contacts_fields() {
 						'instructions'  => 'SVG или PNG с прозрачным фоном. Пусто — блок карты не показывается вовсе.',
 					)
 				),
-				artdom_f( 'ct_map_caption', 'Подпись под картой', 'text' ),
 			),
 			'location'       => array(
 				array(
@@ -417,19 +415,3 @@ function artdom_register_contacts_fields() {
 }
 add_action( 'acf/init', 'artdom_register_contacts_fields' );
 
-/**
- * Разрешить загрузку SVG — только администратору.
- *
- * SVG это исполняемый формат: внутри может лежать скрипт. Поэтому право
- * даётся не всем, кто умеет загружать файлы, а только тем, кто и так может
- * править код темы.
- *
- * @param array $mimes Разрешённые типы.
- */
-function artdom_allow_svg( $mimes ) {
-	if ( current_user_can( 'edit_themes' ) || current_user_can( 'manage_options' ) ) {
-		$mimes['svg'] = 'image/svg+xml';
-	}
-	return $mimes;
-}
-add_filter( 'upload_mimes', 'artdom_allow_svg' );

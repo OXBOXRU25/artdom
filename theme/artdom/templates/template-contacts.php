@@ -122,7 +122,6 @@ while ( have_posts() ) :
 
 
   <?php
-  $artdom_map     = artdom_field( 'ct_map' );
   $artdom_map_url = artdom_field( 'ct_map_url' );
   /* Ссылка должна быть всегда: строка «Смотреть на Яндекс.Картах» — часть
      блока, а не украшение. Пока точный адрес точки не задан в админке,
@@ -162,33 +161,6 @@ while ( have_posts() ) :
 
     </div>
   </section>
-
-  <?php
-  /* Карта: сперва то, что загрузили в админке, иначе точечная Россия из темы.
-     Файл отдаётся картинкой, а не вставляется в разметку: внутри 28 784
-     кружка, и в документе это были бы 28 784 узла DOM на каждой загрузке
-     страницы. Как <img> браузер рисует его в отдельном документе и кеширует. */
-  $artdom_map_src = is_array( $artdom_map ) && ! empty( $artdom_map['url'] )
-    ? $artdom_map['url']
-    : get_template_directory_uri() . '/img/russia-dots.svg';
-  $artdom_map_alt = is_array( $artdom_map ) && ! empty( $artdom_map['alt'] )
-    ? $artdom_map['alt']
-    : 'Карта России: города, где мы закрывали сделки';
-  ?>
-  <?php if ( $artdom_map_src ) : ?>
-  <section class="cmap">
-    <div class="wrap cmap__in" data-rise>
-      <?php /* Обёртка нужна ради белого растворения по краям: оно кладётся
-               поверх карты отдельным слоем и не трогает сам файл. */ ?>
-      <div class="cmap__stage">
-        <img class="cmap__img" src="<?php echo esc_url( $artdom_map_src ); ?>" alt="<?php echo esc_attr( $artdom_map_alt ); ?>" width="4096" height="2229" loading="lazy" decoding="async">
-      </div>
-      <?php if ( artdom_field( 'ct_map_caption' ) ) : ?>
-      <p class="cmap__caption"><?php echo esc_html( artdom_field( 'ct_map_caption' ) ); ?></p>
-      <?php endif; ?>
-    </div>
-  </section>
-  <?php endif; ?>
 
 </main>
 

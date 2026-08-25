@@ -1015,11 +1015,6 @@ body.is-sheet .hdr--solid { background: transparent; }
   max-width: 22ch;
 }
 
-/* --- Карта --- */
-.cmap { padding-block: 0 max(40px, calc(80 * var(--k))); }
-.cmap__in { display: grid; justify-items: center; }
-.cmap__img { width: 100%; max-width: calc(1344 * var(--k)); height: auto; }
-.cmap__caption { margin-block-start: max(12px, calc(20 * var(--k))); font-size: var(--t-chip); color: var(--c-muted); text-align: center; max-width: 44ch; }
 
 @media (max-width: 899px) {
   .caddr__in { grid-template-columns: minmax(0, 1fr); gap: max(20px, calc(28 * var(--k))); }
@@ -1098,18 +1093,4 @@ body.is-sheet .hdr--solid { background: transparent; }
   .fnext__text { color: #8b8e99; }
 }
 
-/* Белое растворение по краям карты.
-   Отдельным слоем поверх картинки, а не фильтром: filter: blur заставил бы
-   браузер размывать всю карту целиком на каждом кадре, а радиальный градиент
-   рисуется бесплатно. Сам файл при этом не тронут — карту можно заменить,
-   и растворение останется. */
-.cmap__stage { position: relative; }
-.cmap__stage::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background:
-    radial-gradient(115% 88% at 50% 50%,
-      rgba(255, 255, 255, 0) 42%,
-      rgba(255, 255, 255, .55) 68%,
-      var(--c-white) 88%),
-    linear-gradient(to right, var(--c-white), rgba(255, 255, 255, 0) 12%, rgba(255, 255, 255, 0) 88%, var(--c-white));
-}
+
