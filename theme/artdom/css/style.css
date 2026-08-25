@@ -1368,28 +1368,59 @@ body.is-sheet .hdr--solid { background: transparent; }
 .fnext__circle svg { width: var(--arrow-w); height: auto; }   /* общий токен со стрелкой в кнопках */
 .fnext__card:hover .fnext__circle { opacity: 1; transform: scale(1); }
 
+/* На телефоне карточки становятся настоящими карточками: своя подложка,
+   скруглённые углы, кружок со стрелкой под текстом слева. Построение с
+   референса. Раньше они шли полосами во всю ширину и разделялись линией —
+   на узком экране это читалось как продолжение подвала, а не как две
+   отдельные двери в разделы. */
 @media (max-width: 767px) {
-  /* Вытягивание за контейнер снимаем: на телефоне карточки стоят колонкой и
-     обязаны сесть в ту же вертикаль, что «Готовы найти свой дом?» и телефон
-     ниже. С отрицательными полями «ОБЪЕКТЫ» уезжали влево на разницу между
-     полем контейнера и зазором карточек — 11px, и это было видно. */
-  .fnext { grid-template-columns: minmax(0, 1fr); gap: 0; margin-inline: 0; }
-  .fnext::before { display: none; }
-  /* Карточка идёт от края до края чёрного блока, а текст держит поле
-     контейнера: тогда линия между карточками доходит до краёв — как та, что
-     лежит под ними, — а слова остаются в общей вертикали. */
-  .fnext__card {
-    aspect-ratio: auto; gap: max(24px, calc(40 * var(--k)));
-    margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter);
+  .fnext {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--edge);
+    margin-inline: 0;
+    /* Подъём под шапку подвала снимаем: у карточек теперь свои края, и им
+       нужен воздух сверху, а не стык с предыдущей секцией. */
+    margin-block-start: 0;
+    margin-block-end: var(--edge);
   }
-  .fnext__card + .fnext__card { border-block-start: var(--dp) solid rgba(255, 255, 255, .3); }
-  .fnext__card:hover { background: transparent; border-radius: 0; }
+  .fnext__card {
+    aspect-ratio: auto;
+    gap: max(28px, calc(44 * var(--k)));
+    margin-inline: 0;
+    padding: max(22px, calc(34 * var(--k)));
+    background: #15171b;
+    border-radius: max(16px, calc(22 * var(--k)));
+  }
+  /* Слой подсветки не нужен — подложка у карточки теперь своя и постоянная. */
+  .fnext__card::before { display: none; }
+  .fnext__card + .fnext__card { border-block-start: 0; }
   .fnext__word { color: var(--c-white); }
-  /* Наведения на телефоне нет, поэтому приглушённый текст так и остался бы
-     приглушённым навсегда. Показываем сразу в полном цвете. */
-  .fnext__text { color: var(--c-white); }
-  /* На телефоне наведения нет — кружок показываем всегда. */
-  .fnext__circle { opacity: 1; transform: none; }
+  /* Кружок уходит под текст и влево — как на референсе. */
+  .fnext__bottom {
+    flex-direction: column; align-items: flex-start;
+    gap: max(22px, calc(34 * var(--k)));
+  }
+  /* Наведения на телефоне нет — кружок показываем всегда. Цвет подвала, а не
+     карточки: он читается вырезом в ней. */
+  .fnext__circle { opacity: 1; transform: none; background: var(--c-black); }
+}
+
+/* Подвал на телефоне: всё начиная с телефонного номера идёт по центру.
+   Слева выровненный столбик ссылок под центрированными карточками читался
+   как отдельный кусок, приклеенный снизу. Порог 860 — тот же, на котором
+   призывы и контакты встают в одну колонку. */
+@media (max-width: 860px) {
+  .ftr__mid { text-align: center; }
+  /* Ссылки-строки центрируем полями: ширина у них по содержимому, а
+     отрицательный отступ от зоны нажатия при этом остаётся на месте. */
+  .ftr a.ftr__tel, .ftr a.ftr__mail { margin-inline: auto; }
+  .ftr__soc, .ftr__nav, .ftr__legal { justify-items: center; }
+  .ftr__bottom { align-items: center; text-align: center; }
+
+  /* Кнопки призыва — во всю рабочую ширину экрана. Текст слева, стрелка
+     справа: раскладку space-between кнопка держит сама, ей нужна только
+     ширина. */
+  .ftr__cta .btn { width: 100%; }
 }
 
 /* Ореол у точки: мягко дышит, а не улетает кольцом. Прежний вариант
