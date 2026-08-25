@@ -1030,19 +1030,28 @@ body.is-sheet .hdr--solid { background: transparent; }
 }
 
 /* --- Карточки перехода в подвале ---
-   Пропорции референса: карточка занимает ровно половину ширины, отношение
-   сторон 704:630. Слово вверху, пояснение внизу слева, стрелка в кружке
-   внизу справа. По наведению карточка светлеет и получает скругление —
-   это единственный способ показать её границу на чёрном фоне. */
+   Пропорции референса; слово вверху, пояснение внизу слева, кружок со
+   стрелкой внизу справа. Кружка по умолчанию НЕТ: у референса он стоит на
+   прозрачности 0 и проявляется по наведению — так пара карточек в покое
+   остаётся спокойной, а отклик читается сразу. */
 .fnext {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--dp);
+  gap: max(28px, calc(56 * var(--k)));
   margin-block-end: max(28px, calc(52 * var(--k)));
+}
+/* Разделитель — тем же цветом, что линии ниже в подвале, и уведён вниз на
+   собственный нижний отступ, чтобы дойти до горизонтальной линии. */
+.fnext::before {
+  content: ""; position: absolute;
+  inset-block: 0 calc(-1 * max(28px, calc(52 * var(--k))));
+  inset-inline-start: 50%;
+  width: var(--dp); background: rgba(255, 255, 255, .3);
 }
 .fnext__card {
   display: flex; flex-direction: column; justify-content: space-between;
-  aspect-ratio: 704 / 473;   /* высота на четверть меньше исходных 630 */
+  aspect-ratio: 704 / 473;
   padding: max(18px, calc(40 * var(--k)));
   border-radius: 0;
   background: transparent;
@@ -1051,14 +1060,8 @@ body.is-sheet .hdr--solid { background: transparent; }
 }
 .fnext__card:hover { background: #16181c; border-radius: max(8px, calc(14 * var(--k))); }
 
-/* Соседей разделяем волосяной линией: на чёрном фоне у карточек нет
-   собственных границ, и без неё пара читается одним полем. */
-.fnext__card + .fnext__card { box-shadow: calc(-1 * var(--dp)) 0 0 0 #23252b; }
-.fnext__card:hover + .fnext__card,
-.fnext__card:has(+ .fnext__card:hover) { box-shadow: none; }
-
 .fnext__word {
-  font-size: clamp(24px, calc(70 * var(--k)), 70px);   /* на пятую часть мельче */
+  font-size: clamp(24px, calc(70 * var(--k)), 70px);
   line-height: 1;
   font-weight: 600;
   letter-spacing: normal;
@@ -1076,32 +1079,32 @@ body.is-sheet .hdr--solid { background: transparent; }
 }
 .fnext__card:hover .fnext__text { color: var(--c-white); }
 
-/* Кружок со стрелкой: 60px при 1440, то есть 80 макетных. */
+/* Кружок: без обводки, залит цветом подвала — читается вырезом в
+   посветлевшей карточке. Появление — прозрачностью и лёгким подъёмом
+   масштаба, без переката стрелки: у референса он просто проявляется. */
 .fnext__circle {
-  position: relative; flex: none; overflow: hidden;
-  display: grid; place-items: center;
+  flex: none; display: grid; place-items: center;
   width: max(44px, calc(80 * var(--k))); aspect-ratio: 1;
-  border: var(--dp) solid #33363d;
-  border-radius: 50%;
-  color: #8b8e99;
-  transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  border: 0; border-radius: 50%;
+  background: var(--c-black);
+  color: var(--c-accent);
+  opacity: 0; transform: scale(.9);
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
 }
-.fnext__circle svg { position: absolute; width: 42%; height: auto; transition: transform .55s var(--ease); }
-.fnext__circle svg:nth-child(2) { transform: translateX(-190%); }
-.fnext__card:hover .fnext__circle { border-color: var(--c-accent); background: var(--c-accent); color: var(--c-white); }
-.fnext__card:hover .fnext__circle svg:nth-child(1) { transform: translateX(190%); }
-.fnext__card:hover .fnext__circle svg:nth-child(2) { transform: translateX(0); }
+.fnext__circle svg { width: 42%; height: auto; }
+.fnext__card:hover .fnext__circle { opacity: 1; transform: scale(1); }
 
 @media (max-width: 767px) {
   .fnext { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .fnext::before { display: none; }
   .fnext__card { aspect-ratio: auto; gap: max(24px, calc(40 * var(--k))); padding-inline: 0; }
-  .fnext__card + .fnext__card { box-shadow: 0 calc(-1 * var(--dp)) 0 0 #23252b; }
+  .fnext__card + .fnext__card { border-block-start: var(--dp) solid rgba(255, 255, 255, .3); }
   .fnext__card:hover { background: transparent; border-radius: 0; }
   .fnext__word { color: var(--c-white); }
   .fnext__text { color: #8b8e99; }
+  /* На телефоне наведения нет — кружок показываем всегда. */
+  .fnext__circle { opacity: 1; transform: none; }
 }
-
-
 
 /* Ореол у точки: мягко дышит, а не улетает кольцом. Прежний вариант
    отбрасывал расходящуюся волну и тянул взгляд на себя — рядом надпись,
