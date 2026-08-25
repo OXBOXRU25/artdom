@@ -1087,7 +1087,7 @@ body.is-sheet .hdr--solid { background: transparent; }
   width: max(44px, calc(80 * var(--k))); aspect-ratio: 1;
   border: 0; border-radius: 50%;
   background: var(--c-black);
-  color: var(--c-accent);
+  color: var(--c-white);
   opacity: 0; transform: scale(.9);
   transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
 }
