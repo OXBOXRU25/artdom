@@ -15,6 +15,9 @@
   /* Масштаб: 1 макетный пиксель в CSS-пикселях текущего экрана */
   --k: calc(100vw / 1920);
   --dp: 1px;
+  /* Высота плавающей шапки: два её поля плюс самая высокая деталь внутри
+     (логотип с его минимальной зоной нажатия в 48). */
+  --hdr-h: calc(19 * var(--k) * 2 + 48px);
 
   /* --- Цвет (истинные значения из PSD) --- */
   --c-ink:        #000003;
@@ -790,7 +793,7 @@ textarea.field__input { resize: vertical; min-height: 96px; }
    Здесь она встаёт в поток и красится в основной цвет. */
 /* Внутри страницы шапка липкая, а не фиксированная: так она остаётся в
    потоке и не требует компенсировать свою высоту отступом сверху. */
-.hdr--solid { position: sticky; inset-block-start: 0; color: var(--c-ink); background: var(--c-white); }
+.hdr--solid { color: var(--c-ink); background: transparent; }
 .hdr--solid .btn { --btn-bg: var(--c-accent); --btn-fg: var(--c-white); }
 .pagehead { padding-block-start: max(24px, calc(30 * var(--k))); }
 
@@ -879,7 +882,7 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 body.is-sheet { background: var(--c-surface); }
 /* Раньше было transparent: при липкой шапке содержимое просвечивало бы
    насквозь. Красим в цвет страницы. */
-body.is-sheet .hdr--solid { background: var(--c-surface); }
+body.is-sheet .hdr--solid { background: transparent; }
 /* Белый лист начинается не сразу под шапкой: у референса над ним 240px
    серого при ширине 1440, и эта полоса — часть композиции, а не пустота.
    Считаем от неё: 240 при масштабе 0.75 это 320 макетных, минус высота
@@ -1278,9 +1281,9 @@ body.is-sheet .hdr--solid { background: var(--c-surface); }
 /* Кнопка призыва справа. У референса она оранжевая с чёрным текстом; у нас
    акцент синий, поэтому текст белый — по контрасту это 4.5:1. */
 .hdr__cta {
-  display: inline-flex; align-items: center; gap: max(7px, calc(10 * var(--k)));
+  display: inline-flex; align-items: center; gap: max(6px, calc(8 * var(--k)));
   min-height: 40px;
-  padding-inline: max(14px, calc(21 * var(--k)));
+  padding-inline: max(11px, calc(15 * var(--k)));
   border-radius: max(6px, calc(11 * var(--k)));
   background: var(--c-accent);
   color: var(--c-white);
@@ -1291,7 +1294,15 @@ body.is-sheet .hdr--solid { background: var(--c-surface); }
   transition: background-color var(--dur) var(--ease);
 }
 .hdr__cta:hover { background: #3f5cc4; }
-.hdr__cta-dot { width: .5em; height: .5em; border-radius: 50%; background: currentColor; flex: none; }
+/* Точка выровнена по оптическому центру букв, а не по центру строки. Строка
+   ниже прописных на величину выносного элемента, поэтому точка, центрированная
+   по строке, сидит примерно на 2px ниже — и пара читается так, будто съехал
+   текст. Сдвиг равен разнице центров: 0.12em. */
+.hdr__cta-dot {
+  width: .5em; height: .5em; border-radius: 50%;
+  background: currentColor; flex: none;
+  transform: translateY(-.12em);
+}
 
 /* Телефон рядом с кнопкой остаётся текстом: у агентства это первый способ
    связи, и убирать его из шапки ради чистоты композиции — потеря. */
@@ -1314,23 +1325,19 @@ body.is-sheet .hdr--solid { background: var(--c-surface); }
 }
 
 /* --- Плавающая шапка ---
-   На главной она лежит поверх видео и держится фиксированной, чтобы меню и
-   кнопка связи были под рукой на всей странице. Пока видно первый экран,
-   фона у неё нет — пилюли и кнопка несут свой. Как только страница
-   уезжает на светлое, добавляем подложку и перекрашиваем логотип с
-   телефоном, иначе белое по белому исчезает. */
-.hdr:not(.hdr--solid) { position: fixed; }
-.hdr { transition: background-color .35s var(--ease), color .35s var(--ease); }
-.hdr.is-stuck {
-  background: rgba(255, 255, 255, .92);
-  backdrop-filter: blur(10px);
-  color: var(--c-ink);
-}
-@supports not (backdrop-filter: blur(10px)) {
-  .hdr.is-stuck { background: var(--c-white); }
-}
+   Висит с отступом от верха, без полосы-подложки: фон несут сами пилюли и
+   кнопка, а содержимое проезжает под ними. Подложка во всю ширину делала из
+   шапки панель, приклеенную к краю, — у референса этого нет.
 
-/* Прозрачная шапка нарочно не ловит клики: пустая полоса во всю ширину иначе
-   глотает нажатия по всему, что под ней проезжает. Но когда подложка видна,
-   она обязана ловить — иначе человек кликает «сквозь» неё в скрытое. */
-.hdr.is-stuck, .hdr--solid { pointer-events: auto; }
+   Фиксированная на всех страницах, поэтому её высоту компенсируем полем у
+   body: иначе первый блок внутренней страницы уехал бы под неё. */
+.hdr { position: fixed; }
+.hdr__in > * { pointer-events: auto; }
+
+/* На главной логотип и телефон белые — они лежат на тёмном видео. Когда
+   страница уходит на светлое, белое по белому пропадает, поэтому меняем
+   только цвет текста. Никакой подложки. */
+.hdr { transition: color .35s var(--ease); }
+.hdr.is-stuck { color: var(--c-ink); }
+
+body:not(.home) { padding-block-start: var(--hdr-h); }
