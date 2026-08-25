@@ -166,8 +166,21 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 .hdr__in { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .hdr__in > * { pointer-events: auto; }
-.logo { display: inline-flex; align-items: center; gap: calc(13 * var(--k)); color: inherit;
-        min-height: 48px; margin-block: calc((40 * var(--k) - 48px) / 2); }
+/* Логотип живёт вне шапки и позиционируется сам. Иначе выворот цвета
+   невозможен: фиксированный слой шапки образует изолированную группу, и
+   наложению не с чем смешиваться, кроме её собственного прозрачного фона.
+   Белый плюс разностное наложение: на белом даёт чёрный, на чёрном белый,
+   и так в каждой точке — без списков тёмных блоков и порогов прокрутки. */
+.logo {
+  position: fixed; z-index: 21;
+  inset-block-start: calc(19 * var(--k));
+  inset-inline-start: var(--gutter);
+  display: inline-flex; align-items: center; gap: calc(13 * var(--k));
+  min-height: 48px;
+  color: var(--c-white);
+  mix-blend-mode: difference;
+}
+.hdr__spacer { display: block; }
 .logo__mark { width: calc(38 * var(--k)); min-width: 26px; height: auto; }
 .logo__word { width: calc(141 * var(--k)); min-width: 96px; height: auto; }
 .hdr__right { display: flex; align-items: center; gap: calc(60 * var(--k)); pointer-events: auto; }
@@ -1345,17 +1358,10 @@ body.is-sheet .hdr--solid { background: transparent; }
 
    Пилюли и кнопка в наложении не участвуют: у них свой фон, и выворот
    превратил бы синий в грязно-оливковый. */
-/* Логотип и телефон переключают цвет по тому, что сейчас под шапкой.
-   Режим наложения тут не годится: шапка со своим слоем образует
-   изолированную группу, и выворот считается относительно её собственного
-   прозрачного фона — логотип так и остаётся белым на светлом. Поэтому
-   скрипт смотрит, попадает ли под шапку тёмный блок, и ставит класс. */
-.hdr .logo,
-.hdr .hdr__tel {
-  color: var(--c-ink);
-  transition: color .3s var(--ease);
-}
-.hdr.on-dark .logo,
+/* Логотип выворачивается наложением — он вынесен из шапки, см. правило .logo.
+   Телефон остаётся внутри неё, поэтому наложение к нему неприменимо: ему
+   переключаем цвет классом, который ставит скрипт по блоку под шапкой. */
+.hdr .hdr__tel { color: var(--c-ink); transition: color .3s var(--ease); }
 .hdr.on-dark .hdr__tel { color: var(--c-white); }
 
 body:not(.home) { padding-block-start: var(--hdr-h); }
