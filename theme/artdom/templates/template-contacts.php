@@ -3,11 +3,27 @@
  * Template Name: Контакты
  * Template Post Type: page
  *
- * Форма стоит прямо на странице, а не за кнопкой: человек, дошедший до
- * контактов, уже решил написать — лишний клик тут только мешает.
+ * Композиция снята с symbolstudio.pl/en/contact: серый фон, белый лист с
+ * отступом от краёв, по центру плашка с точкой, огромный заголовок капсом
+ * и подводка; ниже две колонки, разделённые волосяной линией — слева живой
+ * человек и контакты, справа форма.
+ *
+ * Взято оттуда именно построение, а не оформление: гарнитура, палитра,
+ * скругления и кнопка остаются нашими.
  *
  * @package artdom
  */
+
+/* Серый фон и прозрачная шапка включаются классом на <body>: страница
+   единственная в своём роде, заводить ради неё отдельный шаблон шапки
+   было бы дороже. */
+add_filter(
+	'body_class',
+	static function ( $classes ) {
+		$classes[] = 'is-sheet';
+		return $classes;
+	}
+);
 
 get_header();
 
@@ -18,53 +34,80 @@ $socials = artdom_field( 'opt_socials', true );
 
 while ( have_posts() ) :
 	the_post();
-	set_query_var( 'artdom_head_title', get_the_title() );
-	set_query_var( 'artdom_head_lead', has_excerpt() ? get_the_excerpt() : 'Ответим в течение часа в рабочее время. Показы проводим и в выходные.' );
 ?>
 
-<main id="main">
-  <?php get_template_part( 'template-parts/page-head' ); ?>
+<main id="main" class="sheet">
 
-  <section class="sec sec--white contacts">
-    <div class="wrap contacts__in">
+  <section class="chero">
+    <div class="wrap chero__in">
+      <p class="chip chip--dot"><span class="chip__dot" aria-hidden="true"></span><?php echo esc_html( artdom_field( 'contacts_chip' ) ); ?></p>
+      <h1 class="chero__title"><?php echo artdom_lines( artdom_field( 'contacts_title' ) ); ?></h1>
+      <?php foreach ( preg_split( '/\R{2,}/u', trim( (string) artdom_field( 'contacts_lead' ) ) ) as $artdom_p ) : ?>
+      <p class="chero__lead"><?php echo artdom_lines( $artdom_p ); ?></p>
+      <?php endforeach; ?>
+    </div>
+  </section>
 
-      <div class="contacts__info" data-rise>
-        <?php if ( $phone ) : ?>
-        <p class="contacts__row">
-          <span class="contacts__label muted">Телефон</span>
-          <a class="contacts__big selectable" href="tel:<?php echo esc_attr( artdom_tel( $phone ) ); ?>"><?php echo esc_html( $phone ); ?></a>
-        </p>
-        <?php endif; ?>
-        <?php if ( $email ) : ?>
-        <p class="contacts__row">
-          <span class="contacts__label muted">Почта</span>
-          <a class="contacts__big selectable" href="mailto:<?php echo esc_attr( $email ); ?>"><?php echo esc_html( $email ); ?></a>
-        </p>
-        <?php endif; ?>
-        <?php if ( $address ) : ?>
-        <p class="contacts__row">
-          <span class="contacts__label muted">Адрес</span>
-          <span class="contacts__addr selectable"><?php echo esc_html( $address ); ?></span>
-        </p>
-        <?php endif; ?>
-        <?php if ( is_array( $socials ) && $socials ) : ?>
-        <p class="contacts__row">
-          <span class="contacts__label muted">Мессенджеры</span>
-          <span class="contacts__soc">
-            <?php foreach ( $socials as $s ) : ?>
-            <a href="<?php echo esc_url( $s['url'] ); ?>" rel="noopener"><?php echo esc_html( $s['label'] ); ?></a>
-            <?php endforeach; ?>
-          </span>
-        </p>
-        <?php endif; ?>
+  <section class="ccols">
+    <div class="wrap ccols__in">
 
-        <?php if ( get_the_content() ) : ?>
-        <div class="prose contacts__text"><?php the_content(); ?></div>
+      <div class="ccols__left" data-rise>
+        <div class="broker">
+          <div class="broker__portrait">
+            <?php
+            artdom_img(
+              artdom_field( 'about_portrait' ),
+              'founder.webp',
+              artdom_field( 'about_name' ) . ', ' . artdom_field( 'about_role' ),
+              array( 160, 160 ),
+              false
+            );
+            ?>
+          </div>
+          <div class="broker__who">
+            <p class="broker__name"><?php echo esc_html( artdom_field( 'about_name' ) ); ?></p>
+            <p class="broker__role"><?php echo esc_html( artdom_field( 'contacts_broker_note' ) ); ?></p>
+          </div>
+        </div>
+
+        <dl class="crows selectable">
+          <?php if ( $phone ) : ?>
+          <div class="crows__row">
+            <dt>Телефон</dt>
+            <dd><a href="tel:<?php echo esc_attr( artdom_tel( $phone ) ); ?>"><?php echo esc_html( $phone ); ?></a></dd>
+          </div>
+          <?php endif; ?>
+          <?php if ( $email ) : ?>
+          <div class="crows__row">
+            <dt>Почта</dt>
+            <dd><a href="mailto:<?php echo esc_attr( $email ); ?>"><?php echo esc_html( $email ); ?></a></dd>
+          </div>
+          <?php endif; ?>
+          <?php if ( $address ) : ?>
+          <div class="crows__row">
+            <dt>Адрес</dt>
+            <dd><?php echo esc_html( $address ); ?></dd>
+          </div>
+          <?php endif; ?>
+          <?php if ( is_array( $socials ) && $socials ) : ?>
+          <div class="crows__row">
+            <dt>Мессенджеры</dt>
+            <dd class="crows__soc">
+              <?php foreach ( $socials as $artdom_s ) : ?>
+              <a href="<?php echo esc_url( $artdom_s['url'] ); ?>" rel="noopener"><?php echo esc_html( $artdom_s['label'] ); ?></a>
+              <?php endforeach; ?>
+            </dd>
+          </div>
+          <?php endif; ?>
+        </dl>
+
+        <?php if ( trim( wp_strip_all_tags( get_the_content() ) ) ) : ?>
+        <div class="prose ccols__text"><?php the_content(); ?></div>
         <?php endif; ?>
       </div>
 
-      <div class="contacts__form" data-rise>
-        <h2 class="h2">Написать нам</h2>
+      <div class="ccols__right" data-rise>
+        <h2 class="ccols__title"><?php echo esc_html( artdom_field( 'contacts_form_title' ) ); ?></h2>
         <?php
         set_query_var( 'artdom_form_kind', 'lead' );
         set_query_var( 'artdom_form_id', 'contacts-lead' );
@@ -76,6 +119,7 @@ while ( have_posts() ) :
 
     </div>
   </section>
+
 </main>
 
 <?php

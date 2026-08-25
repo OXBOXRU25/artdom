@@ -755,21 +755,6 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .prose li + li { margin-block-start: 4px; }
 .prose a { color: var(--c-accent); text-decoration: underline; text-underline-offset: 3px; }
 
-/* --- Контакты --- */
-.contacts__in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--gutter); align-items: start; }
-.contacts__row { display: grid; gap: 4px; padding-block: max(12px, calc(16 * var(--k))); border-block-end: 1px solid var(--c-rule); }
-.contacts__row:first-child { border-block-start: 1px solid var(--c-rule); }
-.contacts__label { font-family: var(--f-ui); font-size: var(--t-chip); }
-.contacts__big { font-size: var(--t-mail); line-height: 1.2; }
-.contacts__addr { font-size: var(--t-mid); }
-.contacts__soc { display: flex; flex-wrap: wrap; gap: max(10px, calc(14 * var(--k))); font-size: var(--t-mid); }
-.contacts__soc a { color: var(--c-accent); }
-.contacts__text { margin-block-start: max(20px, calc(28 * var(--k))); }
-.contacts__form { padding: max(20px, calc(28 * var(--k))); background: var(--c-surface); border-radius: var(--r-chip); }
-.contacts__form .modal__box { padding: 0; background: none; box-shadow: none; max-width: none; }
-.contacts__form .h2 { margin-block-end: max(14px, calc(20 * var(--k))); }
-@media (max-width: 899px) { .contacts__in { grid-template-columns: minmax(0, 1fr); } }
-
 /* --- Поиск и 404 --- */
 .results { border-block-start: 1px solid var(--c-rule); }
 .results__item { padding-block: max(14px, calc(20 * var(--k))); border-block-end: 1px solid var(--c-rule); }
@@ -861,3 +846,139 @@ textarea.field__input { resize: vertical; min-height: 96px; }
   transition: inset-block-start .2s var(--ease);
 }
 .skip:focus-visible { inset-block-start: 12px; }
+
+/* ============================================================
+   КОНТАКТЫ
+   Построение снято с symbolstudio.pl: серый фон, белый лист с
+   отступом, центральная шапка и две колонки через волосяную линию.
+   Числа — замеры на 1440 и 375, пересчитанные в нашу шкалу.
+   ============================================================ */
+
+/* Серый фон и белый лист поверх него. Шапка при этом обязана стать
+   прозрачной, иначе поверх серого ляжет её белая полоса. */
+body.is-sheet { background: var(--c-surface); }
+body.is-sheet .hdr--solid { background: transparent; }
+.sheet { background: var(--c-white); margin-inline: max(8px, calc(16 * var(--k))); }
+
+/* --- Центральная шапка --- */
+.chero { padding-block: max(48px, calc(92 * var(--k))) max(36px, calc(70 * var(--k))); }
+/* minmax(0,1fr), а не auto: авто-дорожка растёт по содержимому и вылезает
+   за контейнер — на 375 так уезжали и заголовок, и подводка. */
+.chero__in { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; }
+/* При justify-items:center элемент сетки берёт ширину по содержимому и может
+   вылезти за колонку. На 375 так уезжали и заголовок, и подводка. */
+.chero__in > * { max-width: 100%; }
+
+/* Плашка с точкой: на референсе 14px капсом. Разрядки нет — она там
+   тоже normal, так что наше правило не нарушается. */
+.chip--dot {
+  display: inline-flex; align-items: center; gap: max(8px, calc(10 * var(--k)));
+  padding: max(9px, calc(12 * var(--k))) max(14px, calc(20 * var(--k)));
+  border: var(--dp) solid var(--c-rule);
+  border-radius: var(--r-btn-sm);
+  background: var(--c-white);
+  font-family: var(--f-ui);
+  font-size: clamp(12px, calc(18 * var(--k)), 16px);
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--c-ink);
+}
+.chip__dot { width: .7em; height: .7em; border-radius: 50%; background: var(--c-accent); flex: none; }
+
+/* Заголовок крупнее нашей обычной роли: у референса 72px при 1440,
+   то есть 96 в макетных пикселях. Потолок 96, пол 32 — ниже он
+   перестаёт читаться как заявление. */
+.chero__title {
+  margin-block-start: max(18px, calc(36 * var(--k)));
+  font-size: clamp(32px, calc(96 * var(--k)), 96px);
+  line-height: 1.1;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: normal;
+  max-width: 16ch;
+  text-wrap: balance;
+}
+.chero__lead {
+  margin-block-start: max(16px, calc(28 * var(--k)));
+  max-width: 52ch;
+  font-size: var(--t-body);
+  line-height: 1.4;
+  color: var(--c-ink-soft);
+}
+.chero__lead + .chero__lead { margin-block-start: max(10px, calc(16 * var(--k))); }
+
+/* --- Две колонки через волосяную линию ---
+   У референса линия стоит на 47% ширины листа и живёт ровно по высоте
+   колонок. Псевдоэлемент на сетке даёт то же самое и не требует
+   лишнего узла в разметке. */
+.ccols { padding-block: 0 max(48px, calc(96 * var(--k))); }
+.ccols__in {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: max(28px, calc(80 * var(--k)));
+  position: relative;
+}
+.ccols__in::before {
+  content: ""; position: absolute; inset-block: 0;
+  inset-inline-start: calc(50% - max(14px, calc(40 * var(--k))));
+  width: var(--dp); background: var(--c-rule);
+}
+
+/* Брокер */
+.broker { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: max(14px, calc(32 * var(--k))); }
+.broker__portrait { width: max(56px, calc(107 * var(--k))); }
+.broker__portrait img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 50%; }
+.broker__name { font-size: var(--t-title); line-height: 1.2; }
+.broker__role { margin-block-start: 2px; font-size: var(--t-body); color: var(--c-muted); }
+
+/* Строки контактов: подпись слева мелким капсом, значение крупнее.
+   На референсе подпись 11px — у нас пол 12, ниже Lighthouse ругается
+   и читать тяжело. */
+.crows { margin-block-start: max(24px, calc(56 * var(--k))); }
+.crows__row {
+  display: grid; grid-template-columns: max(88px, calc(150 * var(--k))) minmax(0, 1fr);
+  gap: max(10px, calc(16 * var(--k)));
+  align-items: baseline;
+  padding-block: max(10px, calc(14 * var(--k)));
+}
+.crows dt { font-family: var(--f-ui); font-size: clamp(12px, calc(15 * var(--k)), 14px); text-transform: uppercase; color: var(--c-muted); }
+.crows dd { margin: 0; font-size: clamp(16px, calc(24 * var(--k)), 22px); line-height: 1.3; color: var(--c-ink); }
+.crows dd a { transition: color var(--dur) var(--ease); }
+.crows dd a:hover { color: var(--c-accent); }
+.crows__soc { display: flex; flex-wrap: wrap; gap: max(12px, calc(20 * var(--k))); }
+.crows__soc a { color: var(--c-accent); }
+.ccols__text { margin-block-start: max(20px, calc(36 * var(--k))); }
+
+/* --- Форма: поля подчёркиванием, без коробок --- */
+.ccols__title { font-size: var(--t-title); line-height: 1.2; }
+.ccols__right .modal__box { padding: 0; background: none; box-shadow: none; max-width: none; }
+.ccols__right .modal__fields { display: grid; gap: max(20px, calc(40 * var(--k))); margin-block-start: max(20px, calc(36 * var(--k))); }
+.ccols__right .field { display: grid; gap: max(4px, calc(6 * var(--k))); }
+.ccols__right .field__label {
+  font-family: var(--f-ui);
+  font-size: clamp(12px, calc(15 * var(--k)), 14px);
+  text-transform: uppercase;
+  color: var(--c-ink);
+}
+.ccols__right .field__input {
+  background: none; border: 0; border-radius: 0;
+  border-block-end: var(--dp) solid var(--c-rule);
+  padding: max(8px, calc(12 * var(--k))) 0;
+  font-size: var(--t-mid);
+  transition: border-color var(--dur) var(--ease);
+}
+.ccols__right .field__input:hover { border-color: var(--c-muted); background: none; }
+.ccols__right .field__input:focus-visible { outline: none; border-color: var(--c-accent); border-block-end-width: 2px; }
+.ccols__right .modal__submit { margin-block-start: max(24px, calc(44 * var(--k))); }
+.ccols__right .check { margin-block-start: max(6px, calc(10 * var(--k))); }
+
+/* --- Телефон: одна колонка, линии между колонками нет --- */
+@media (max-width: 899px) {
+  .ccols__in { grid-template-columns: minmax(0, 1fr); gap: max(32px, calc(48 * var(--k))); }
+  .ccols__in::before { display: none; }
+  /* ВНИМАНИЕ: ниже 1180px наш --k заморожен на 1180/1920, поэтому
+     calc(96 * var(--k)) на телефоне даёт 59px, а не мелкий кегль.
+     Здесь размер задаётся от ширины экрана напрямую. */
+  .chero__title { max-width: 100%; font-size: clamp(28px, 9vw, 44px); }
+  .chero__lead { max-width: 100%; }
+}
