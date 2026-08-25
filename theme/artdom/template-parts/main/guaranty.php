@@ -25,13 +25,13 @@ if ( $slides ) :
           ? $s['image']['url']
           : get_template_directory_uri() . '/img/' . ( is_string( $s['image'] ) ? $s['image'] : 'garanty.webp' );
         ?>
-        <img draggable="false" src="<?php echo esc_url( $src ); ?>" alt="" width="1920" height="963"<?php echo $first ? '' : ' loading="lazy"'; ?> decoding="async" data-slide="<?php echo (int) $i; ?>"<?php echo $first ? ' data-on="true"' : ''; ?>>
+        <img draggable="false" src="<?php echo esc_url( $src ); ?>" alt="" width="1920" height="963"<?php echo $first ? '' : ' loading="lazy"'; ?> decoding="async" data-slide="<?php echo (int) $i; ?>">
         <?php endforeach; ?>
       </div>
       <div class="guaranty__text wrap">
         <?php foreach ( $slides as $i => $s ) : ?>
         <?php if ( 0 === $i ) : ?>
-        <h2 class="h2--big guaranty__title" data-slide="0" data-on="true"><?php echo artdom_lines( $s['title'] ); ?></h2>
+        <h2 class="h2--big guaranty__title" data-slide="0"><?php echo artdom_lines( $s['title'] ); ?></h2>
         <?php else : ?>
         <p class="h2--big guaranty__title" data-slide="<?php echo (int) $i; ?>"><?php echo artdom_lines( $s['title'] ); ?></p>
         <?php endif; ?>
@@ -39,7 +39,7 @@ if ( $slides ) :
       </div>
       <div class="guaranty__steps" aria-hidden="true">
         <?php foreach ( $slides as $i => $s ) : ?>
-        <span data-slide="<?php echo (int) $i; ?>"<?php echo 0 === $i ? ' data-on="true"' : ''; ?>></span>
+        <span data-slide="<?php echo (int) $i; ?>"></span>
         <?php endforeach; ?>
       </div>
     </div>

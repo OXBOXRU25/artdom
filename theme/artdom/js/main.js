@@ -263,31 +263,115 @@
      при F5 на середине страницы прокрутка восстанавливается ПОСЛЕ скриптов. */
   Array.prototype.forEach.call(document.querySelectorAll("[data-guaranty]"), function (sec) {
     var stage = sec.querySelector(".guaranty__stage");
-    var marks = sec.querySelectorAll("[data-slide]");
-    var count = sec.querySelectorAll(".guaranty__bg [data-slide]").length;
-    var current = -1;
+    var imgs = sec.querySelectorAll(".guaranty__bg [data-slide]");
+    var titles = sec.querySelectorAll(".guaranty__title");
+    var steps = sec.querySelectorAll(".guaranty__steps span");
+    var count = imgs.length;
+    if (!count) return;
 
-    function update() {
+    /* Кадр стоит неподвижно первые ДЕРЖИМ доли отрезка, остальное — сам
+       переход. Без паузы картинка всё время в движении и читается мутной, а
+       заголовок не успевают прочесть. */
+    var ДЕРЖИМ = 0.55;
+
+    var тихо = window.matchMedia
+      && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    var ждём = false;
+
+    function draw() {
+      ждём = false;
+
       var travel = sec.offsetHeight - stage.offsetHeight;
-      if (travel <= 0 || !count) return;
+      if (travel <= 0) return;
 
-      var p = (-sec.getBoundingClientRect().top) / travel;
+      /* p — сквозная доля в кадрах: 0 это первый кадр целиком, 1.5 —
+         середина перехода со второго на третий. */
+      var p = (-sec.getBoundingClientRect().top) / travel * count;
       if (p < 0) p = 0;
-      if (p > 0.9999) p = 0.9999;                 /* иначе на самом низу индекс уедет за последний */
+      if (p > count - 0.0001) p = count - 0.0001;
 
-      var i = Math.floor(p * count);
-      if (i === current) return;
-      current = i;
+      var i = Math.floor(p);
+      var t = p - i;
 
-      for (var n = 0; n < marks.length; n++) {
-        if (+marks[n].dataset.slide === i) marks[n].dataset.on = "true";
-        else marks[n].removeAttribute("data-on");
+      /* r — доля самого перехода, 0 пока держим кадр, 1 когда следующий
+         открыт целиком. */
+      var r = (t - ДЕРЖИМ) / (1 - ДЕРЖИМ);
+      if (r < 0) r = 0;
+      if (r > 1) r = 1;
+      /* Человеку, попросившему убрать анимацию, отдаём чистую смену без
+         промежуточных положений: доля округляется до края. */
+      if (тихо) r = r < 0.5 ? 0 : 1;
+
+      var n;
+      for (n = 0; n < count; n++) {
+        if (n === i + 1) {
+          /* Приходящий кадр открывается снизу МЯГКИМ краем: жёсткая линия
+             читается склейкой двух фотографий, размытая полоса — сменой
+             плана. Полоса схлопывается к нулю на обоих концах перехода,
+             иначе в покое снизу оставался бы просвечивающий кант, а
+             сверху — недокрытая полоска. */
+          var полоса = 6 * Math.min(1, r * 12) * Math.min(1, (1 - r) * 12);
+          var низ = r * 100 - полоса / 2;
+          var верх = r * 100 + полоса / 2;
+          var маска = "linear-gradient(to top, #000 " + низ.toFixed(2) + "%, transparent " + верх.toFixed(2) + "%)";
+          imgs[n].style.clipPath = "none";
+          imgs[n].style.maskImage = маска;
+          imgs[n].style.webkitMaskImage = маска;
+        } else {
+          /* Прошедшие кадры открыты целиком — их всё равно закрывают
+             следующие; будущие закрыты. Маска тут не нужна, а лишняя маска
+             на весь экран стоит браузеру кадров. */
+          imgs[n].style.clipPath = n <= i ? "inset(0)" : "inset(100% 0 0 0)";
+          imgs[n].style.maskImage = "none";
+          imgs[n].style.webkitMaskImage = "none";
+        }
+        /* Уходящий кадр наезжает и уходит вверх, пока его закрывают: без
+           этого стык читается как склейка двух неподвижных фотографий, а не
+           как смена плана. Сдвиг вдвое меньше запаса, который даёт
+           увеличение, — иначе сверху открылась бы пустая полоса. */
+        imgs[n].style.transform = n === i
+          ? "scale(" + (1 + r * 0.06).toFixed(4) + ") translateY(" + (-r * 2.5).toFixed(3) + "%)"
+          : "none";
       }
+
+      /* Заголовки не пересекаются во времени: уходящий успевает уехать
+         целиком, и только потом приходит следующий. Иначе на середине
+         перехода два крупных заголовка лежат друг на друге полупрозрачными
+         — читается как ошибка вёрстки, а не как перекат. */
+      var ушёл = r < 0.45 ? r / 0.45 : 1;
+      var пришёл = r > 0.55 ? (r - 0.55) / 0.45 : 0;
+      for (n = 0; n < titles.length; n++) {
+        var y, o;
+        if (n === i) { y = -ушёл * 100; o = 1 - ушёл; }
+        else if (n === i + 1) { y = (1 - пришёл) * 100; o = пришёл; }
+        else { y = n < i ? -100 : 100; o = 0; }
+        titles[n].style.transform = "translateY(" + y.toFixed(2) + "%)";
+        titles[n].style.opacity = o.toFixed(3);
+      }
+
+      for (n = 0; n < steps.length; n++) {
+        steps[n].style.setProperty("--fill", n < i ? 1 : (n === i ? t.toFixed(3) : 0));
+      }
+    }
+
+    /* Склеиваем в кадр: на прокрутке событий приходит куда больше, чем
+       браузер успевает нарисовать, а работы здесь на девять узлов. */
+    function update() {
+      if (ждём) return;
+      ждём = true;
+      requestAnimationFrame(draw);
     }
 
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
-    update();
+    window.addEventListener("load", update);
+    /* Пока вкладка скрыта, кадры не рисуются и rAF не срабатывает — на
+       возврате состояние догоняем принудительно. */
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden) draw();
+    });
+    draw();
   });
 
   /* ---------- Меню на телефоне ---------- */
