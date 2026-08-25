@@ -867,7 +867,7 @@ body.is-sheet .hdr--solid { background: transparent; }
 .sheet {
   background: var(--c-white);
   margin-inline: max(8px, calc(16 * var(--k)));
-  margin-block-start: max(40px, calc(229 * var(--k)));
+  margin-block-start: max(30px, calc(172 * var(--k)));   /* на четверть выше */
 }
 
 /* --- Центральная шапка --- */
