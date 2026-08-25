@@ -17,7 +17,7 @@
   --dp: 1px;
   /* Высота плавающей шапки: два её поля плюс самая высокая деталь внутри
      (логотип с его минимальной зоной нажатия в 48). */
-  --hdr-h: calc(19 * var(--k) * 2 + 48px);
+  --hdr-h: calc(var(--hdr-pad) * 2 + 48px);
 
   /* --- Цвет (истинные значения из PSD) --- */
   --c-ink:        #000003;
@@ -69,6 +69,12 @@
      местах — порознь они разъедутся при первой же правке одного из них.
      Пол в 12px: ниже стрелка перестаёт читаться на телефоне. */
   --arrow-w:  max(12px, calc(16.8 * var(--k)));
+
+  /* Верхнее поле шапки. Одним токеном на три места: сама шапка, логотип и
+     бургер — оба последних стоят вне её и позиционируются сами. Пока число
+     было вписано порознь, логотип центрировался на 35.7px, а бургер на 42:
+     на глаз это читалось как «лого стоит криво». */
+  --hdr-pad:  calc(19 * var(--k));
 
   /* --- Движение --- */
   --ease: cubic-bezier(.16, 1, .3, 1);
@@ -170,7 +176,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   position: absolute; inset-block-start: 0; inset-inline: 0; z-index: 20;
   /* Вдвое ближе к верху, чем было: прежние 38 макетных пикселей оставляли
      шапку висеть посреди пустоты. */
-  padding-block: calc(19 * var(--k));
+  padding-block: var(--hdr-pad);
   color: var(--c-white);
   pointer-events: none;                 /* пустая полоса не должна глотать клики */
 }
@@ -186,13 +192,20 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
    отдельного правила на состояние «меню открыто» не требуется. */
 .logo {
   position: fixed; z-index: 41;
-  inset-block-start: calc(19 * var(--k));
+  inset-block-start: var(--hdr-pad);
   inset-inline-start: var(--gutter);
   display: inline-flex; align-items: center; gap: calc(13 * var(--k));
   min-height: 48px;
   color: var(--c-white);
   mix-blend-mode: difference;
 }
+/* Над тёмными блоками наложение выключаем и красим просто белым. Разность
+   вычитает подложку из белого, поэтому на среднем тоне отдаёт средний же:
+   на фотографии первого экрана логотип выходил мутно-серым. Фотографии и
+   видео лежат ровно в этих блоках; на светлых секциях подложка плоская и
+   почти белая, там разность даёт чистый чёрный и работает как надо.
+   Класс ставит тот же скрипт, что метит шапку. */
+.logo.on-dark { mix-blend-mode: normal; color: var(--c-white); }
 .hdr__spacer { display: block; }
 .logo__mark { width: calc(38 * var(--k)); min-width: 26px; height: auto; }
 .logo__word { width: calc(141 * var(--k)); min-width: 96px; height: auto; }
@@ -220,7 +233,18 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .hero { position: relative; min-height: calc(1040 * var(--k)); display: flex; align-items: flex-end; overflow: hidden; }
 .hero__bg { position: absolute; inset: 0; }
 .hero__bg img, .hero__bg video { width: 100%; height: 100%; object-fit: cover; }
-.hero__bg::after { content: ""; position: absolute; inset: 0; background: var(--c-scrim); }
+/* Ровное затемнение по всему кадру плюс отдельная тень под шапкой. Без неё
+   белый логотип на светлом небе давал 2.76:1 при норме 3:1 для графики
+   (WCAG 1.4.11) — на телефоне, где кадр кадрируется по светлой верхней
+   части. Полоса высотой 180px и всего в четверть силы: на замере она
+   поднимает контраст до 4.9:1, а на глаз читается как виньетка, не как
+   плашка. На десктопе кадр и так тёмный, там она ничего не меняет. */
+.hero__bg::after {
+  content: ""; position: absolute; inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(24, 26, 30, .42) 0, rgba(24, 26, 30, 0) 180px),
+    var(--c-scrim);
+}
 .hero__in {
   position: relative; z-index: 2; width: 100%;
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, calc(580 * var(--k)));
@@ -535,8 +559,10 @@ html.rise-failsafe.rise-failsafe [data-rise="shutter"] {
 }
 
 @media (max-width: 860px) {
-  :root { --k: calc(1180px / 1920); --pad-top: 48px; --pad-bot: 56px; --gutter: 20px; --gap-card: 20px; }
-  .hdr { padding-block: 18px; }
+  /* --hdr-pad здесь, а не на .hdr: от него теперь считаются и высота шапки,
+     и положение логотипа с бургером — они стоят вне её. Пока число сидело
+     на самой .hdr, --hdr-h на телефоне врал на 12px. */
+  :root { --k: calc(1180px / 1920); --pad-top: 48px; --pad-bot: 56px; --gutter: 20px; --gap-card: 20px; --hdr-pad: 18px; }
   .hero { min-height: 88svh; }
   .hero__in { grid-template-columns: 1fr; gap: 32px; padding-block-end: 40px; }
   .hero__title { max-width: none; }
@@ -660,16 +686,22 @@ html.rise-failsafe.rise-failsafe [data-rise="shutter"] {
 .menu[data-open="true"] .menu__foot > :nth-child(2) { animation-delay: .64s; }
 .menu[data-open="true"] .menu__foot > :nth-child(3) { animation-delay: .69s; }
 
-/* Закрытие — кружком на месте бургера: он и стоял ровно здесь, поэтому
-   палец возвращается туда же, откуда открывал. */
+/* Закрытие стоит ровно на месте бургера — та же коробка, то же верхнее поле,
+   тот же вычет поля вокруг рисунка. Палец возвращается туда же, откуда
+   открывал, и значок не прыгает вбок при открытии.
+
+   Обводки нет намеренно: кружок пришлось бы ставить либо по отступу экрана,
+   либо по центру бургера, а это разные точки — расхождение 11px, и его
+   видно. Голый крестик выравнивается по чернилам, как и сам бургер. */
 .menu__close {
-  position: absolute; inset-block-start: 18px; inset-inline-end: var(--gutter);
+  position: absolute;
+  inset-block-start: var(--hdr-pad);
+  inset-inline-end: calc(var(--gutter) - 11px);
   width: 48px; height: 48px; display: grid; place-items: center;
-  border: var(--dp) solid rgba(255, 255, 255, .35); border-radius: 50%;
-  transition: border-color var(--dur) var(--ease), rotate var(--dur) var(--ease);
+  transition: rotate var(--dur) var(--ease);
 }
-.menu__close:hover { border-color: var(--c-white); rotate: 90deg; }
-.menu__close svg { width: 18px; }
+.menu__close:hover { rotate: 90deg; }
+.menu__close svg { width: 22px; }
 body.is-locked { overflow: hidden; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1449,15 +1481,31 @@ body.is-sheet .hdr--solid { background: transparent; }
    не помещаются, а кнопка вплотную к бургеру спорила с ним за нажатие.
    В сетке при этом два элемента — распорка под логотип и сам бургер. */
 @media (max-width: 1180px) {
-  .hdr__in { grid-template-columns: 1fr auto; }
+  .hdr__in { grid-template-columns: 1fr; }
   .nav, .hdr__right { display: none; }
   /* Бургер поднят сюда с 860: без него в полосе от 861 до 1180 не осталось
-     бы вообще ни одной ссылки на разделы. */
+     бы вообще ни одной ссылки на разделы.
+
+     Стоит он вне шапки, отдельным фиксированным слоем — только так работает
+     выворот. Верхнее поле общее с логотипом, высота тоже 48, поэтому оба
+     центрируются на одной линии без подгонки.
+
+     z-index 39 — выше шапки (20) и ниже бургерного меню (40): открытое меню
+     закрывает его собой, и прятать отдельным правилом не нужно. */
   .hdr__burger {
+    position: fixed; z-index: 39;
+    inset-block-start: var(--hdr-pad);
+    /* 11 = (48 − 26) / 2, то есть поле кнопки вокруг рисунка. Вычитаем его,
+       чтобы к краю экрана выходили сами полоски, а не пустая коробка —
+       тогда справа виден тот же отступ, что слева у логотипа. */
+    inset-inline-end: calc(var(--gutter) - 11px);
     display: inline-flex; align-items: center; justify-content: center;
-    width: 48px; height: 48px; margin-inline-end: -8px; pointer-events: auto;
+    width: 48px; height: 48px;
+    color: var(--c-white);
+    mix-blend-mode: difference;
   }
   .hdr__burger svg { width: 26px; }
+  .hdr__burger.on-dark { mix-blend-mode: normal; color: var(--c-white); }
 }
 
 /* --- Плавающая шапка ---

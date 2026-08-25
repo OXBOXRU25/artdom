@@ -82,12 +82,19 @@ $u = get_template_directory_uri();
         <span class="hdr__cta-dot" aria-hidden="true"></span>Оставить заявку
       </a>
     </div>
-
-    <button class="hdr__burger" type="button" data-menu-open aria-label="Открыть меню" aria-expanded="false" aria-controls="menu">
-      <svg viewBox="0 0 26 16" aria-hidden="true"><use href="#i-burger"></use></svg>
-    </button>
   </div>
 </header>
+
+<?php
+/* Бургер, как и логотип, живёт ВНЕ шапки. Причина та же: фиксированный слой
+   образует изолированную группу, и наложению внутри неё не с чем смешиваться,
+   кроме её собственного прозрачного фона. Снаружи он выворачивается по тому,
+   что под ним, ровно как логотип — и встаёт с ним на одну линию, потому что
+   оба берут верхнее поле из одного токена. */
+?>
+<button class="hdr__burger" type="button" data-menu-open aria-label="Открыть меню" aria-expanded="false" aria-controls="menu">
+  <svg viewBox="0 0 26 16" aria-hidden="true"><use href="#i-burger"></use></svg>
+</button>
 
 <!-- ============ Меню на телефоне ============ -->
 <?php

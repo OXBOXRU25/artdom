@@ -571,6 +571,17 @@
   var hdr = document.querySelector(".hdr");
   if (!hdr) return;
 
+  /* Логотип и бургер метим тем же классом. Разностное наложение вычитает подложку из
+     белого, поэтому на СРЕДНЕМ тоне оно даёт средний же тон: на фотографии
+     первого экрана логотип выходил мутно-серым и терялся. Фотографии и видео
+     у нас лежат ровно в этих блоках, значит здесь наложение выключаем и
+     красим просто белым — как бургер рядом. На светлых секциях подложка
+     плоская и почти белая, вычитание даёт чистый чёрный, и наложение
+     остаётся работать само. */
+  var выворот = Array.prototype.slice.call(
+    document.querySelectorAll(".logo, .hdr__burger")
+  );
+
   var тёмные = Array.prototype.slice.call(
     document.querySelectorAll(".hero, .guaranty, .ftr, .fnext")
   );
@@ -588,6 +599,7 @@
     if (надо !== было) {
       было = надо;
       hdr.classList.toggle("on-dark", надо);
+      выворот.forEach(function (el) { el.classList.toggle("on-dark", надо); });
     }
   };
 
