@@ -18,5 +18,5 @@ $rating = $rating > 0 ? $rating : 5;
     </div>
   </div>
   <?php echo artdom_stars( $rating, sprintf( '%d из 5', $rating ), 'p' ); ?>
-  <p class="body review__text"><?php echo artdom_lines( get_field( 'rev_text' ) ); ?></p>
+  <p class="body review__text" data-clip="2"><?php echo artdom_lines( get_field( 'rev_text' ) ); ?></p>
 </article>

@@ -29,5 +29,5 @@ $artdom_thumb = get_the_post_thumbnail_url( get_the_ID(), 'large' );
   <h3 class="pcard__title">
     <a class="roll" href="<?php the_permalink(); ?>" draggable="false"><span class="roll__a"><?php echo esc_html( $artdom_title ); ?></span><span class="roll__b" aria-hidden="true"><?php echo esc_html( $artdom_title ); ?></span></a>
   </h3>
-  <p class="body pcard__text"><?php echo esc_html( wp_trim_words( get_the_excerpt(), 26 ) ); ?></p>
+  <p class="body pcard__text" data-clip="2" data-clip-href="<?php the_permalink(); ?>"><?php echo esc_html( wp_trim_words( get_the_excerpt(), 26 ) ); ?></p>
 </article>

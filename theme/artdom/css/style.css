@@ -1754,6 +1754,30 @@ body:not(.home) { padding-block-start: var(--hdr-h); }
 /* В ленте раздела записей больше трёх — нужен зазор между строками. */
 .blog__grid { row-gap: max(26px, calc(44 * var(--k))); }
 
+/* Описание в две строки. Здесь — запасной вариант на случай, когда скрипт
+   не поднялся: родная обрезка браузера. Она рвёт строку посреди слова и
+   красит многоточие цветом текста, но текст хотя бы не разваливает ряд.
+   Скрипт ставит data-clip-on и дальше режет сам, по словам. */
+[data-clip]:not([data-clip-on]) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+/* Многоточие цветом кнопок: это знак, что текст продолжается, а не часть
+   предложения. Кнопку в отзыве сбрасываем до вида текста — она должна
+   читаться продолжением строки, а не элементом управления. */
+.clip__more {
+  color: var(--c-accent);
+  font: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  transition: opacity var(--dur) var(--ease);
+}
+.clip__more:hover { opacity: .7; }
+
 /* Дата под заголовком статьи. */
 .pagehead__date {
   margin-block-start: max(10px, calc(16 * var(--k)));

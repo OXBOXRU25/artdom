@@ -426,6 +426,104 @@
     draw();
   });
 
+  /* ---------- Описания в две строки ----------
+     Обрезаем по последнему СЛОВУ, которое умещается, и ставим многоточие
+     цветом кнопок — это знак, что текст продолжается и его можно открыть.
+
+     Через CSS так не сделать: -webkit-line-clamp красит многоточие цветом
+     текста и рвёт строку посреди слова. Поэтому меряем сами: снимаем
+     обрезку, подбираем двоичным поиском число слов, которое влезает в две
+     строки, и дописываем хвост.
+
+     Куда ведёт хвост, зависит от того, есть ли куда вести. У статьи есть
+     своя страница — там это ссылка. У отзыва страницы нет, поэтому кнопка
+     раскрывает текст на месте. */
+  var подрезаемые = Array.prototype.slice.call(document.querySelectorAll("[data-clip]"));
+
+  function хвостик(el) {
+    var href = el.dataset.clipHref;
+    var узел;
+    if (href) {
+      узел = document.createElement("a");
+      узел.href = href;
+      /* Заголовок карточки ведёт туда же, поэтому для скринридера этот хвост
+         лишний: он прочитал бы «многоточие, ссылка». Прячем от него и из
+         обхода табом, мышью он при этом работает. */
+      узел.setAttribute("aria-hidden", "true");
+      узел.tabIndex = -1;
+    } else {
+      узел = document.createElement("button");
+      узел.type = "button";
+      узел.setAttribute("aria-label", "Показать текст полностью");
+      узел.addEventListener("click", function () {
+        el.textContent = el.dataset.clipFull;
+        el.dataset.clipDone = "open";
+      });
+    }
+    узел.className = "clip__more";
+    узел.textContent = "…";
+    return узел;
+  }
+
+  function подрезать(el) {
+    if (el.dataset.clipDone === "open") return;   /* раскрыт человеком — не трогаем */
+
+    var строк = parseInt(el.dataset.clip, 10) || 2;
+
+    if (!el.dataset.clipFull) {
+      el.dataset.clipFull = el.textContent.replace(/s+/g, " ").trim();
+    }
+    /* Снимаем запасную обрезку из CSS и возвращаем полный текст: мерить
+       надо несокращённый, иначе на втором проходе он будет ужиматься. */
+    el.dataset.clipOn = "1";
+    el.textContent = el.dataset.clipFull;
+
+    var lh = parseFloat(getComputedStyle(el).lineHeight);
+    if (!lh) return;
+    var предел = lh * строк + 1;
+    if (el.scrollHeight <= предел) return;
+
+    var слова = el.dataset.clipFull.split(" ");
+    var низ = 1, верх = слова.length, лучш = 1;
+    while (низ <= верх) {
+      var сер = (низ + верх) >> 1;
+      el.textContent = слова.slice(0, сер).join(" ") + "…";
+      if (el.scrollHeight <= предел) { лучш = сер; низ = сер + 1; } else { верх = сер - 1; }
+    }
+
+    /* Точку или запятую перед многоточием убираем — иначе выходит «бумаге.…» */
+    function поставить(n) {
+      var т = слова.slice(0, n).join(" ").replace(/[.,;:!?—–-]+$/, "");
+      /* БЕЗ пробела перед хвостом: мерили мы «слово…» слитно, а пробел плюс
+         отдельный узел шире и иногда переносят строку. На этом ряд
+         разъезжался по высоте. */
+      el.textContent = т;
+      el.appendChild(хвостик(el));
+    }
+
+    поставить(лучш);
+    /* Проверка ПОСЛЕ вставки: хвост — отдельный узел, и его перенос считается
+       иначе, чем у той же строки одним куском. Если не влезли — отступаем
+       по слову, пока не влезем. */
+    while (el.scrollHeight > предел && лучш > 1) {
+      лучш -= 1;
+      поставить(лучш);
+    }
+  }
+
+  function подрезатьВсе() { подрезаемые.forEach(подрезать); }
+
+  if (подрезаемые.length) {
+    подрезатьВсе();
+    /* Шрифт грузится позже разметки, и с ним меняется перенос строк. */
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(подрезатьВсе); }
+    var перещёт = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(перещёт);
+      перещёт = setTimeout(подрезатьВсе, 150);
+    });
+  }
+
   /* ---------- Меню на телефоне ---------- */
   var menu = document.getElementById("menu");
   var opener = document.querySelector("[data-menu-open]");
