@@ -26,6 +26,14 @@
         runCounters(el);
       } else rest.push(el);
     }
+
+    /* Доехали до низа страницы — ниже порога уже ничто не окажется: показываем
+       всё оставшееся. Иначе блок в последней сотне пикселей документа (или
+       любой блок на странице короче окна) не появился бы никогда. */
+    if (rest.length && window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2) {
+      for (var j = 0; j < rest.length; j++) { rest[j].classList.add("is-in"); runCounters(rest[j]); }
+      rest = [];
+    }
     still = rest;
   }
 

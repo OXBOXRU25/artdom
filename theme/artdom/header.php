@@ -17,6 +17,16 @@ $u = get_template_directory_uri();
 <head>
 <meta charset="<?php bloginfo( 'charset' ); ?>">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+  /* Прячем блоки до появления только если скрипты живы: без JS ни один блок
+     не должен пропасть. Страховка — если main.js не поднялся за 1.2 с (он
+     подключён в подвале), показываем всё принудительно. При переезде на
+     WordPress этот кусок из статики потерялся, и появление не работало вовсе. */
+  document.documentElement.classList.add('js');
+  setTimeout(function () {
+    if (!document.documentElement.dataset.riseReady) document.documentElement.classList.add('rise-failsafe');
+  }, 1200);
+</script>
 <?php wp_head(); ?>
 </head>
 

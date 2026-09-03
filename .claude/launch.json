@@ -6,6 +6,12 @@
       "runtimeExecutable": "D:/AI/nodejs/node.exe",
       "runtimeArgs": ["D:/AI/Artdom/_tools/serve.mjs"],
       "port": 4321
+    },
+    {
+      "name": "artdom-wp",
+      "runtimeExecutable": "D:/AI/php/php.exe",
+      "runtimeArgs": ["-S", "127.0.0.1:8080", "-t", "D:/AI/Artdom/wp", "D:/AI/Artdom/wp/router.php"],
+      "port": 8080
     }
   ]
 }
