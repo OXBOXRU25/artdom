@@ -43,26 +43,25 @@ while ( have_posts() ) :
 	set_query_var( 'artdom_head_title', get_the_title() );
 	set_query_var( 'artdom_head_lead', '' );
 ?>
+<main id="main" class="sheet">
 
-<main id="main">
-  <?php get_template_part( 'template-parts/page-head' ); ?>
-
-  <?php if ( $intro_title ) : ?>
-  <?php /* Утверждение во всю ширину капсом — первое, что читает человек. */ ?>
-  <section class="sec sec--white abclaim">
-    <div class="wrap">
-      <h2 class="abclaim__t" data-rise><?php echo artdom_lines( $intro_title ); ?></h2>
+  <?php /* Первый экран построен как на контактах: серая полоса под шапкой,
+           затем белый лист, и всё содержимое по центру. Заказчик просил один
+           приём на обеих страницах, а не два разных. */ ?>
+  <section class="chero">
+    <div class="wrap chero__in">
+      <h1 class="chero__title"><?php echo artdom_lines( $intro_title ? $intro_title : get_the_title() ); ?></h1>
+      <?php foreach ( array_slice( $paras, 0, 1 ) as $p ) : ?>
+      <p class="chero__lead"><?php echo artdom_lines( $p ); ?></p>
+      <?php endforeach; ?>
     </div>
   </section>
-  <?php endif; ?>
 
-  <?php if ( $paras ) : ?>
-  <?php /* Текст не во всю ширину, а второй колонкой: у референса он сдвинут
-           от левого края и занимает примерно четверть строки. */ ?>
+  <?php if ( count( $paras ) > 1 ) : ?>
   <section class="sec sec--white abtext">
     <div class="wrap abtext__in">
       <div class="abtext__col" data-rise>
-        <?php foreach ( $paras as $p ) : ?>
+        <?php foreach ( array_slice( $paras, 1 ) as $p ) : ?>
         <p class="abtext__p"><?php echo artdom_lines( $p ); ?></p>
         <?php endforeach; ?>
       </div>
@@ -76,11 +75,6 @@ while ( have_posts() ) :
            но без разброса по словам: по-русски он читался бы как ошибка
            вёрстки, а не как приём. */ ?>
   <section class="abstage" data-rise>
-    <div class="abstage__shots" aria-hidden="true">
-      <span class="abstage__shot abstage__shot--a"></span>
-      <span class="abstage__shot abstage__shot--b"></span>
-      <span class="abstage__shot abstage__shot--c"></span>
-    </div>
     <blockquote class="abstage__q"><?php echo artdom_lines( $quote ); ?></blockquote>
     <p class="abstage__who">
       <?php echo esc_html( artdom_field( 'about_name' ) ); ?><span class="abstage__role"><?php echo esc_html( artdom_field( 'about_role' ) ); ?></span>
@@ -90,7 +84,7 @@ while ( have_posts() ) :
 
   <?php if ( is_array( $principles ) && $principles ) : ?>
   <section class="sec sec--white abwhy">
-    <h2 class="abwhy__grey" data-rise><?php echo esc_html( artdom_field( 'ab_principles_title' ) ); ?></h2>
+    <h2 class="abhead abwhy__head" data-rise><?php echo esc_html( artdom_field( 'ab_principles_title' ) ); ?></h2>
     <div class="wrap abwhy__in">
       <?php foreach ( $principles as $i => $pr ) : ?>
       <div class="abwhy__col" data-rise>
