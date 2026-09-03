@@ -917,3 +917,37 @@
   window.addEventListener("load", смотреть);
   смотреть();
 })();
+
+/* Оглавление на странице услуг: подсвечиваем пункт, чей блок сейчас на
+   экране. Точка и цвет — как у референса symbolstudio.
+   Считаем по прокрутке, а не наблюдателем: блоки высокие, наблюдатель на
+   длинном блоке молчит, и подсветка отставала бы на полстраницы. */
+(function () {
+  "use strict";
+
+  var links = Array.prototype.slice.call(document.querySelectorAll("[data-svcnav]"));
+  if (!links.length) return;
+
+  var rows = links
+    .map(function (a) { return document.getElementById(a.getAttribute("data-svcnav")); })
+    .filter(Boolean);
+  if (rows.length !== links.length) return;
+
+  var текущий = -1;
+
+  function смотреть() {
+    /* Текущим считаем последний блок, чей верх уже прошёл треть экрана. */
+    var порог = window.innerHeight * 0.33;
+    var найден = 0;
+    for (var i = 0; i < rows.length; i++) {
+      if (rows[i].getBoundingClientRect().top <= порог) найден = i;
+    }
+    if (найден === текущий) return;
+    текущий = найден;
+    for (var j = 0; j < links.length; j++) links[j].classList.toggle("is-here", j === найден);
+  }
+
+  window.addEventListener("scroll", смотреть, { passive: true });
+  window.addEventListener("resize", смотреть);
+  смотреть();
+})();
