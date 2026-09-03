@@ -20,10 +20,23 @@ set_query_var( 'artdom_head_lead', artdom_field( 'services_lead' ) );
       <?php if ( have_posts() ) : ?>
       <div class="grid-cards">
         <?php while ( have_posts() ) : the_post(); ?>
+        <?php
+        /* Ссылка — вся карточка, а не кнопка внутри неё. Пять одинаковых
+           синих кнопок подряд были самым громким пятном на экране, и глаз
+           считал их вместо названий услуг. Заголовок остаётся заголовком,
+           а <a> оборачивает карточку целиком: одна цель нажатия во всю
+           площадь вместо мелкой кнопки. */
+        $artdom_price = (string) get_field( 'svc_price' );
+        ?>
         <article class="svc" data-rise>
-          <h2 class="svc__title"><a class="roll" href="<?php the_permalink(); ?>"><span class="roll__a"><?php the_title(); ?></span><span class="roll__b" aria-hidden="true"><?php the_title(); ?></span></a></h2>
-          <p class="body svc__text"><?php echo esc_html( wp_trim_words( (string) get_field( 'svc_lead' ), 26 ) ); ?></p>
-          <?php artdom_btn( 'Узнать больше', get_permalink(), 'btn btn--sm' ); ?>
+          <a class="svc__link" href="<?php the_permalink(); ?>">
+            <h2 class="svc__title"><?php the_title(); ?></h2>
+            <p class="body svc__text" data-clip="3"><?php echo esc_html( (string) get_field( 'svc_lead' ) ); ?></p>
+            <span class="svc__foot">
+              <span class="svc__price"><?php echo $artdom_price ? esc_html( $artdom_price ) : 'Подробнее'; ?></span>
+              <span class="svc__arrow" aria-hidden="true"><svg viewBox="0 0 24 16"><use href="#i-arrow-xl"></use></svg></span>
+            </span>
+          </a>
         </article>
         <?php endwhile; ?>
       </div>

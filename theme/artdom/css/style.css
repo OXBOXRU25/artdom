@@ -1055,11 +1055,40 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .ctaband__in { display: flex; align-items: center; justify-content: space-between; gap: var(--gutter); flex-wrap: wrap; }
 .ctaband__in .body { margin-block-start: max(8px, calc(12 * var(--k))); max-width: 46ch; color: var(--c-muted); }
 
-/* --- Услуги списком --- */
-.svc { display: flex; flex-direction: column; align-items: flex-start; gap: max(10px, calc(14 * var(--k))); padding: max(20px, calc(28 * var(--k))); background: var(--c-surface); border-radius: var(--r-chip); }
+/* --- Карточка услуги ---------------------------------------------------------
+   Кнопки внутри нет: нажимается вся карточка. Внизу строка «цена — стрелка»,
+   она же и подсказывает, что карточка кликается. Синего на экране не
+   остаётся вовсе, и взгляд идёт по названиям и цифрам, а не по кнопкам. */
+.svc { background: var(--c-surface); border-radius: var(--r-chip); }
+.svc__link {
+  display: flex; flex-direction: column;
+  gap: max(10px, calc(14 * var(--k)));
+  height: 100%;                       /* карточки в ряду одной высоты */
+  padding: max(20px, calc(28 * var(--k)));
+  color: inherit;
+}
 .svc__title { font-size: var(--t-title); line-height: 1.15; }
 .svc__text { color: var(--c-muted); }
-.svc .btn { margin-block-start: auto; }
+
+/* Подвал карточки прижат к низу: у услуг описания разной длины, и без этого
+   цена с стрелкой скакали бы по ряду на разной высоте. */
+.svc__foot {
+  margin-block-start: auto;
+  padding-block-start: max(14px, calc(18 * var(--k)));
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  border-block-start: var(--dp) solid var(--c-rule-soft);
+  font-family: var(--f-ui); font-size: var(--t-nav);
+}
+.svc__price { color: var(--c-ink); }
+.svc__arrow {
+  flex: none; width: 24px; color: var(--c-muted);
+  display: inline-flex; align-items: center;
+  transition: transform var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.svc__arrow svg { width: 100%; height: auto; }
+.svc__link:hover .svc__arrow { color: var(--c-accent); transform: translateX(6px); }
+.svc__link:hover .svc__title { color: var(--c-accent); }
+.svc__link:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; border-radius: var(--r-chip); }
 
 /* --- Порядок работы --- */
 .steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap-card) var(--gutter); margin-block-start: max(24px, calc(40 * var(--k))); }

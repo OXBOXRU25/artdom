@@ -196,6 +196,7 @@ function artdom_register_inner_fields() {
 			'title'          => 'Содержание услуги',
 			'fields'         => array(
 				artdom_f( 'svc_lead', 'Короткое описание', 'textarea', array( 'rows' => 3, 'instructions' => 'Показывается в аккордеоне на главной и в списке услуг.' ) ),
+				artdom_f( 'svc_price', 'Стоимость', 'text', array( 'instructions' => 'Как писать на сайте: «от 120 000 ₽» или «по договорённости». Пусто — строка не покажется.' ) ),
 				artdom_f( 'svc_text', 'Основной текст', 'textarea', array( 'rows' => 10, 'instructions' => 'Пустая строка между абзацами разделит их на сайте.' ) ),
 				artdom_f(
 					'svc_steps',
