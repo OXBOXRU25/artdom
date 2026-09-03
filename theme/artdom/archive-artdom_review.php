@@ -14,6 +14,8 @@
  * @package artdom
  */
 
+artdom_use_sheet();
+
 get_header();
 
 $artdom_stats  = artdom_reviews_stats();
@@ -21,12 +23,12 @@ $artdom_rating = $artdom_stats['avg'];
 $artdom_count  = $artdom_stats['count'];
 ?>
 
-<main id="main">
+<main id="main" class="sheet">
   <section class="sec sec--white revpage">
+    <div class="wrap"><?php echo artdom_crumbs(); ?></div>
     <div class="wrap revpage__in">
 
       <aside class="revpage__side">
-        <?php echo artdom_crumbs(); ?>
         <h1 class="h1 revpage__title">Отзывы</h1>
         <p class="body revpage__lead">Отзывы приходят с Яндекс.Карт, из Авито и напрямую от клиентов. Публикуем как есть.</p>
 

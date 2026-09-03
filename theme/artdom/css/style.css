@@ -2386,3 +2386,15 @@ form .btn {
   max-width: var(--abcol);
 }
 .abtext__col { max-width: var(--abcol); }
+
+/* Крошки по центру, под меню — на всех внутренних страницах один приём.
+   Раньше они прижимались к левому краю, а на отзывах вовсе стояли внутри
+   боковой колонки. */
+.pagehead .crumbs,
+.revpage .crumbs { justify-content: center; }
+
+/* Шапка без заголовка на экране: заголовок остаётся в разметке (страница без
+   <h1> безымянна и для скринридера, и для поиска), но место под него больше
+   не отводится. */
+.pagehead--bare { padding-block-end: 0; }
+.pagehead--bare .pagehead__lead { margin-block-start: max(12px, calc(18 * var(--k))); }

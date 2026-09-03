@@ -22,8 +22,11 @@
  * @package artdom
  */
 
+artdom_use_sheet();
+
 get_header();
 
+set_query_var( 'artdom_head_hide', true );
 set_query_var( 'artdom_head_title', 'Услуги' );
 
 $artdom_items = array();
@@ -43,7 +46,7 @@ if ( have_posts() ) {
 }
 ?>
 
-<main id="main">
+<main id="main" class="sheet">
   <?php get_template_part( 'template-parts/page-head' ); ?>
 
   <?php if ( $artdom_items ) : ?>

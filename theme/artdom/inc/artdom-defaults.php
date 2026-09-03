@@ -515,3 +515,21 @@ function artdom_sanitize_title( $title, $raw_title = '', $context = 'save' ) {
 	return sanitize_title_with_dashes( artdom_translit( $source ), '', 'save' );
 }
 add_filter( 'sanitize_title', 'artdom_sanitize_title', 9, 3 );
+
+/**
+ * Серый фон под шапкой и белый лист ниже — приём страницы контактов.
+ *
+ * Включается классом на <body>: сам по себе .sheet задаёт только белый лист,
+ * а подложку красит именно этот класс. Раньше вызов стоял копией в двух
+ * шаблонах, и на третьей странице его просто забыли — фон остался белым, а
+ * перехода не было видно вовсе. Одна функция вместо копий.
+ */
+function artdom_use_sheet() {
+	add_filter(
+		'body_class',
+		static function ( $classes ) {
+			$classes[] = 'is-sheet';
+			return $classes;
+		}
+	);
+}

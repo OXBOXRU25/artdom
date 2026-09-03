@@ -9,17 +9,20 @@
  * @package artdom
  */
 
+artdom_use_sheet();
+
 get_header();
 
 $artdom_blog_page = (int) get_option( 'page_for_posts' );
 
+set_query_var( 'artdom_head_hide', true );
 set_query_var( 'artdom_head_title', $artdom_blog_page ? get_the_title( $artdom_blog_page ) : 'Блог' );
 /* Подводки нет: заголовок «Блог» и лента под ним объясняют раздел сами.
    Описание страницы остаётся в админке — вернуть его сюда одна строка. */
 set_query_var( 'artdom_head_lead', '' );
 ?>
 
-<main id="main">
+<main id="main" class="sheet">
   <?php get_template_part( 'template-parts/page-head' ); ?>
 
   <section class="sec sec--white">
