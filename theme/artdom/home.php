@@ -27,7 +27,6 @@ set_query_var( 'artdom_head_lead', '' );
 
   <section class="sec sec--white">
     <div class="wrap">
-      <div class="rule"></div>
 
       <?php if ( have_posts() ) : ?>
       <div class="blog__grid">

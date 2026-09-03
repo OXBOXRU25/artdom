@@ -2405,7 +2405,7 @@ form .btn {
    её задавал верхний отступ .sheet, и крошки лежали уже на белом листе. */
 .crumbbar {
   min-height: max(30px, calc(172 * var(--k)));
-  display: grid; align-items: end;
-  padding-block-end: max(12px, calc(26 * var(--k)));
+  display: grid; align-items: start;
+  padding-block-start: max(10px, calc(22 * var(--k)));
 }
 .crumbbar .crumbs { justify-content: center; }
