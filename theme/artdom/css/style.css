@@ -520,6 +520,12 @@ a[draggable="false"], img { -webkit-user-drag: none; }   /* НЕ наследу�
 .stats__label { margin-block-start: auto; font-size: var(--t-mid); line-height: 1.44; color: var(--c-muted); }
 
 /* --- Отзывы ------------------------------------------------------------------ */
+/* Зазор между отзывами приравнен к зазору между статьями. Там он получался
+   из бокового поля карточки (40 макетных на сторону, то есть 80 между
+   колонками), здесь — из токена, и порознь они разошлись: 35px против 61.
+   Токен переопределяем только в отзывах: у объектов карточки с картинками,
+   им широкий проём между колонками не нужен. */
+.reviews { --gap-card: max(36px, calc(80 * var(--k))); }
 /* Кнопка «Добавить отзыв» лежит в разметке после ленты, чтобы на телефоне
    читаться в правильном порядке: отзывы, бегунок, призыв. На широком экране
    сетка возвращает её в первую строку справа от заголовка. Сделано сеткой,
@@ -1696,6 +1702,27 @@ body:not(.home) { padding-block-start: var(--hdr-h); }
    трёх, и четвёртая — тоже первая в своей строке. */
 .pcard:nth-child(3n + 1) { padding-inline-start: 0; border-inline-start: 0; }
 .pcard:nth-child(3n) { padding-inline-end: 0; }
+
+/* Обложка. Пропорция задана здесь, а не размерами файла: пока снимков нет,
+   заглушка обязана занимать ровно столько же места, иначе с появлением
+   первой фотографии ряд подпрыгнет. */
+.pcard__media {
+  display: block;
+  aspect-ratio: 3 / 2;
+  overflow: clip;
+  background: var(--c-surface);
+  margin-block-end: max(14px, calc(24 * var(--k)));
+}
+.pcard__media img { width: 100%; height: 100%; object-fit: cover; transition: transform .9s var(--ease); }
+.pcard:hover .pcard__media img { transform: scale(1.04); }
+/* Заглушка: знак в четверть ширины, приглушённый до цвета линий. Читается
+   как «здесь будет снимок», а не как элемент оформления. */
+.pcard__stub {
+  display: grid; place-items: center;
+  width: 100%; height: 100%;
+  color: var(--c-rule);
+}
+.pcard__stub svg { width: 16%; height: auto; }
 
 .pcard__date {
   font-family: var(--f-ui);
