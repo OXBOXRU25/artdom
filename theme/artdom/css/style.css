@@ -864,6 +864,33 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .is-bad .field__error { display: block; }
 .is-bad .field__input { border-color: #c2334d; background: var(--c-white); }
 
+/* --- Оценка звёздами ---
+   Радиокнопки идут от пяти к одной, показ в обратном порядке. Тогда
+   «выбранная и все левее» — это просто соседний селектор ~, и вся
+   подсветка держится на CSS. Скрипт нужен только для проверки. */
+.rate { display: inline-flex; flex-direction: row-reverse; justify-content: flex-end; gap: max(4px, calc(6 * var(--k))); }
+.rate__star {
+  display: inline-grid; place-items: center;
+  /* Зона нажатия 44px при звезде в 26: WCAG 2.5.8 просит минимум 24, а
+     пальцем по звёздам промахиваются чаще всего. */
+  width: 44px; height: 44px;
+  color: var(--c-rule);
+  cursor: pointer;
+  transition: color var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.rate__star svg { width: 26px; height: auto; }
+/* Выбранная и все левее неё. */
+.rate__in:checked ~ .rate__star { color: var(--c-accent); }
+/* Наведение перебивает выбор: пока палец на третьей звезде, показываем три,
+   даже если выбрано пять. */
+.rate:hover .rate__star { color: var(--c-rule); }
+.rate__star:hover, .rate__star:hover ~ .rate__star { color: var(--c-accent); }
+.rate__star:hover { transform: scale(1.1); }
+.rate__in:focus-visible + .rate__star { outline: 2px solid var(--c-accent); outline-offset: 2px; border-radius: 6px; }
+/* У поля с оценкой заголовок стоит над звёздами, а не рядом. */
+.field--rating { gap: 2px; }
+.field--rating .rate { margin-inline-start: -10px; }   /* чернила звезды — в вертикаль поля */
+
 /* --- Согласие --- */
 /* Текст согласия на 15% мельче основного: это правовая приписка, а не
    часть разговора с клиентом. Высоту его строки держим в токене — от неё

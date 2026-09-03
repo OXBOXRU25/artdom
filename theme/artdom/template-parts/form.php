@@ -21,8 +21,11 @@ $f       = $forms[ $kind ];
 $id      = get_query_var( 'artdom_form_id' );
 $id      = $id ? $id : 'form-' . $kind;
 $closer  = (bool) get_query_var( 'artdom_form_closer' );
-$heading = get_query_var( 'artdom_form_heading' );
-$heading = '' === $heading ? false : ( $heading ? $heading : $f['title'] );
+/* Запасное значение возвращается только если переменную не задавали. Пустая
+   строка — это осознанное «без заголовка», её ставит страница контактов, где
+   заголовок формы уже есть в вёрстке. */
+$heading = get_query_var( 'artdom_form_heading', '__нет__' );
+$heading = '__нет__' === $heading ? $f['title'] : $heading;
 
 $legal   = artdom_field( 'opt_legal', true );
 $privacy = ( is_array( $legal ) && ! empty( $legal[0]['url'] ) ) ? $legal[0]['url'] : '#';
@@ -43,7 +46,7 @@ $started = time();
 
   <div class="modal__fields">
     <?php foreach ( $f['fields'] as $field ) : $fid = $id . '-' . $field['name']; ?>
-    <p class="field">
+    <p class="field<?php echo 'rating' === $field['type'] ? ' field--rating' : ''; ?>">
       <label class="field__label" for="<?php echo esc_attr( $fid ); ?>">
         <?php echo esc_html( $field['label'] ); ?><?php echo $field['required'] ? '<span aria-hidden="true"> *</span>' : ''; ?>
       </label>
@@ -53,7 +56,22 @@ $started = time();
          придётся, а с примером — по образцу. */
       $ph = isset( $field['placeholder'] ) ? $field['placeholder'] : '';
       ?>
-      <?php if ( 'textarea' === $field['type'] ) : ?>
+      <?php if ( 'rating' === $field['type'] ) : ?>
+      <?php
+      /* Звёзды идут в разметке от пяти к одной, а показываются в обратном
+         порядке (row-reverse). Так соседний селектор ~ закрашивает выбранную
+         звезду и все левее неё — без единой строчки скрипта. */
+      ?>
+      <span class="rate">
+        <?php for ( $artdom_r = 5; $artdom_r >= 1; $artdom_r-- ) : ?>
+        <input class="rate__in vh" type="radio" id="<?php echo esc_attr( $fid . '-' . $artdom_r ); ?>" name="<?php echo esc_attr( $field['name'] ); ?>" value="<?php echo (int) $artdom_r; ?>">
+        <label class="rate__star" for="<?php echo esc_attr( $fid . '-' . $artdom_r ); ?>">
+          <svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg>
+          <span class="vh"><?php echo (int) $artdom_r; ?> из 5</span>
+        </label>
+        <?php endfor; ?>
+      </span>
+      <?php elseif ( 'textarea' === $field['type'] ) : ?>
       <textarea class="field__input" id="<?php echo esc_attr( $fid ); ?>" name="<?php echo esc_attr( $field['name'] ); ?>" rows="3" autocomplete="off" placeholder="<?php echo esc_attr( $ph ); ?>"></textarea>
       <?php else : ?>
       <input class="field__input" id="<?php echo esc_attr( $fid ); ?>" name="<?php echo esc_attr( $field['name'] ); ?>"

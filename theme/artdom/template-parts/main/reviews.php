@@ -61,7 +61,7 @@ if ( $reviews->have_posts() ) :
          поднимает её обратно в шапку секции, справа от заголовка. */
       ?>
       <div class="reviews__cta" data-rise>
-        <?php artdom_btn( artdom_field( 'reviews_btn_text' ), artdom_field( 'reviews_btn_link' ), 'btn btn--wide' ); ?>
+        <?php artdom_btn( artdom_field( 'reviews_btn_text' ), '#', 'btn btn--wide', array( 'data-form-open' => 'review' ) ); ?>
       </div>
     </div>
   </section>

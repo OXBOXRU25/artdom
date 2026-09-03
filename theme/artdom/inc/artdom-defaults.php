@@ -380,6 +380,19 @@ function artdom_forms_config() {
 				array( 'name' => 'message', 'label' => 'Что ищете',            'type' => 'textarea', 'required' => false, 'autocomplete' => 'off',   'placeholder' => 'Трёхкомнатная в Хамовниках, бюджет до 200 млн, окна во двор' ),
 			),
 		),
+		'review'    => array(
+			'title'  => 'Оставить отзыв',
+			'lead'   => 'Расскажите, как прошла работа. Отзыв появится на сайте после проверки.',
+			'submit' => 'Отправить отзыв',
+			'fields' => array(
+				array( 'name' => 'name',    'label' => 'Как вас представить',  'type' => 'text',     'required' => true,  'autocomplete' => 'name',  'placeholder' => 'Анна С.' ),
+				array( 'name' => 'rating',  'label' => 'Оценка',               'type' => 'rating',   'required' => true,  'autocomplete' => 'off' ),
+				array( 'name' => 'message', 'label' => 'Отзыв',                'type' => 'textarea', 'required' => true,  'autocomplete' => 'off',   'placeholder' => 'Что понравилось, а что стоит улучшить' ),
+				/* Почта не обязательна: отзыв можно оставить и не оставляя контакта,
+				   но если он есть — будет куда ответить. */
+				array( 'name' => 'email',   'label' => 'Почта для ответа',     'type' => 'email',    'required' => false, 'autocomplete' => 'email', 'placeholder' => 'name@domain.ru' ),
+			),
+		),
 		'subscribe' => array(
 			'title'  => 'Подборка объектов на почту',
 			'lead'   => 'Раз в неделю — новые лоты и закрытые предложения. Без спама, отписаться можно в любой момент.',

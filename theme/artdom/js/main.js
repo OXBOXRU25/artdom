@@ -627,7 +627,20 @@
       var kind = form.getAttribute("data-form");
       var bad = null;
 
-      if (kind === "subscribe") {
+      if (kind === "review") {
+        var rn = form.elements.name;
+        if (rn.value.trim().length < 2) { showError(rn, "Как вас представить?"); bad = bad || rn; }
+        /* Группа радиокнопок приходит как коллекция, а не как одно поле:
+           у неё нет .value, пока ничего не выбрано. */
+        var stars = form.elements.rating;
+        var star = stars && (stars.value || (stars.length ? null : stars.checked));
+        if (!star) {
+          var первая = form.querySelector(".rate__in");
+          if (первая) { showError(первая, "Поставьте оценку."); bad = bad || первая; }
+        }
+        var rt = form.elements.message;
+        if (rt.value.trim().length < 20) { showError(rt, "Расскажите чуть подробнее — хотя бы пару фраз."); bad = bad || rt; }
+      } else if (kind === "subscribe") {
         var mail = form.elements.email;
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(mail.value.trim())) {
           showError(mail, "Проверьте адрес почты."); bad = bad || mail;

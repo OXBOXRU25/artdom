@@ -19,7 +19,6 @@ foreach ( array_keys( artdom_forms_config() ) as $artdom_kind ) :
 	set_query_var( 'artdom_form_kind', $artdom_kind );
 	set_query_var( 'artdom_form_id', $artdom_id );
 	set_query_var( 'artdom_form_closer', true );
-	set_query_var( 'artdom_form_heading', null );
 	get_template_part( 'template-parts/form' );
 	?>
 </dialog>

@@ -162,6 +162,7 @@ function artdom_handle_form() {
 	$email   = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
 	$message = isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '';
 	$page    = isset( $_POST['page'] ) ? esc_url_raw( wp_unslash( $_POST['page'] ) ) : '';
+	$rating  = isset( $_POST['rating'] ) ? (int) $_POST['rating'] : 0;
 	$consent = ! empty( $_POST['consent'] );
 
 	/* 5. Согласие на обработку персональных данных — требование 152-ФЗ */
@@ -169,7 +170,41 @@ function artdom_handle_form() {
 		artdom_form_error( 'Нужно согласие на обработку персональных данных.', 'consent' );
 	}
 
-	if ( 'subscribe' === $kind ) {
+	if ( 'review' === $kind ) {
+		if ( mb_strlen( $name ) < 2 ) {
+			artdom_form_error( 'Как вас представить?', 'name' );
+		}
+		if ( $rating < 1 || $rating > 5 ) {
+			artdom_form_error( 'Поставьте оценку.', 'rating' );
+		}
+		/* Двадцать знаков: «Всё отлично» — это не отзыв, а оценка, она уже есть
+		   в звёздах. Короткие записи потом всё равно удаляют руками. */
+		if ( mb_strlen( $message ) < 20 ) {
+			artdom_form_error( 'Расскажите чуть подробнее — хотя бы пару фраз.', 'message' );
+		}
+		if ( '' !== $email && ! is_email( $email ) ) {
+			artdom_form_error( 'Проверьте адрес почты.', 'email' );
+		}
+		$who     = $name;
+		$contact = $email;
+		$label   = 'Отзыв, ' . $rating . ' из 5';
+
+		/* Кладём сразу в раздел «Отзывы», но НЕ публикуем: отзыв с сайта должен
+		   пройти проверку. Заказчику остаётся нажать «Опубликовать», а не
+		   переносить текст руками из письма. */
+		$artdom_rev = wp_insert_post(
+			array(
+				'post_type'   => 'artdom_review',
+				'post_title'  => $name,
+				'post_status' => 'pending',
+			)
+		);
+		if ( ! is_wp_error( $artdom_rev ) && function_exists( 'update_field' ) ) {
+			update_field( 'field_artdom_rev_source', 'Отзыв на сайте', $artdom_rev );
+			update_field( 'field_artdom_rev_rating', $rating, $artdom_rev );
+			update_field( 'field_artdom_rev_text', $message, $artdom_rev );
+		}
+	} elseif ( 'subscribe' === $kind ) {
 		if ( ! is_email( $email ) ) {
 			artdom_form_error( 'Проверьте адрес почты.', 'email' );
 		}
@@ -214,6 +249,7 @@ function artdom_handle_form() {
 		'Имя'       => $name,
 		'Телефон'   => $phone,
 		'E-mail'    => $email,
+		'Оценка'    => $rating ? $rating . ' из 5' : '',
 		'Сообщение' => $message,
 		'Страница'  => $page,
 	);
@@ -248,11 +284,16 @@ function artdom_handle_form() {
 
 	set_transient( $key, $hits + 1, HOUR_IN_SECONDS );
 
+	/* Ответ по виду формы: обещание «брокер свяжется» после отзыва звучит
+	   так, будто человека сейчас будут продавать. */
+	$ответы = array(
+		'subscribe' => 'Готово. Первая подборка придёт в ближайшую неделю.',
+		'review'    => 'Спасибо! Отзыв появится на сайте после проверки.',
+		'lead'      => 'Спасибо! Персональный брокер свяжется с вами.',
+	);
 	wp_send_json_success(
 		array(
-			'message' => 'subscribe' === $kind
-				? 'Готово. Первая подборка придёт в ближайшую неделю.'
-				: 'Спасибо! Персональный брокер свяжется с вами.',
+			'message' => isset( $ответы[ $kind ] ) ? $ответы[ $kind ] : $ответы['lead'],
 		)
 	);
 }
