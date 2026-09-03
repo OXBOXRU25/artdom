@@ -964,19 +964,28 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .pagehead__extra .rating { margin-block-start: 0; }
 
 /* --- Фильтр каталога --- */
-.filters { display: flex; flex-wrap: wrap; gap: max(8px, calc(10 * var(--k))); }
+/* Фильтры и счётчик стоят одной строкой: счётчик относится к отобранному и
+   должен быть рядом с фильтром, а не абзацем ниже. Переносится он последним
+   и прижат вправо. */
+.catalog__bar {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: max(10px, calc(16 * var(--k))) max(16px, calc(28 * var(--k)));
+}
+.filters { display: flex; flex-wrap: wrap; gap: 8px; }
+/* Размеры фиксированные: фильтр — орган управления, а не блок вёрстки, и на
+   любом мониторе он должен быть одного размера. */
 .filters__chip {
   display: inline-flex; align-items: center; gap: 6px;
-  min-height: 44px; padding-inline: max(14px, calc(18 * var(--k)));
+  min-height: 44px; padding-inline: 16px;
   border-radius: var(--r-btn-sm); background: var(--c-chip); color: var(--c-ink-soft);
-  font-family: var(--f-ui); font-size: var(--t-chip);
+  font-family: var(--f-ui); font-size: 14px;
   transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
 }
 .filters__chip:hover { background: var(--c-rule); }
 .filters__chip[aria-current] { background: var(--c-ink); color: var(--c-white); }
 .filters__n { color: var(--c-muted); font-variant-numeric: tabular-nums; }
 .filters__chip[aria-current] .filters__n { color: var(--c-rule); }
-.catalog__count { margin-block-start: max(12px, calc(16 * var(--k))); font-family: var(--f-ui); font-size: var(--t-chip); }
+.catalog__count { margin: 0; font-family: var(--f-ui); font-size: 14px; white-space: nowrap; }
 
 /* --- Сетка карточек ---
    Та же карточка, что в ленте на главной, но в сетке: три колонки, потом две,
@@ -1740,13 +1749,17 @@ body:not(.home) { padding-block-start: var(--hdr-h); }
   margin-block-start: max(26px, calc(44 * var(--k)));
   margin-inline: calc(-1 * var(--pcard-pad));
 }
-.pcard {
-  padding-inline: var(--pcard-pad);
-  border-inline-start: var(--dp) solid var(--c-rule);
-}
+.pcard { padding-inline: var(--pcard-pad); }
+/* Волоски между колонками только в подборке на главной: там секция плотная
+   и линии держат ритм. В ленте раздела они дробят страницу.
+
+   Селектор именно section.blog, а не .blog: WordPress на странице записей
+   ставит <body class="blog">, и правило совпадало со всем телом страницы —
+   волоски оставались ровно там, откуда их просили убрать. */
+section.blog .pcard { border-inline-start: var(--dp) solid var(--c-rule); }
 /* Волосок снимаем только у первой в строке: он разделяет колонки, а слева от
    первой делить нечего. */
-.pcard:nth-child(3n + 1) { border-inline-start: 0; }
+section.blog .pcard:nth-child(3n + 1) { border-inline-start: 0; }
 
 /* Обложка. Пропорция задана здесь, а не размерами файла: пока снимков нет,
    заглушка обязана занимать ровно столько же места, иначе с появлением
@@ -1853,10 +1866,11 @@ body:not(.home) { padding-block-start: var(--hdr-h); }
 
 @media (max-width: 1180px) {
   .blog__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  /* В двух колонках первым без волоска должен быть каждый нечётный,
-     а не только самый первый. */
-  .pcard:nth-child(odd) { padding-inline-start: 0; border-inline-start: 0; }
-  .pcard:nth-child(even) { padding-inline-end: 0; }
+  /* В двух колонках без волоска остаётся каждый нечётный. Поля у ВСЕХ
+     карточек одинаковые: снятие крайних делает колонки разной ширины, и
+     обложка в узкой садится ниже соседней. */
+  section.blog .pcard:nth-child(3n + 1) { border-inline-start: var(--dp) solid var(--c-rule); }
+  section.blog .pcard:nth-child(odd) { border-inline-start: 0; }
 }
 
 @media (max-width: 767px) {

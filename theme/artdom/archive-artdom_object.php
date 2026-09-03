@@ -17,12 +17,10 @@ $all     = get_post_type_archive_link( 'artdom_object' );
 $total   = (int) $GLOBALS['wp_query']->found_posts;
 
 set_query_var( 'artdom_head_title', is_tax( 'artdom_object_type' ) ? single_term_title( '', false ) : 'Объекты' );
-set_query_var(
-	'artdom_head_lead',
-	is_tax( 'artdom_object_type' )
-		? term_description()
-		: 'Квартиры, резиденции и апартаменты в проверенных домах. Часть предложений не публикуется в открытом доступе — о них расскажет брокер.'
-);
+/* У каталога подводки нет: заголовок «Объекты» и ряд фильтров под ним
+   объясняют раздел лучше, чем абзац текста. У категории описание
+   остаётся — его пишет заказчик, и оно про конкретный тип. */
+set_query_var( 'artdom_head_lead', is_tax( 'artdom_object_type' ) ? term_description() : '' );
 ?>
 
 <main>
@@ -31,16 +29,23 @@ set_query_var(
   <section class="sec sec--white catalog">
     <div class="wrap">
 
-      <?php if ( ! is_wp_error( $terms ) && $terms ) : ?>
-      <div class="filters" role="group" aria-label="Фильтр по типу объекта">
-        <a class="filters__chip" href="<?php echo esc_url( $all ); ?>"<?php echo $current ? '' : ' aria-current="true"'; ?>>Все</a>
-        <?php foreach ( $terms as $t ) : ?>
-        <a class="filters__chip" href="<?php echo esc_url( get_term_link( $t ) ); ?>"<?php echo $current === $t->term_id ? ' aria-current="true"' : ''; ?>><?php echo esc_html( $t->name ); ?><span class="filters__n"><?php echo (int) $t->count; ?></span></a>
-        <?php endforeach; ?>
-      </div>
-      <?php endif; ?>
+      <?php
+      /* Фильтры и счётчик — одной строкой: счётчик относится к тому, что
+         отобрано фильтром, и стоять он должен рядом с ним, а не абзацем
+         ниже. Прижат к правому краю рабочей области. */
+      ?>
+      <div class="catalog__bar">
+        <?php if ( ! is_wp_error( $terms ) && $terms ) : ?>
+        <div class="filters" role="group" aria-label="Фильтр по типу объекта">
+          <a class="filters__chip" href="<?php echo esc_url( $all ); ?>"<?php echo $current ? '' : ' aria-current="true"'; ?>>Все</a>
+          <?php foreach ( $terms as $t ) : ?>
+          <a class="filters__chip" href="<?php echo esc_url( get_term_link( $t ) ); ?>"<?php echo $current === $t->term_id ? ' aria-current="true"' : ''; ?>><?php echo esc_html( $t->name ); ?><span class="filters__n"><?php echo (int) $t->count; ?></span></a>
+          <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
 
-      <p class="catalog__count muted"><?php echo esc_html( $total ); ?> <?php echo esc_html( artdom_plural( $total, array( 'объект', 'объекта', 'объектов' ) ) ); ?></p>
+        <p class="catalog__count muted"><?php echo esc_html( $total ); ?> <?php echo esc_html( artdom_plural( $total, array( 'объект', 'объекта', 'объектов' ) ) ); ?></p>
+      </div>
 
       <div class="rule"></div>
 
