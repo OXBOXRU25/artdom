@@ -1085,59 +1085,57 @@ textarea.field__input { resize: vertical; min-height: 96px; }
   margin-block-start: max(24px, calc(40 * var(--k)));
 }
 
-/* Вертикальный волосок между оглавлением и содержимым — он же и держит
-   левый край блоков. У референса линия идёт через всю высоту списка. */
-.svclist {
-  display: grid;
-  gap: calc(300 * var(--k));               /* снимки→следующее название 225 + воздух */
-  padding-inline-start: calc(44 * var(--k));
-  border-inline-start: var(--dp) solid var(--c-rule);
-}
-
+/* Оглавление. Липкое — на длинной странице человек всё время видит, где он.
+   Капса нет: по-русски пункты длинные, «ЮРИДИЧЕСКОЕ СОПРОВОЖДЕНИЕ» капсом
+   занимает две строки и спорит с названием услуги. Шаг между пунктами
+   удвоен против первого захода — список должен читаться как оглавление, а
+   не как плотный столбик. */
 .svcnav { position: sticky; top: calc(var(--hdr-h, 72px) + 24px); align-self: start; }
 .svcnav__cap {
   font-family: var(--f-ui); font-size: clamp(10px, calc(15 * var(--k)), 14px);
   line-height: 1.45; text-transform: uppercase; letter-spacing: .04em;
   color: var(--c-ink);
-  margin-block-end: calc(16 * var(--k));
+  margin-block-end: calc(30 * var(--k));
 }
-.svcnav__list { display: grid; }
+.svcnav__list { display: grid; row-gap: calc(53 * var(--k)); }
 .svcnav__list a {
   position: relative;
-  display: block; padding-block: calc(4 * var(--k));
+  display: block;
   font-family: var(--f-ui);
-  font-size: clamp(11px, calc(16 * var(--k)), 15px); line-height: 1.2;
-  text-transform: uppercase; letter-spacing: .01em;
+  font-size: clamp(11px, calc(16 * var(--k)), 15px); line-height: 1.4;
+  letter-spacing: .01em;
   color: var(--c-muted);
   transition: color var(--dur) var(--ease);
 }
 .svcnav__list a:hover { color: var(--c-ink); }
-/* Точка перед текущим пунктом — ровно как у референса. Ставится
-   псевдоэлементом слева от строки, чтобы текст не сдвигался при подсветке. */
+/* Точка перед текущим пунктом. Псевдоэлементом слева от строки, чтобы текст
+   не сдвигался при подсветке. */
 .svcnav__list a.is-here { color: var(--c-accent); }
-.svcnav__list a.is-here::before {
-  content: "•"; position: absolute; inset-inline-start: -11px;
+.svcnav__list a.is-here::before { content: "•"; position: absolute; inset-inline-start: -11px; }
+
+/* Вертикальный волосок между оглавлением и содержимым — он же и держит
+   левый край блоков. У референса линия идёт через всю высоту списка. */
+/* Левый край блока считаем сами: поле контейнера + столбец оглавления +
+   два зазора + сам волосок. Он нужен, чтобы правая колонка начиналась ровно
+   на середине ЭКРАНА, а не на середине блока: 50vw минус этот край и есть
+   ширина левой колонки. */
+.svclist {
+  --svc-left: calc(var(--gutter) + 195px + calc(44 * var(--k)) * 2 + var(--dp));
+  display: grid;
+  gap: calc(300 * var(--k));
+  padding-inline-start: calc(44 * var(--k));
+  border-inline-start: var(--dp) solid var(--c-rule);
 }
 
-/* --- Блок услуги -------------------------------------------------------------
-   Три колонки: слева служебная (номер и подпись), в середине название и
-   список, справа вопрос с текстом. Доли сняты с референса: 136 / 470 / 494
-   при контейнере 1100. */
 .svcrow {
   display: grid;
-  grid-template-columns: minmax(88px, 136px) minmax(0, 470fr) minmax(0, 494fr);
+  grid-template-columns: calc(50vw - var(--svc-left) - calc(28 * var(--k))) minmax(0, 1fr);
   column-gap: calc(28 * var(--k));
   row-gap: 0;
   align-items: start;
 }
-.svcrow__n {
-  grid-column: 1; grid-row: 1;
-  font-family: var(--f-ui);
-  font-size: clamp(11px, calc(16 * var(--k)), 15px); line-height: 1.6;
-  color: var(--c-ink);
-}
 .svcrow__title {
-  grid-column: 2 / -1; grid-row: 1;
+  grid-column: 1 / -1; grid-row: 1;
   font-size: clamp(24px, calc(43 * var(--k)), 54px); line-height: 1.2;
   font-weight: 500; letter-spacing: -.01em;
   text-transform: uppercase;
@@ -1146,26 +1144,22 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .svcrow__title a:hover { color: var(--c-accent); }
 
 /* 57 при 1440 — воздух между названием и строкой ниже. */
-.svcrow__cap   { grid-column: 1; grid-row: 2; margin-block-start: calc(76 * var(--k)); }
-.svcrow__scope { grid-column: 2; grid-row: 2; margin-block-start: calc(76 * var(--k)); }
-.svcrow__side  { grid-column: 3; grid-row: 2; margin-block-start: calc(76 * var(--k)); }
+.svcrow__scope { grid-column: 1; grid-row: 2; margin-block-start: calc(76 * var(--k)); }
+.svcrow__side  { grid-column: 2; grid-row: 2; margin-block-start: calc(76 * var(--k)); }
 
-.svcrow__cap {
-  font-family: var(--f-ui);
-  font-size: clamp(10px, calc(15 * var(--k)), 14px); line-height: 1.45;
-  text-transform: uppercase; letter-spacing: .02em;
-  color: var(--c-muted);
-}
 .svcrow__scope {
   display: grid; gap: 0;
   font-size: clamp(13px, calc(19 * var(--k)), 18px); line-height: 1.5;
   color: var(--c-ink); font-weight: 500;
 }
-/* Тире вместо маркера — как у референса. Отдельной колонкой, чтобы вторая
-   строка длинного пункта вставала под текст, а не под тире. */
-.svcrow__scope li { display: grid; grid-template-columns: 1.1em 1fr; }
-.svcrow__scope li::before { content: "–"; color: inherit; }
-
+/* Маркер — маленький синий кружок, отдельной колонкой, чтобы вторая строка
+   длинного пункта вставала под текст, а не под кружок. */
+.svcrow__scope li { display: grid; grid-template-columns: 1.1em 1fr; align-items: baseline; }
+.svcrow__scope li::before {
+  content: ""; align-self: center;
+  width: .42em; height: .42em; border-radius: 50%;
+  background: var(--c-accent);
+}
 .svcrow__q {
   font-size: clamp(15px, calc(24 * var(--k)), 23px); line-height: 1.4;
   color: var(--c-ink); font-weight: 500; text-wrap: balance;
@@ -1187,7 +1181,7 @@ textarea.field__input { resize: vertical; min-height: 96px; }
    между группами 37. Пропорции в стилях, а не в файлах: с появлением первой
    настоящей фотографии ряд не поедет. */
 .svcrow__media {
-  grid-column: 2 / -1; grid-row: 3;
+  grid-column: 1 / -1; grid-row: 3;
   margin-block-start: calc(150 * var(--k));   /* 112 при 1440 */
   display: grid;
   grid-template-columns: 512fr 281fr 281fr;
@@ -1195,7 +1189,7 @@ textarea.field__input { resize: vertical; min-height: 96px; }
   align-items: start;
 }
 /* Между крупным и парой у референса 37, а не 8 — добираем полем на первом. */
-.svcrow__shot--big { margin-inline-end: calc(39 * var(--k)); margin-block-start: calc(33 * var(--k)); }
+.svcrow__shot--big { margin-inline-end: calc(39 * var(--k)); }
 .svcrow__shot {
   aspect-ratio: 281 / 250;
   background: var(--c-surface);
@@ -1211,16 +1205,13 @@ textarea.field__input { resize: vertical; min-height: 96px; }
   .svcpage__in { grid-template-columns: minmax(0, 1fr); }
   .svcnav { display: none; }
   .svclist { padding-inline-start: 0; border-inline-start: 0; gap: calc(120 * var(--k)); }
-  .svcrow { grid-template-columns: minmax(24px, 34px) minmax(0, 1fr); }
-  .svcrow__title { grid-column: 2; }
-  .svcrow__cap   { grid-column: 2; grid-row: 2; }
-  .svcrow__scope { grid-column: 2; grid-row: 3; margin-block-start: calc(20 * var(--k)); }
-  .svcrow__side  { grid-column: 2; grid-row: 4; margin-block-start: calc(40 * var(--k)); }
-  .svcrow__media { grid-column: 2; grid-row: 5; grid-template-columns: 1fr; gap: 10px; }
-  .svcrow__media > .svcrow__shot:nth-child(2),
-  .svcrow__media > .svcrow__shot:nth-child(3) { grid-column: 1; grid-row: auto; margin: 0; }
+  .svcrow { grid-template-columns: minmax(0, 1fr); }
+  .svcrow__title { grid-column: 1; }
+  .svcrow__scope { grid-column: 1; grid-row: 2; margin-block-start: calc(30 * var(--k)); }
+  .svcrow__side  { grid-column: 1; grid-row: 3; margin-block-start: calc(50 * var(--k)); }
+  .svcrow__media { grid-column: 1; grid-row: 4; grid-template-columns: 1fr; gap: 10px; }
+  .svcrow__shot--big { margin-inline-end: 0; margin-block-start: 0; }
 }
-
 /* --- Порядок работы --- */
 .steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap-card) var(--gutter); margin-block-start: max(24px, calc(40 * var(--k))); }
 .steps__n { font-family: var(--f-ui); font-size: var(--t-title); color: var(--c-accent); font-variant-numeric: tabular-nums; }

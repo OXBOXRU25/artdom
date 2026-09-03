@@ -61,18 +61,16 @@ if ( have_posts() ) {
       </nav>
 
       <div class="svclist">
-        <?php foreach ( $artdom_items as $artdom_i => $artdom_s ) : ?>
+        <?php foreach ( $artdom_items as $artdom_s ) : ?>
         <?php
         $artdom_q     = ( is_array( $artdom_s['faq'] ) && $artdom_s['faq'] ) ? $artdom_s['faq'][0]['q'] : '';
         $artdom_paras = preg_split( '/\R{2,}/u', trim( $artdom_s['text'] ) );
         ?>
         <article class="svcrow" id="<?php echo esc_attr( $artdom_s['id'] ); ?>" data-rise>
 
-          <p class="svcrow__n" aria-hidden="true"><?php echo esc_html( str_pad( $artdom_i + 1, 2, '0', STR_PAD_LEFT ) ); ?></p>
           <h2 class="svcrow__title"><a href="<?php echo esc_url( $artdom_s['link'] ); ?>"><?php echo esc_html( $artdom_s['title'] ); ?></a></h2>
 
           <?php if ( is_array( $artdom_s['steps'] ) && $artdom_s['steps'] ) : ?>
-          <p class="svcrow__cap">Что входит:</p>
           <ul class="svcrow__scope" role="list">
             <?php foreach ( $artdom_s['steps'] as $artdom_st ) : ?>
             <li><?php echo esc_html( $artdom_st['title'] ); ?></li>
