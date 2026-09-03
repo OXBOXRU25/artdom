@@ -2237,10 +2237,14 @@ form .btn {
   text-transform: uppercase;
 }
 
-/* Текст второй колонкой: у референса он начинается примерно на 19% строки и
-   занимает около четверти. */
-.abtext__in { display: grid; grid-template-columns: 19% minmax(0, 1fr); }
-.abtext__col { grid-column: 2; max-width: 58ch; }
+/* Текст идёт продолжением центрированной шапки, а не отдельной колонкой у
+   левого края. Сдвиг влево (как у референса) поставил на одном экране два
+   разных выравнивания подряд: подводка по центру, следом колонка слева — и
+   страница разваливалась пополам. Блок по центру, строки внутри по левому
+   краю: так читается длинный текст. */
+.abtext { padding-block-start: 0; }
+.abtext__in { display: grid; justify-items: center; }
+.abtext__col { max-width: 62ch; }
 /* Все абзацы одним кеглем. Крупным раньше шёл первый — он работал
    подзаголовком; после того как первый абзац уехал в шапку страницы,
    выделение доставалось случайному абзацу и читалось ошибкой. */
@@ -2263,7 +2267,9 @@ form .btn {
 .abstage__q {
   max-width: calc(1100 * var(--k));
   margin-inline: auto;
-  font-size: clamp(28px, calc(85 * var(--k)), 88px); line-height: 1.1;
+  /* Меньше референсных 64: у них короткие английские слова, наша фраза
+     длиннее и тем же кеглем занимала пять строк во весь экран. */
+  font-size: clamp(22px, calc(58 * var(--k)), 60px); line-height: 1.15;
   font-weight: 500; letter-spacing: -.02em;
   text-transform: uppercase;
   color: var(--c-white);
@@ -2303,22 +2309,20 @@ form .btn {
   margin-block-end: calc(50 * var(--k));
 }
 
-/* Команда: строки с волоском, портрет слева, имя, роль справа. */
-.abteam__list { display: grid; }
-/* Доли колонок сняты с референса при 1440: портрет стоит у левого края
-   (l=48, ширина 161), имя начинается только на 723 — то есть после большой
-   паузы, ровно на середине строки, — а роль прижата к правому краю (l=1172,
-   ширина 195). Первый заход давал имя на 215: строка выглядела плотной и на
-   референс не походила вовсе. */
+/* Разметка снята с референса при 1440: сам список начинается не у края
+   страницы, а на 400 и имеет ширину 977. Внутри строки портрет прижат
+   влево (161x100), имя стоит на 723, роль на 1172 — то есть доли колонок
+   323 / 449 / 205. Волосков между строками у референса НЕТ, шаг строки 116.
+   Прошлый заход считал доли от края страницы, а не от начала списка, и
+   портрет оставался у левого поля. */
+.abteam__list { display: grid; margin-inline-start: 27.8%; }
 .abteam__row {
   display: grid;
-  grid-template-columns: 675fr 449fr 205fr;
+  grid-template-columns: 323fr 449fr 205fr;
   align-items: center; column-gap: calc(28 * var(--k));
-  padding-block: calc(20 * var(--k));
-  border-block-start: var(--dp) solid var(--c-rule);
+  min-height: calc(155 * var(--k));
 }
-.abteam__row:last-child { border-block-end: var(--dp) solid var(--c-rule); }
-.abteam__shot { display: block; width: calc(161 * var(--k)); min-width: 96px; aspect-ratio: 161 / 100; background: var(--c-surface); }
+.abteam__shot { display: block; width: calc(215 * var(--k)); min-width: 96px; aspect-ratio: 161 / 100; background: var(--c-surface); }
 .abteam__name { font-size: clamp(17px, calc(37 * var(--k)), 38px); line-height: 1.3; font-weight: 500; }
 .abteam__role { font-family: var(--f-ui); font-size: clamp(12px, calc(19 * var(--k)), 18px); line-height: 1.5; color: var(--c-muted); }
 
@@ -2343,7 +2347,8 @@ form .btn {
   .abtext__in { grid-template-columns: minmax(0, 1fr); }
   .abtext__col { grid-column: 1; }
   .abwhy__in { grid-template-columns: minmax(0, 1fr); }
-  .abteam__row { grid-template-columns: 96px minmax(0, 1fr); row-gap: 4px; }
+  .abteam__list { margin-inline-start: 0; }
+  .abteam__row { grid-template-columns: 96px minmax(0, 1fr); row-gap: 4px; min-height: 0; padding-block: 14px; border-block-start: var(--dp) solid var(--c-rule); }
   .abteam__role { grid-column: 2; }
   .abpath__row { grid-template-columns: minmax(0, 1fr); row-gap: 10px; }
 }
