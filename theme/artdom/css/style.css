@@ -2351,7 +2351,6 @@ form .btn {
   padding-block: calc(50 * var(--k));
   border-block-start: var(--dp) solid var(--c-rule);
 }
-.abpath__row:last-child { border-block-end: var(--dp) solid var(--c-rule); }
 .abpath__n {
   font-size: clamp(34px, calc(85 * var(--k)), 88px); line-height: 1.3;
   font-weight: 500; color: var(--c-accent);
