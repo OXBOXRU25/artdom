@@ -47,9 +47,17 @@ $started = time();
   <div class="modal__fields">
     <?php foreach ( $f['fields'] as $field ) : $fid = $id . '-' . $field['name']; ?>
     <p class="field<?php echo 'rating' === $field['type'] ? ' field--rating' : ''; ?>">
-      <label class="field__label" for="<?php echo esc_attr( $fid ); ?>">
-        <?php echo esc_html( $field['label'] ); ?><?php echo $field['required'] ? '<span aria-hidden="true"> *</span>' : ''; ?>
-      </label>
+      <?php
+      /* У оценки подпись НЕ <label for>: полей там пять, а не одно, и ссылка
+         вела в пустоту — валидатор ругался на каждой странице сайта. Группу
+         радиокнопок подписывает aria-labelledby на самой группе. */
+      $artdom_lbl = esc_html( $field['label'] ) . ( $field['required'] ? '<span aria-hidden="true"> *</span>' : '' );
+      ?>
+      <?php if ( 'rating' === $field['type'] ) : ?>
+      <span class="field__label" id="<?php echo esc_attr( $fid ); ?>-label"><?php echo $artdom_lbl; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+      <?php else : ?>
+      <label class="field__label" for="<?php echo esc_attr( $fid ); ?>"><?php echo $artdom_lbl; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label>
+      <?php endif; ?>
       <?php
       /* Пример заполнения серым: он показывает не только формат, но и то,
          какие подробности нам полезны. Пустое поле человек заполняет как
@@ -62,7 +70,7 @@ $started = time();
          порядке (row-reverse). Так соседний селектор ~ закрашивает выбранную
          звезду и все левее неё — без единой строчки скрипта. */
       ?>
-      <span class="rate">
+      <span class="rate" role="radiogroup" aria-labelledby="<?php echo esc_attr( $fid ); ?>-label"<?php echo $field['required'] ? ' aria-required="true"' : ''; ?>>
         <?php for ( $artdom_r = 5; $artdom_r >= 1; $artdom_r-- ) : ?>
         <input class="rate__in vh" type="radio" id="<?php echo esc_attr( $fid . '-' . $artdom_r ); ?>" name="<?php echo esc_attr( $field['name'] ); ?>" value="<?php echo (int) $artdom_r; ?>">
         <label class="rate__star" for="<?php echo esc_attr( $fid . '-' . $artdom_r ); ?>">

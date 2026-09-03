@@ -11,7 +11,7 @@
  * @package artdom
  */
 
-foreach ( array_keys( artdom_forms_config() ) as $artdom_kind ) :
+foreach ( artdom_forms_config() as $artdom_kind => $artdom_conf ) :
 	$artdom_id = 'form-' . $artdom_kind;
 	?>
 <dialog class="modal" id="<?php echo esc_attr( $artdom_id ); ?>" aria-labelledby="<?php echo esc_attr( $artdom_id ); ?>-title">
@@ -19,6 +19,13 @@ foreach ( array_keys( artdom_forms_config() ) as $artdom_kind ) :
 	set_query_var( 'artdom_form_kind', $artdom_kind );
 	set_query_var( 'artdom_form_id', $artdom_id );
 	set_query_var( 'artdom_form_closer', true );
+	/* Заголовок задаём ЯВНО, а не полагаемся на запасное значение в form.php.
+	   Переменные запроса живут до конца страницы: контакты ставят пустой
+	   заголовок своей встроенной форме, а модалки рисуются в подвале ПОСЛЕ
+	   них — и наследовали пустоту. На той странице все три модалки выходили
+	   без заголовка, а aria-labelledby указывал в никуда, то есть диалог
+	   оставался без имени для скринридера. */
+	set_query_var( 'artdom_form_heading', $artdom_conf['title'] );
 	get_template_part( 'template-parts/form' );
 	?>
 </dialog>

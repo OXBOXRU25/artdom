@@ -85,7 +85,7 @@ $legal   = artdom_field( 'opt_legal', true );
     <div class="ftr__mid">
       <div>
         <?php if ( $phone ) : ?>
-        <a class="ftr__tel selectable" href="tel:<?php echo esc_attr( artdom_tel( $phone ) ); ?>"><?php echo esc_html( str_replace( ' ', "\u{00a0}", $phone ) ); ?></a>
+        <a class="ftr__tel selectable" href="tel:<?php echo esc_attr( artdom_tel( $phone ) ); ?>"><?php echo esc_html( artdom_phone_text( $phone ) ); ?></a>
         <?php endif; ?>
         <?php if ( $email ) : ?>
         <a class="ftr__mail selectable" href="mailto:<?php echo esc_attr( $email ); ?>"><?php echo esc_html( $email ); ?></a>
@@ -110,7 +110,7 @@ $legal   = artdom_field( 'opt_legal', true );
             'container_class'      => 'ftr__nav',
             'container_aria_label' => 'Навигация в подвале',
             'menu_class'           => '',
-            'items_wrap'           => '%3$s',
+            'items_wrap'           => '<ul class="ftr__list" role="list">%3$s</ul>',
             'depth'                => 1,
             'fallback_cb'          => false,
           )

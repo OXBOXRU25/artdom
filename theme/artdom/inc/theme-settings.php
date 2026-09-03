@@ -152,18 +152,6 @@ add_filter( 'get_the_archive_title', function( $title ){
 //    add_image_size( 'wise_img', 460, 320, array( 'center', 'center' ) );
 //    add_image_size( 'wise_gal', 420, 260, array( 'center', 'center' ) );
 //}
-
-/**
- * Custom Form for search
- * for enable use shortcode
- *   <?=do_shortcode('[wise_search]')?>
- */
-function wise_searchform_custom( $form ) {
-    $form = '<form action="#" id="search-form" class="search-form" method="get"><div class="search-form__input"><input type="text" id="s" name="s" placeholder="Введите слово для поиска" onfocus="if (this.value == \'Введите слово для поиска\') {this.value = \'\';}" onblur="if (this.value == \'\') {this.value = \'Введите слово для поиска\';}" ><button type="submit"><svg id="icon-search" viewBox="0 0 12 12"><path d="M11.3,10.3L8.2,7.1C8.7,6.4,9,5.6,9,4.7C9,2.4,7,0.4,4.7,0.4c-2.3,0-4.2,1.9-4.2,4.2s1.9,4.2,4.2,4.2 c0.9,0,1.7-0.3,2.4-0.8l3.1,3.1c0.1,0.1,0.3,0.2,0.5,0.2s0.4-0.1,0.5-0.2C11.6,11,11.6,10.6,11.3,10.3z M2,4.7 c0-1.5,1.2-2.8,2.8-2.8s2.8,1.2,2.8,2.8S6.2,7.4,4.7,7.4S2,6.2,2,4.7z"> </path></svg></button></div></form>';
-    return $form;
-}
-add_shortcode('wise_search', 'wise_searchform_custom');
-
 /**
  *  change post per page for CPT services
  */

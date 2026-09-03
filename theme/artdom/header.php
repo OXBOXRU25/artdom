@@ -82,7 +82,7 @@ $u = get_template_directory_uri();
         'container_class' => 'nav',
         'container_aria_label' => 'Основная навигация',
         'menu_class'      => '',
-        'items_wrap'      => '%3$s',
+        'items_wrap'      => '<ul class="nav__list" role="list">%3$s</ul>',
         'depth'           => 1,
         'fallback_cb'     => false,
       )
@@ -91,7 +91,7 @@ $u = get_template_directory_uri();
 
     <div class="hdr__right">
       <?php $artdom_phone = artdom_field( 'opt_phone', true ); ?>
-      <a class="hdr__tel selectable" href="tel:<?php echo esc_attr( artdom_tel( $artdom_phone ) ); ?>"><?php echo esc_html( str_replace( ' ', "\u{00a0}", $artdom_phone ) ); ?></a>
+      <a class="hdr__tel selectable" href="tel:<?php echo esc_attr( artdom_tel( $artdom_phone ) ); ?>"><?php echo esc_html( artdom_phone_text( $artdom_phone ) ); ?></a>
       <a class="hdr__cta" href="#" data-form-open="lead">
         <span class="hdr__cta-dot" aria-hidden="true"></span>Оставить заявку
       </a>
@@ -132,7 +132,7 @@ $u = get_template_directory_uri();
           'container_class' => 'menu__nav',
           'container_aria_label' => 'Меню',
           'menu_class'      => '',
-          'items_wrap'      => '%3$s',
+          'items_wrap'      => '<ul class="menu__list" role="list">%3$s</ul>',
           'depth'           => 1,
           'fallback_cb'     => false,
         )
@@ -149,7 +149,7 @@ $u = get_template_directory_uri();
       $artdom_mail  = artdom_field( 'opt_email', true );
       ?>
       <?php if ( $artdom_phone ) : ?>
-      <a class="menu__tel selectable" href="tel:<?php echo esc_attr( artdom_tel( $artdom_phone ) ); ?>"><?php echo esc_html( str_replace( ' ', "\u{00a0}", $artdom_phone ) ); ?></a>
+      <a class="menu__tel selectable" href="tel:<?php echo esc_attr( artdom_tel( $artdom_phone ) ); ?>"><?php echo esc_html( artdom_phone_text( $artdom_phone ) ); ?></a>
       <?php endif; ?>
       <?php if ( $artdom_mail ) : ?>
       <a class="menu__mail selectable" href="mailto:<?php echo esc_attr( $artdom_mail ); ?>"><?php echo esc_html( $artdom_mail ); ?></a>

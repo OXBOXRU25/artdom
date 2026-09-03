@@ -239,7 +239,6 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .logo__mark { width: calc(38 * var(--k)); min-width: 26px; height: auto; }
 .logo__word { width: calc(141 * var(--k)); min-width: 96px; height: auto; }
 .hdr__right { display: flex; align-items: center; gap: calc(60 * var(--k)); pointer-events: auto; }
-.nav { display: flex; align-items: center; gap: calc(34 * var(--k)); }
 .nav a, .hdr__tel {
   font-family: var(--f-ui); font-size: var(--t-nav); line-height: 1;
   min-height: 48px; display: inline-flex; align-items: center;
@@ -590,7 +589,8 @@ a[draggable="false"], img { -webkit-user-drag: none; }   /* НЕ наследу�
    попадал в чужую ссылку. Приём с маргином годится для одиночной ссылки
    в тексте, но не для стопки. 30px проходит минимум WCAG 2.5.8 (24px). */
 .ftr__soc a, .ftr__legal a { min-height: 30px; margin-block: 0; }
-.ftr__nav { display: grid; gap: 0; justify-items: start; font-size: clamp(17px, calc(21 * var(--k)), 26px); }
+.ftr__nav { font-size: clamp(17px, calc(21 * var(--k)), 26px); }
+.ftr__list { display: grid; gap: 0; justify-items: start; }
 .ftr__legal { margin-block-start: calc(54 * var(--k)); display: grid; gap: 0; justify-items: start; font-family: var(--f-ui); font-size: var(--t-nav); }
 /* :where() обнуляет специфичность аргумента, поэтому правило весит всего (0,1,0)
    и его перебивает ЛЮБОЕ именное правило для отдельной ссылки. Без этого
@@ -706,15 +706,20 @@ html.rise-failsafe.rise-failsafe [data-rise="shutter"] {
   visibility: hidden;
 }
 .menu[data-open="true"] { clip-path: inset(0); visibility: visible; }
-/* Меню WordPress приходит голыми <li> внутри <nav>. display: contents убирает
-   их из раскладки и заодно из-под маркера списка, а ссылка становится прямым
-   потомком сетки — ровно как было в статике. Сам .menu__nav из этого списка
-   исключён: он держит собственную сетку, и её шаг отличается от расстояния
-   до разделителя ниже. */
-.nav li, .ftr__nav li, .menu__nav li { display: contents; }
+/* Меню лежит в настоящем <ul>: голые <li> внутри <nav> — ошибка разметки, и
+   скринридер на них не объявляет «список из пяти пунктов». Раскладку держит
+   сам список, а <nav> остаётся только оболочкой (в шапке — ещё и плашкой, на
+   которой ездит пилюля).
+
+   display: contents тут не годится вовсе, хотя и убрал бы <ul> из раскладки
+   одной строкой: он выносит элемент из дерева доступности, и семантика
+   списка теряется ровно так же, как без <ul>. */
+.nav__list  { display: flex; align-items: center; gap: calc(34 * var(--k)); }
+.ftr__list  { display: grid; gap: 0; justify-items: start; }
+.menu__list { display: grid; justify-items: center; width: 100%; }
 
 .menu__in { width: 100%; display: grid; justify-items: center; }
-.menu__nav { display: grid; justify-items: center; width: 100%; }
+.menu__nav { width: 100%; }
 .menu__nav a {
   display: flex; align-items: center; justify-content: center;
   min-height: 48px;
@@ -1514,7 +1519,7 @@ body.is-sheet .hdr--solid { background: transparent; }
   /* Ссылки-строки центрируем полями: ширина у них по содержимому, а
      отрицательный отступ от зоны нажатия при этом остаётся на месте. */
   .ftr a.ftr__tel, .ftr a.ftr__mail { margin-inline: auto; }
-  .ftr__soc, .ftr__nav, .ftr__legal { justify-items: center; }
+  .ftr__soc, .ftr__list, .ftr__legal { justify-items: center; }
   .ftr__bottom { align-items: center; text-align: center; }
 
   /* Кнопки призыва — во всю рабочую ширину экрана. Текст слева, стрелка
@@ -1583,8 +1588,7 @@ body.is-sheet .hdr--solid { background: transparent; }
    переезжает с пункта на пункт, поэтому движение читается как один жест. */
 .nav {
   position: relative;
-  display: inline-flex; align-items: center;
-  gap: 0;
+  display: inline-flex;
   /* Размеры строки шапки НЕ резиновые, и это осознанно. Меню, кнопка и
      телефон — органы управления, а не блоки вёрстки: они должны быть одного
      размера на любом мониторе. Пока они считались от --k, группа меню росла
@@ -1595,6 +1599,9 @@ body.is-sheet .hdr--solid { background: transparent; }
   border-radius: 12px;
   background: var(--c-ink-soft);
 }
+/* Сам список внутри плашки: раскладка на нём, а не на <nav> — иначе <ul>
+   встал бы единственным элементом флекса и зазор между пунктами исчез. */
+.nav__list { display: flex; align-items: center; gap: 0; }
 
 /* Пилюля создаётся скриптом: без него подсветка остаётся заливкой самого
    пункта, и меню выглядит правильно даже когда скрипт не поднялся. */
@@ -1975,3 +1982,22 @@ section.blog .pcard:nth-child(3n + 1) { border-inline-start: 0; }
   .revrow__head { grid-template-columns: auto minmax(0, 1fr); }
   .revrow__date { grid-column: 2; margin-block-start: 2px; }
 }
+
+/* --- Поиск ------------------------------------------------------------------
+   Одна строка: поле тянется, кнопка держит свой размер. Кнопка квадратная и
+   со стрелкой — той же, что везде на сайте; текст «Искать» остаётся для
+   скринридера. Круглая, как кнопки-стрелки в лентах, чтобы форма читалась
+   частью сайта, а не куском админки. */
+.srch { display: flex; align-items: center; gap: 10px; width: min(100%, 520px); }
+.srch__in { flex: 1 1 auto; }
+.srch__go {
+  flex: none;
+  width: 48px; height: 48px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 0; border-radius: 50%;
+  background: var(--c-accent); color: var(--c-white);
+  cursor: pointer;
+  transition: background-color var(--dur) var(--ease);
+}
+.srch__go svg { width: 20px; height: auto; }
+.srch__go:hover { background: var(--c-ink); }

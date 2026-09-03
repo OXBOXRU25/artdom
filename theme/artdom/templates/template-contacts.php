@@ -74,7 +74,7 @@ while ( have_posts() ) :
           <?php if ( $phone ) : ?>
           <div class="crows__row">
             <dt>Телефон</dt>
-            <dd><a href="tel:<?php echo esc_attr( artdom_tel( $phone ) ); ?>"><?php echo esc_html( $phone ); ?></a></dd>
+            <dd><a href="tel:<?php echo esc_attr( artdom_tel( $phone ) ); ?>"><?php echo esc_html( artdom_phone_text( $phone ) ); ?></a></dd>
           </div>
           <?php endif; ?>
           <?php if ( $email ) : ?>
