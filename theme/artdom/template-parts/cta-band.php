@@ -11,10 +11,14 @@
 $title = get_query_var( 'artdom_cta_title' );
 $text  = get_query_var( 'artdom_cta_text' );
 $btn   = get_query_var( 'artdom_cta_btn' );
+$form  = get_query_var( 'artdom_cta_form' );
 
 $title = $title ? $title : 'Не нашли подходящее?';
 $text  = $text ? $text : 'Часть объектов не публикуется в открытом доступе. Расскажите, что ищете&nbsp;— брокер подберёт из закрытой базы.';
 $btn   = $btn ? $btn : 'Оставить заявку';
+/* Какую форму открывает кнопка. На странице отзывов — форму отзыва, иначе
+   призыв «расскажите, как всё прошло» вёл бы к подбору объектов. */
+$form  = $form ? $form : 'lead';
 ?>
   <section class="sec sec--surface ctaband">
     <div class="wrap ctaband__in" data-rise>
@@ -22,6 +26,6 @@ $btn   = $btn ? $btn : 'Оставить заявку';
         <h2 class="h2"><?php echo artdom_lines( $title ); ?></h2>
         <p class="body"><?php echo artdom_lines( $text ); ?></p>
       </div>
-      <?php artdom_btn( $btn, '#', 'btn btn--wide', array( 'data-form-open' => 'lead' ) ); ?>
+      <?php artdom_btn( $btn, '#', 'btn btn--wide', array( 'data-form-open' => $form ) ); ?>
     </div>
   </section>

@@ -464,6 +464,9 @@ function artdom_fill_demo() {
 				'post_name'   => sanitize_title( $name ),
 				'post_status' => 'publish',
 				'menu_order'  => $i,
+				/* Разводим по датам: одной минутой они выглядят как выгрузка,
+				   а на странице отзывов дата показывается. */
+				'post_date'   => gmdate( 'Y-m-d H:i:s', strtotime( '-' . ( $i * 17 + 5 ) . ' days' ) ),
 			)
 		);
 		if ( is_wp_error( $id ) ) {

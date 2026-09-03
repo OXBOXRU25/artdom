@@ -149,7 +149,7 @@ add_action( 'init', 'artdom_maybe_flush_rules', 99 );
  * Создание идемпотентно, поэтому повторный проход ничего не дублирует.
  */
 function artdom_maybe_seed() {
-	$version = 8;
+	$version = 9;
 
 	if ( (int) get_option( 'artdom_seed_version' ) >= $version ) {
 		return;
@@ -164,6 +164,7 @@ function artdom_maybe_seed() {
 
 	artdom_drop_old_demo();
 	artdom_drop_wp_stubs();
+	artdom_spread_review_dates();
 	artdom_fill_demo();
 	artdom_drop_duplicates();
 	artdom_trim_contacts();
@@ -187,6 +188,35 @@ add_action( 'init', 'artdom_maybe_seed', 100 );
  * не совпадает ни с чем. Опознаём по тексту, который WordPress пишет в них
  * сам, — заказчик такого не напишет, а чужие записи трогать нельзя.
  */
+/**
+ * Развести даты демонстрационных отзывов.
+ *
+ * Посеяны они были одним заходом и потому одной минутой. Пока дата нигде не
+ * показывалась, это было незаметно; на странице «Отзывы» она есть, и шесть
+ * одинаковых дат читаются как выгрузка из таблицы, а не как живые отзывы.
+ *
+ * Трогаем только наши заготовки, опознанные по заголовку: чужое не двигаем.
+ */
+function artdom_spread_review_dates() {
+	if ( ! function_exists( 'artdom_demo_reviews' ) ) {
+		return;
+	}
+	foreach ( artdom_demo_reviews() as $i => $r ) {
+		$post = get_page_by_path( sanitize_title( $r[0] ), OBJECT, 'artdom_review' );
+		if ( ! $post ) {
+			continue;
+		}
+		$when = gmdate( 'Y-m-d H:i:s', strtotime( '-' . ( $i * 17 + 5 ) . ' days' ) );
+		wp_update_post(
+			array(
+				'ID'            => (int) $post->ID,
+				'post_date'     => $when,
+				'post_date_gmt' => $when,
+			)
+		);
+	}
+}
+
 function artdom_drop_wp_stubs() {
 	$маркеры = array(
 		'Добро пожаловать в WordPress',

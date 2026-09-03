@@ -1863,3 +1863,57 @@ body:not(.home) { padding-block-start: var(--hdr-h); }
   .postnav__in { grid-template-columns: minmax(0, 1fr); }
   .postnav__item--next { grid-column: 1; text-align: start; justify-items: start; }
 }
+
+/* ============================================================
+   СТРАНИЦА «ОТЗЫВЫ»
+   Построение с communityclinic.ru: слева липкий столбец, справа
+   лента. Шапка страницы тут не отдельной секцией, а внутри
+   столбца — иначе первый экран уходит под заголовок, а отзывы
+   начинаются за сгибом.
+   ============================================================ */
+.revpage { padding-block-start: max(24px, calc(40 * var(--k))); }
+.revpage__in {
+  display: grid;
+  grid-template-columns: minmax(0, 340fr) minmax(0, 940fr);
+  column-gap: max(24px, calc(80 * var(--k)));
+  align-items: start;
+}
+/* Столбец держится у верха, пока листают ленту: призыв «оставить отзыв»
+   должен быть под рукой на любой её высоте. Отступ — высота плавающей
+   шапки плюс воздух, иначе заголовок уезжает под неё. */
+.revpage__side {
+  position: sticky;
+  inset-block-start: calc(var(--hdr-h) + max(12px, calc(24 * var(--k))));
+}
+.revpage__title { margin-block-start: max(10px, calc(18 * var(--k))); }
+.revpage__lead { margin-block-start: max(12px, calc(20 * var(--k))); max-width: 34ch; }
+.revpage__side .rating { margin-block-start: max(16px, calc(28 * var(--k))); }
+.revpage__count { margin-block-start: max(4px, calc(6 * var(--k))); }
+.revpage__btn { margin-block-start: max(18px, calc(32 * var(--k))); }
+
+/* Лента: строки через волосяную линию. Первая без линии — над ней и так
+   край секции. */
+.revrow { padding-block: max(24px, calc(44 * var(--k))); border-block-start: var(--dp) solid var(--c-rule); }
+.revrow:first-child { border-block-start: 0; padding-block-start: 0; }
+/* Имя и источник слева, дата справа на той же линии. */
+.revrow__head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: max(12px, calc(20 * var(--k))); }
+.revrow__date { font-family: var(--f-ui); font-size: var(--t-body); color: var(--c-muted); white-space: nowrap; }
+.revrow .stars { margin-block-start: max(12px, calc(20 * var(--k))); font-size: calc(var(--t-title) * .8); }
+.revrow__text { margin-block-start: max(10px, calc(16 * var(--k))); max-width: 78ch; }
+
+@media (max-width: 1180px) {
+  /* Ниже этой ширины столбец занимает больше половины строки и лента
+     сжимается до нечитаемой. Разворачиваем в одну колонку, липкость
+     снимаем: липкий блок в потоке одной колонки просто закрывает собой
+     содержимое. */
+  .revpage__in { grid-template-columns: minmax(0, 1fr); row-gap: max(24px, calc(40 * var(--k))); }
+  .revpage__side { position: static; }
+  .revpage__lead { max-width: 52ch; }
+}
+
+@media (max-width: 767px) {
+  .revpage__btn { width: 100%; }
+  /* Дата уходит под имя: втроём в строку они на 375 не помещаются. */
+  .revrow__head { grid-template-columns: auto minmax(0, 1fr); }
+  .revrow__date { grid-column: 2; margin-block-start: 2px; }
+}
