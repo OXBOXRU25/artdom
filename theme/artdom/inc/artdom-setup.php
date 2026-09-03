@@ -149,7 +149,7 @@ add_action( 'init', 'artdom_maybe_flush_rules', 99 );
  * Создание идемпотентно, поэтому повторный проход ничего не дублирует.
  */
 function artdom_maybe_seed() {
-	$version = 5;
+	$version = 8;
 
 	if ( (int) get_option( 'artdom_seed_version' ) >= $version ) {
 		return;
@@ -163,6 +163,7 @@ function artdom_maybe_seed() {
 	update_option( 'artdom_seed_version', $version, false );
 
 	artdom_drop_old_demo();
+	artdom_drop_wp_stubs();
 	artdom_fill_demo();
 	artdom_drop_duplicates();
 	artdom_trim_contacts();
@@ -176,6 +177,43 @@ add_action( 'init', 'artdom_maybe_seed', 100 );
  * Опознаём по тексту, который писался только в них: заказчик такого не
  * напишет, а чужие записи трогать нельзя.
  */
+/**
+ * Убрать заготовки самого WordPress.
+ *
+ * «Привет, мир!» и «Пример страницы» создаются при установке и в ленте блога
+ * читаются как наш недосмотр.
+ *
+ * По ярлыку их не найти: на русской установке он кириллический, и hello-world
+ * не совпадает ни с чем. Опознаём по тексту, который WordPress пишет в них
+ * сам, — заказчик такого не напишет, а чужие записи трогать нельзя.
+ */
+function artdom_drop_wp_stubs() {
+	$маркеры = array(
+		'Добро пожаловать в WordPress',
+		'Welcome to WordPress',
+		'Это пример страницы',
+		'This is an example page',
+	);
+
+	$posts = get_posts(
+		array(
+			'post_type'        => array( 'post', 'page' ),
+			'post_status'      => 'any',
+			'numberposts'      => 200,
+			'suppress_filters' => true,
+		)
+	);
+
+	foreach ( $posts as $p ) {
+		foreach ( $маркеры as $м ) {
+			if ( false !== strpos( $p->post_content, $м ) ) {
+				wp_delete_post( (int) $p->ID, true );
+				break;
+			}
+		}
+	}
+}
+
 function artdom_drop_old_demo() {
 	$marks = array(
 		'artdom_object' => array( 'obj_text', array( 'Текст-заглушка', 'Демонстрационная карточка' ) ),

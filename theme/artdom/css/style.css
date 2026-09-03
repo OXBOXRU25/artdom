@@ -1670,3 +1670,110 @@ body.is-sheet .hdr--solid { background: transparent; }
 .hdr.on-dark .hdr__tel { color: var(--c-white); }
 
 body:not(.home) { padding-block-start: var(--hdr-h); }
+
+/* ============================================================
+   БЛОГ
+   Подборка на главной, лента в разделе и страница статьи.
+   Обложек нет намеренно: своих снимков под статьи у компании пока
+   нет, а подставлять фотографии из других секций — ровно та ошибка,
+   что уже вылезла на объектах. Держим текстовую подачу в языке
+   страницы контактов: волосяные линии и гротеск.
+   ============================================================ */
+
+/* Три колонки через вертикальные волоски — то же построение, что у
+   «Цифр». Крайние поля снимаем, чтобы текст сел в общую вертикаль
+   страницы, а не отступил от неё на внутреннее поле карточки. */
+.blog__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-block-start: max(26px, calc(44 * var(--k)));
+}
+.pcard {
+  padding-inline: max(18px, calc(40 * var(--k)));
+  border-inline-start: var(--dp) solid var(--c-rule);
+}
+/* По тройкам, а не по первому и последнему ребёнку: в ленте карточек больше
+   трёх, и четвёртая — тоже первая в своей строке. */
+.pcard:nth-child(3n + 1) { padding-inline-start: 0; border-inline-start: 0; }
+.pcard:nth-child(3n) { padding-inline-end: 0; }
+
+.pcard__date {
+  font-family: var(--f-ui);
+  font-size: var(--t-body);
+  line-height: 1.2;
+  color: var(--c-muted);
+}
+.pcard__title {
+  margin-block-start: max(10px, calc(18 * var(--k)));
+  font-size: var(--t-title);
+  line-height: 1.18;
+  font-weight: 400;
+  letter-spacing: normal;
+}
+.pcard__title .roll { transition: color var(--dur) var(--ease); }
+.pcard:hover .pcard__title .roll { color: var(--c-accent); }
+.pcard:hover .roll__a { transform: translateY(calc(-100% - .3em)); }
+.pcard:hover .roll__b { transform: translateY(0); }
+.pcard__text { margin-block-start: max(10px, calc(16 * var(--k))); }
+
+/* В ленте раздела записей больше трёх — нужен зазор между строками. */
+.blog__grid { row-gap: max(26px, calc(44 * var(--k))); }
+
+/* Дата под заголовком статьи. */
+.pagehead__date {
+  margin-block-start: max(10px, calc(16 * var(--k)));
+  font-family: var(--f-ui);
+  font-size: var(--t-body);
+  color: var(--c-muted);
+}
+
+/* Переход к соседним статьям. */
+.postnav__in {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: max(20px, calc(40 * var(--k)));
+  margin-block-start: max(22px, calc(36 * var(--k)));
+}
+.postnav__item { display: grid; gap: max(6px, calc(10 * var(--k))); align-content: start; }
+.postnav__item--next { text-align: end; justify-items: end; grid-column: 2; }
+.postnav__label { font-family: var(--f-ui); font-size: var(--t-body); color: var(--c-muted); }
+.postnav__title { font-size: var(--t-mid); line-height: 1.25; transition: color var(--dur) var(--ease); }
+.postnav__item:hover .postnav__title { color: var(--c-accent); }
+
+/* Постраничная навигация ленты. */
+.pagination { margin-block-start: max(28px, calc(52 * var(--k))); }
+.pagination .nav-links { display: flex; flex-wrap: wrap; gap: 6px; }
+.pagination .page-numbers {
+  min-width: 44px; min-height: 44px;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding-inline: 12px;
+  border: var(--dp) solid var(--c-rule);
+  border-radius: var(--r-btn-sm);
+  font-family: var(--f-ui); font-size: var(--t-body); line-height: 1;
+  transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.pagination a.page-numbers:hover { border-color: var(--c-accent); color: var(--c-accent); }
+.pagination .page-numbers.current { background: var(--c-ink); border-color: var(--c-ink); color: var(--c-white); }
+
+@media (max-width: 1180px) {
+  .blog__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* В двух колонках первым без волоска должен быть каждый нечётный,
+     а не только самый первый. */
+  .pcard:nth-child(odd) { padding-inline-start: 0; border-inline-start: 0; }
+  .pcard:nth-child(even) { padding-inline-end: 0; }
+}
+
+@media (max-width: 767px) {
+  /* Одна колонка: вертикальные волоски делить нечего, разделяем
+     горизонтальными — так же, как в «Цифрах». */
+  .blog__grid { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
+  .pcard {
+    padding-inline: 0;
+    border-inline: 0;
+    padding-block: max(20px, calc(28 * var(--k)));
+    border-block-start: var(--dp) solid var(--c-rule);
+  }
+  .pcard:first-child { border-block-start: 0; padding-block-start: 0; }
+  .postnav__in { grid-template-columns: minmax(0, 1fr); }
+  .postnav__item--next { grid-column: 1; text-align: start; justify-items: start; }
+}

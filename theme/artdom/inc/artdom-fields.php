@@ -142,6 +142,11 @@ function artdom_register_fields() {
 				artdom_f( 'reviews_btn_text', 'Кнопка: текст', 'textarea', array( 'rows' => 2 ) + $multiline ),
 				artdom_f( 'reviews_btn_link', 'Кнопка: ссылка', 'text', $link ),
 
+				artdom_tab( 'Блог' ),
+				artdom_f( 'blog_title', 'Заголовок' ),
+				artdom_f( 'blog_lead', 'Подводка', 'textarea', array( 'rows' => 3 ) ),
+				artdom_f( 'blog_btn_text', 'Кнопка: текст', 'textarea', array( 'rows' => 2 ) + $multiline ),
+
 				artdom_tab( 'Подвал' ),
 				artdom_f( 'cta1_title', 'Левый блок: заголовок' ),
 				artdom_f( 'cta1_text', 'Левый блок: текст', 'textarea', array( 'rows' => 3 ) ),

@@ -112,6 +112,11 @@ function artdom_defaults() {
 		'reviews_btn_text'=> "Добавить\nсвой отзыв",
 		'reviews_btn_link'=> '#',
 
+		/* ---------- Блог ---------- */
+		'blog_title'      => 'Разбираем сделки',
+		'blog_lead'       => 'То, что обычно остаётся за кадром сделки: документы, форматы домов, деньги и работа брокера.',
+		'blog_btn_text'   => "Все статьи",
+
 		/* ---------- Подвал: две карточки призыва ---------- */
 		/* Контакты */
 		'contacts_chip'  => 'Берём новые обращения',
@@ -305,6 +310,17 @@ function artdom_crumbs( $extra = array() ) {
 		$items[ get_the_title() ] = '';
 	} elseif ( is_post_type_archive( 'artdom_review' ) ) {
 		$items['Отзывы'] = '';
+	} elseif ( is_home() ) {
+		/* Лента записей: WordPress отдаёт её через is_home(), а не is_page(),
+		   даже когда она назначена обычной страницей. */
+		$artdom_blog = (int) get_option( 'page_for_posts' );
+		$items[ $artdom_blog ? get_the_title( $artdom_blog ) : 'Блог' ] = '';
+	} elseif ( is_singular( 'post' ) ) {
+		$artdom_blog = (int) get_option( 'page_for_posts' );
+		if ( $artdom_blog ) {
+			$items[ get_the_title( $artdom_blog ) ] = get_permalink( $artdom_blog );
+		}
+		$items[ get_the_title() ] = '';
 	} elseif ( is_search() ) {
 		$items['Поиск'] = '';
 	} elseif ( is_404() ) {

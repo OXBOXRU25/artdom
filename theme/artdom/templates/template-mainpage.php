@@ -17,6 +17,7 @@ get_header();
 	<?php get_template_part( 'template-parts/main/guaranty' ); ?>
 	<?php get_template_part( 'template-parts/main/stats' ); ?>
 	<?php get_template_part( 'template-parts/main/reviews' ); ?>
+	<?php get_template_part( 'template-parts/main/blog' ); ?>
 </main>
 
 <?php
