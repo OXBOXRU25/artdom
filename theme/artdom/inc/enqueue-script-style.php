@@ -77,7 +77,11 @@ add_action( 'wp_enqueue_scripts', 'artdom_dequeue_bloat', 100 );
  * только дочитав CSS.
  */
 function artdom_preload_fonts() {
-	$fonts = array( 'inter18-400.woff2', 'inter18-600.woff2' );
+	/* inter28 обязателен в этом списке: им набраны меню, кнопки и телефон в
+	   шапке. Без предзагрузки он приезжал позже остальных, и до его приезда
+	   строка рисовалась запасным inter18 — а тот на мелком кегле ШИРЕ на
+	   10.8px. Меню на долю секунды растягивалось и схлопывалось обратно. */
+	$fonts = array( 'inter18-400.woff2', 'inter18-600.woff2', 'inter28-400.woff2' );
 	foreach ( $fonts as $font ) {
 		printf(
 			'<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n",

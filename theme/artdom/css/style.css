@@ -9,7 +9,11 @@
 @font-face { font-family: "Inter18"; src: url("../fonts/inter18-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
 @font-face { font-family: "Inter18"; src: url("../fonts/inter18-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
 @font-face { font-family: "Inter18"; src: url("../fonts/inter18-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
-@font-face { font-family: "Inter28"; src: url("../fonts/inter28-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+/* block, а не swap: этим шрифтом набраны меню и кнопки, и подмена в шапке
+   заметнее короткой паузы. Файл предзагружается и лежит на своём домене,
+   так что пауза измеряется миллисекундами. У остального текста остаётся
+   swap — там лучше показать сразу запасным, чем держать пустоту. */
+@font-face { font-family: "Inter28"; src: url("../fonts/inter28-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: block; }
 
 :root {
   /* Масштаб: 1 макетный пиксель в CSS-пикселях текущего экрана */
