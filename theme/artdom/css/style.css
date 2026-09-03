@@ -1097,7 +1097,7 @@ textarea.field__input { resize: vertical; min-height: 96px; }
   color: var(--c-ink);
   margin-block-end: calc(30 * var(--k));
 }
-.svcnav__list { display: grid; row-gap: calc(53 * var(--k)); }
+.svcnav__list { display: grid; row-gap: calc(24 * var(--k)); }
 .svcnav__list a {
   position: relative;
   display: block;
@@ -1111,7 +1111,6 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 /* Точка перед текущим пунктом. Псевдоэлементом слева от строки, чтобы текст
    не сдвигался при подсветке. */
 .svcnav__list a.is-here { color: var(--c-accent); }
-.svcnav__list a.is-here::before { content: "•"; position: absolute; inset-inline-start: -11px; }
 
 /* Вертикальный волосок между оглавлением и содержимым — он же и держит
    левый край блоков. У референса линия идёт через всю высоту списка. */
@@ -1122,11 +1121,21 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .svclist {
   --svc-left: calc(var(--gutter) + 195px + calc(44 * var(--k)) * 2 + var(--dp));
   display: grid;
-  gap: calc(300 * var(--k));
+  gap: 0;
   padding-inline-start: calc(44 * var(--k));
   border-inline-start: var(--dp) solid var(--c-rule);
 }
 
+
+/* Блоки разделены волоском, а не пустотой. Ритм референса (225 между
+   блоками) я перенёс буквально — но там пролёт держат крупные фотографии,
+   а у нас на их месте заглушки, и пустота читалась дырой. Линия делает ту
+   же работу вчетверо меньшим расстоянием. */
+.svcrow + .svcrow {
+  margin-block-start: calc(90 * var(--k));
+  padding-block-start: calc(90 * var(--k));
+  border-block-start: var(--dp) solid var(--c-rule);
+}
 .svcrow {
   display: grid;
   grid-template-columns: calc(50vw - var(--svc-left) - calc(28 * var(--k))) minmax(0, 1fr);
@@ -1157,7 +1166,7 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .svcrow__scope li { display: grid; grid-template-columns: 1.1em 1fr; align-items: baseline; }
 .svcrow__scope li::before {
   content: ""; align-self: center;
-  width: .42em; height: .42em; border-radius: 50%;
+  width: .21em; height: .21em; border-radius: 50%;
   background: var(--c-accent);
 }
 .svcrow__q {
@@ -1182,7 +1191,7 @@ textarea.field__input { resize: vertical; min-height: 96px; }
    настоящей фотографии ряд не поедет. */
 .svcrow__media {
   grid-column: 1 / -1; grid-row: 3;
-  margin-block-start: calc(150 * var(--k));   /* 112 при 1440 */
+  margin-block-start: calc(80 * var(--k));    /* было 112 по референсу — там снимки настоящие */
   display: grid;
   grid-template-columns: 512fr 281fr 281fr;
   column-gap: 8px;                            /* зазор между двумя правыми */
