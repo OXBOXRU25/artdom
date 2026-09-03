@@ -9,6 +9,8 @@
  * @package artdom
  */
 
+artdom_use_sheet();
+
 get_header();
 
 $terms   = get_terms( array( 'taxonomy' => 'artdom_object_type', 'hide_empty' => true ) );
@@ -16,6 +18,7 @@ $current = is_tax( 'artdom_object_type' ) ? get_queried_object_id() : 0;
 $all     = get_post_type_archive_link( 'artdom_object' );
 $total   = (int) $GLOBALS['wp_query']->found_posts;
 
+set_query_var( 'artdom_head_hide', true );
 set_query_var( 'artdom_head_title', is_tax( 'artdom_object_type' ) ? single_term_title( '', false ) : 'Объекты' );
 /* У каталога подводки нет: заголовок «Объекты» и ряд фильтров под ним
    объясняют раздел лучше, чем абзац текста. У категории описание
@@ -23,7 +26,7 @@ set_query_var( 'artdom_head_title', is_tax( 'artdom_object_type' ) ? single_term
 set_query_var( 'artdom_head_lead', is_tax( 'artdom_object_type' ) ? term_description() : '' );
 ?>
 
-<main>
+<main id="main" class="sheet">
   <?php get_template_part( 'template-parts/page-head' ); ?>
 
   <section class="sec sec--white catalog">

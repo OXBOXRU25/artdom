@@ -1380,8 +1380,10 @@ body.is-sheet .hdr--solid { background: transparent; }
   background: var(--c-white);
   /* Боковых полей нет: лист идёт от края до края, серым остаётся только
      полоса сверху. С полями лист читался карточкой, лежащей на странице, —
-     а он и есть страница. */
-  margin-block-start: max(30px, calc(172 * var(--k)));   /* на четверть выше */
+     а он и есть страница.
+
+     Верхнего отступа больше нет: полосу держит строка крошек над листом,
+     иначе серого набиралось вдвое. */
 }
 
 /* --- Центральная шапка --- */
@@ -2398,3 +2400,12 @@ form .btn {
    не отводится. */
 .pagehead--bare { padding-block-end: 0; }
 .pagehead--bare .pagehead__lead { margin-block-start: max(12px, calc(18 * var(--k))); }
+
+/* Строка крошек в серой полосе под меню. Она же и держит эту полосу: раньше
+   её задавал верхний отступ .sheet, и крошки лежали уже на белом листе. */
+.crumbbar {
+  min-height: max(30px, calc(172 * var(--k)));
+  display: grid; align-items: end;
+  padding-block-end: max(12px, calc(26 * var(--k)));
+}
+.crumbbar .crumbs { justify-content: center; }

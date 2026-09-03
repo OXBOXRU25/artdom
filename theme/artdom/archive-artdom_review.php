@@ -25,7 +25,6 @@ $artdom_count  = $artdom_stats['count'];
 
 <main id="main" class="sheet">
   <section class="sec sec--white revpage">
-    <div class="wrap"><?php echo artdom_crumbs(); ?></div>
     <div class="wrap revpage__in">
 
       <aside class="revpage__side">

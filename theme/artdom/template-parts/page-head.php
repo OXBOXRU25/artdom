@@ -23,7 +23,6 @@ $head_hide  = (bool) get_query_var( 'artdom_head_hide' );
 ?>
   <section class="sec sec--white pagehead<?php echo $head_hide ? ' pagehead--bare' : ''; ?>">
     <div class="wrap">
-      <?php echo artdom_crumbs(); ?>
       <h1 class="h1 pagehead__title<?php echo $head_hide ? ' vh' : ''; ?>"><?php echo artdom_lines( $head_title ); ?></h1>
       <?php if ( $head_lead ) : ?>
       <p class="lead pagehead__lead"><?php echo artdom_lines( $head_lead ); ?></p>
