@@ -9,28 +9,33 @@
  * @package artdom
  */
 
+artdom_use_sheet();
+
 get_header();
 
 while ( have_posts() ) :
 	the_post();
 
-	set_query_var( 'artdom_head_title', get_the_title() );
-	set_query_var( 'artdom_head_lead', has_excerpt() ? get_the_excerpt() : '' );
-	/* Дата идёт отдельной строкой под подводкой: у статьи она часть смысла,
-	   а не служебная пометка — по ней судят, не устарела ли. */
-	set_query_var(
-		'artdom_head_extra',
-		'<p class="pagehead__date"><time datetime="' . esc_attr( get_the_date( 'c' ) ) . '">'
-			. esc_html( get_the_date( 'j F Y' ) ) . '</time></p>'
-	);
 ?>
 
-<main id="main">
-  <?php get_template_part( 'template-parts/page-head' ); ?>
+<main id="main" class="sheet">
+  <?php /* Шапка статьи по центру, как на контактах и «О компании»: тот же
+           приём на всех внутренних страницах. Дата под подводкой. */ ?>
+  <section class="chero chero--post">
+    <div class="wrap chero__in">
+      <h1 class="chero__title"><?php the_title(); ?></h1>
+      <?php if ( has_excerpt() ) : ?>
+      <p class="chero__lead"><?php echo esc_html( get_the_excerpt() ); ?></p>
+      <?php endif; ?>
+      <p class="chero__date"><time datetime="<?php echo esc_attr( get_the_date( "c" ) ); ?>"><?php echo esc_html( get_the_date( "j F Y" ) ); ?></time></p>
+    </div>
+  </section>
 
-  <section class="sec sec--white">
-    <div class="wrap prose" data-rise>
-      <?php the_content(); ?>
+  <section class="sec sec--white postbody">
+    <div class="wrap postbody__in">
+      <div class="prose" data-rise>
+        <?php the_content(); ?>
+      </div>
     </div>
   </section>
 
