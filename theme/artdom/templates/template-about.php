@@ -60,7 +60,7 @@ while ( have_posts() ) :
   <?php /* Первый экран построен как на контактах: серая полоса под шапкой,
            затем белый лист, и всё содержимое по центру. Заказчик просил один
            приём на обеих страницах, а не два разных. */ ?>
-  <section class="chero">
+  <section class="chero chero--about">
     <div class="wrap chero__in">
       <h1 class="chero__title"><?php echo artdom_lines( $intro_title ? $intro_title : get_the_title() ); ?></h1>
       <?php foreach ( array_slice( $paras, 0, 1 ) as $p ) : ?>

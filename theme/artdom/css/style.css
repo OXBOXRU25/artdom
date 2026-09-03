@@ -2340,10 +2340,14 @@ form .btn {
 
 /* Шаги: крупный номер акцентом слева, текст второй колонкой. */
 .abpath__list { display: grid; }
+/* Текст начинается на той же вертикали, что портреты в «Команде»: там
+   список отбит на 27.8% ширины контейнера, здесь та же доля. Раньше колонка
+   считалась в пикселях от --k и вставала на 30 левее — две соседние секции
+   не выравнивались между собой. */
 .abpath__row {
   display: grid;
-  grid-template-columns: calc(697 * var(--k)) minmax(0, 1fr);
-  column-gap: calc(28 * var(--k));
+  grid-template-columns: 27.8% minmax(0, 1fr);
+  column-gap: 0;
   padding-block: calc(50 * var(--k));
   border-block-start: var(--dp) solid var(--c-rule);
 }
@@ -2364,3 +2368,14 @@ form .btn {
   .abteam__role { grid-column: 2; }
   .abpath__row { grid-template-columns: minmax(0, 1fr); row-gap: 10px; }
 }
+
+/* Шапка «О компании»: подводка того же кегля, что и основной текст ниже, и
+   обе колонки шире на треть. Раньше подводка была мельче — на одном экране
+   получались два размера одного и того же текста, и разница читалась
+   случайной, а не смысловой. */
+.chero--about .chero__lead {
+  font-size: var(--t-mid);
+  line-height: 1.5;
+  max-width: 69ch;                       /* 52ch + треть */
+}
+.abtext__col { max-width: 83ch; }        /* 62ch + треть */
