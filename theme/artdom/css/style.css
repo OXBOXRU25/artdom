@@ -825,16 +825,35 @@ body.is-locked { overflow: hidden; }
    Формы в модальном окне
    ========================================================================== */
 
+/* Прокручиваются ПОЛЯ, а не всё окно.
+
+   Раньше прокрутка висела на самом <dialog>, а нижнее поле — на коробке
+   внутри. Пока форма влезала в экран, под кнопкой было 67; как только не
+   влезала — низ уходил за край, и оставалось 25. Один и тот же отступ
+   выглядел разным в двух формах на одном сайте.
+
+   Теперь коробка — колонка на всю высоту окна: заголовок сверху, поля
+   посередине с собственной прокруткой, кнопка снизу. Отступ под кнопкой
+   одинаковый в любой форме и на любом экране. */
 .modal {
   border: 0; padding: 0; margin: auto;
   width: min(560px, calc(100vw - 2 * var(--gutter)));
   max-height: min(92svh, 780px);
   background: var(--c-white); color: var(--c-ink);
   border-radius: var(--r-btn) 0 var(--r-btn) 0;   /* та же диагональ, что у кнопок */
-  overflow: auto;
+  overflow: hidden;
 }
 .modal::backdrop { background: rgba(18, 20, 24, .62); }
-.modal__box { position: relative; padding: calc(46 * var(--k)) calc(44 * var(--k)) calc(40 * var(--k)); }
+.modal__box {
+  position: relative;
+  display: flex; flex-direction: column;
+  max-height: min(92svh, 780px);
+  padding: calc(46 * var(--k)) calc(44 * var(--k)) calc(40 * var(--k));
+}
+/* min-height: 0 обязателен: без него элемент флекса не сжимается меньше
+   своего содержимого, и прокрутка не появляется вовсе. */
+.modal__fields { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.modal__box > .modal__submit, .modal__box > .modal__note { flex: none; }
 @media (max-width: 860px) { .modal__box { padding: 32px 20px 28px; } }
 
 .modal__close {
