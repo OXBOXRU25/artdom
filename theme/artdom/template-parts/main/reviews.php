@@ -19,8 +19,9 @@ $reviews = new WP_Query(
 );
 
 if ( $reviews->have_posts() ) :
-	$rating = artdom_field( 'reviews_rating' );
-	$count  = artdom_field( 'reviews_count' );
+	$artdom_stats = artdom_reviews_stats();
+	$rating = $artdom_stats['avg'];
+	$count  = $artdom_stats['count'];
 ?>
   <!-- ============ Отзывы ============ -->
   <section class="sec sec--surface reviews" id="reviews">
@@ -30,12 +31,12 @@ if ( $reviews->have_posts() ) :
           <h2 class="h2"><?php echo esc_html( artdom_field( 'reviews_title' ) ); ?></h2>
           <?php if ( $rating ) : ?>
           <p class="rating">
-            <span><?php echo esc_html( $rating ); ?></span>
-            <?php echo artdom_stars( 5, 'Оценка 5 из 5' ); ?>
+            <span><?php echo esc_html( number_format( (float) $rating, 1, ',', '' ) ); ?></span>
+            <?php echo artdom_stars( $rating ); ?>
           </p>
           <?php endif; ?>
           <?php if ( $count ) : ?>
-          <p class="body">на основе <strong><?php echo esc_html( $count ); ?></strong> отзывов</p>
+          <p class="body">на основе <strong><?php echo (int) $count; ?></strong> <?php echo esc_html( artdom_plural( (int) $count, array( 'отзыва', 'отзывов', 'отзывов' ) ) ); ?></p>
           <?php endif; ?>
         </div>
       </div>

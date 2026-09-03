@@ -524,6 +524,51 @@
     });
   }
 
+  /* ---------- Подгрузка отзывов ----------
+     Забираем следующую страницу тем же адресом, что открылся бы по ссылке,
+     и вынимаем из неё строки. Своей точки на сервере не заводим: страница
+     уже умеет отдавать вторую порцию, а без скрипта ссылка просто работает
+     как ссылка. */
+  var списокОтзывов = document.querySelector("[data-revlist]");
+  var ещёОтзывы = document.querySelector("[data-revmore]");
+
+  if (списокОтзывов && ещёОтзывы) {
+    ещёОтзывы.addEventListener("click", function (e) {
+      var ссылка = e.target.closest("a");
+      if (!ссылка || ещёОтзывы.dataset.busy) return;
+      e.preventDefault();
+
+      var адрес = ссылка.href;
+      var надпись = ссылка.textContent;
+      ещёОтзывы.dataset.busy = "1";
+      ссылка.textContent = "Загружаем…";
+
+      fetch(адрес, { credentials: "same-origin" })
+        .then(function (r) { return r.text(); })
+        .then(function (html) {
+          var док = new DOMParser().parseFromString(html, "text/html");
+          var новые = док.querySelectorAll("[data-revlist] .revrow");
+          Array.prototype.forEach.call(новые, function (n) {
+            списокОтзывов.insertBefore(document.importNode(n, true), ещёОтзывы);
+          });
+          var дальше = док.querySelector("[data-revmore] a");
+          if (дальше) {
+            ссылка.href = дальше.href;
+            ссылка.textContent = надпись;
+            delete ещёОтзывы.dataset.busy;
+          } else {
+            /* Больше нечего показывать — кнопка не должна оставаться
+               мёртвой. */
+            ещёОтзывы.remove();
+          }
+        })
+        .catch(function () {
+          ссылка.textContent = надпись;
+          delete ещёОтзывы.dataset.busy;
+        });
+    });
+  }
+
   /* ---------- Меню на телефоне ---------- */
   var menu = document.getElementById("menu");
   var opener = document.querySelector("[data-menu-open]");

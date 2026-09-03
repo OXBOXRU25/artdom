@@ -16,8 +16,9 @@
 
 get_header();
 
-$artdom_rating = artdom_field( 'reviews_rating' );
-$artdom_count  = artdom_field( 'reviews_count' );
+$artdom_stats  = artdom_reviews_stats();
+$artdom_rating = $artdom_stats['avg'];
+$artdom_count  = $artdom_stats['count'];
 ?>
 
 <main id="main">
@@ -30,16 +31,16 @@ $artdom_count  = artdom_field( 'reviews_count' );
         <p class="body revpage__lead">Отзывы приходят с Яндекс.Карт, из Авито и напрямую от клиентов. Публикуем как есть.</p>
 
         <?php if ( $artdom_rating ) : ?>
-        <p class="rating"><span><?php echo esc_html( $artdom_rating ); ?></span><?php echo artdom_stars( 5, 'Оценка 5 из 5' ); ?></p>
+        <p class="rating"><span><?php echo esc_html( number_format( (float) $artdom_rating, 1, ',', '' ) ); ?></span><?php echo artdom_stars( $artdom_rating ); ?></p>
         <?php endif; ?>
         <?php if ( $artdom_count ) : ?>
-        <p class="body revpage__count">на основе <strong><?php echo esc_html( $artdom_count ); ?></strong> отзывов</p>
+        <p class="body revpage__count">на основе <strong><?php echo (int) $artdom_count; ?></strong> <?php echo esc_html( artdom_plural( (int) $artdom_count, array( 'отзыва', 'отзывов', 'отзывов' ) ) ); ?></p>
         <?php endif; ?>
 
         <?php artdom_btn( 'Оставить отзыв', '#', 'btn btn--wide revpage__btn', array( 'data-form-open' => 'review' ) ); ?>
       </aside>
 
-      <div class="revpage__list">
+      <div class="revpage__list" data-revlist>
         <?php if ( have_posts() ) : ?>
         <?php
         while ( have_posts() ) :
@@ -48,15 +49,15 @@ $artdom_count  = artdom_field( 'reviews_count' );
         endwhile;
         ?>
         <?php
-        the_posts_pagination(
-          array(
-            'mid_size'           => 1,
-            'prev_text'          => 'Назад',
-            'next_text'          => 'Дальше',
-            'screen_reader_text' => 'Страницы отзывов',
-          )
-        );
+        /* Подгрузка по нажатию, а не постраничная навигация: отзывы читают
+           подряд, и уводить человека на вторую страницу значит терять его.
+           Без скрипта это обычная ссылка на следующую страницу — работает
+           и так. */
+        $artdom_more = get_next_posts_link( 'Показать ещё' );
         ?>
+        <?php if ( $artdom_more ) : ?>
+        <p class="revpage__more" data-revmore><?php echo wp_kses_post( $artdom_more ); ?></p>
+        <?php endif; ?>
         <?php else : ?>
         <p class="body">Отзывов пока нет.</p>
         <?php endif; ?>
@@ -65,13 +66,6 @@ $artdom_count  = artdom_field( 'reviews_count' );
     </div>
   </section>
 
-  <?php
-  set_query_var( 'artdom_cta_title', 'Работали с нами?' );
-  set_query_var( 'artdom_cta_text', 'Расскажите, как всё прошло&nbsp;— это помогает нам и тем, кто выбирает брокера.' );
-  set_query_var( 'artdom_cta_btn', 'Оставить отзыв' );
-  set_query_var( 'artdom_cta_form', 'review' );
-  get_template_part( 'template-parts/cta-band' );
-  ?>
 </main>
 
 <?php

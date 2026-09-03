@@ -273,16 +273,89 @@ function artdom_img( $field, $fallback, $alt = '', $size = array( 580, 395 ), $l
  * @param string $label Подпись для скринридера.
  */
 function artdom_stars( $n = 5, $label = '', $tag = 'span' ) {
-	$n = max( 0, min( 5, (int) $n ) );
-	$label = $label ? $label : sprintf( 'Оценка %d из 5', $n );
-	$tag = in_array( $tag, array( 'span', 'p' ), true ) ? $tag : 'span';
+	/* Оценка приходит дробной: 4.9 — это четыре полных звезды и девять
+	   десятых пятой. Прежде число приводилось к целому, и 4.9 рисовалось
+	   пятью полными — картинка спорила с подписью рядом. */
+	$n     = max( 0, min( 5, (float) $n ) );
+	$full  = (int) floor( $n );
+	$part  = $n - $full;
+	/* Меньше пяти процентов не рисуем: такая доля неотличима от пустой
+	   звезды и читается грязью. */
+	if ( $part < 0.05 ) {
+		$part = 0;
+	}
+
+	$label = $label ? $label : sprintf( 'Оценка %s из 5', rtrim( rtrim( number_format( $n, 1, ',', '' ), '0' ), ',' ) );
+	$tag   = in_array( $tag, array( 'span', 'p' ), true ) ? $tag : 'span';
+	$star  = '<svg viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg>';
+
 	$out = '<' . $tag . ' class="stars" role="img" aria-label="' . esc_attr( $label ) . '">';
 	for ( $i = 1; $i <= 5; $i++ ) {
-		$out .= '<svg viewBox="0 0 20 19" aria-hidden="true"' . ( $i > $n ? ' data-off="true"' : '' )
-			. '><use href="#i-star"></use></svg>';
+		if ( $i <= $full ) {
+			$out .= $star;
+		} elseif ( $i === $full + 1 && $part > 0 ) {
+			/* Две звезды одна над другой: снизу пустая, сверху залитая и
+			   обрезанная по доле. Доля идёт свойством, а обрезку делает CSS. */
+			$out .= '<span class="stars__part" style="--part:' . round( $part * 100 ) . '%">'
+				. '<svg viewBox="0 0 20 19" aria-hidden="true" data-off="true"><use href="#i-star"></use></svg>'
+				. '<svg class="stars__fill" viewBox="0 0 20 19" aria-hidden="true"><use href="#i-star"></use></svg>'
+				. '</span>';
+		} else {
+			$out .= '<svg viewBox="0 0 20 19" aria-hidden="true" data-off="true"><use href="#i-star"></use></svg>';
+		}
 	}
 	return $out . '</' . $tag . '>';
 }
+
+/**
+ * Оценка и число отзывов — по факту из базы, а не из полей в админке.
+ *
+ * Поля стояли заполненными вручную: 4.9 и 86, а на странице показывалось
+ * шесть отзывов. Две цифры в пятнадцати сантиметрах друг от друга
+ * противоречили одна другой, и заметно это было сразу.
+ *
+ * Считаем с запасом в час: отзывы меняются редко, а перебирать их на каждой
+ * загрузке страницы незачем.
+ */
+function artdom_reviews_stats() {
+	$stats = get_transient( 'artdom_rev_stats' );
+	if ( is_array( $stats ) ) {
+		return $stats;
+	}
+
+	$ids = get_posts(
+		array(
+			'post_type'   => 'artdom_review',
+			'post_status' => 'publish',
+			'numberposts' => -1,
+			'fields'      => 'ids',
+		)
+	);
+
+	$sum = 0;
+	$n   = 0;
+	foreach ( $ids as $id ) {
+		$r = function_exists( 'get_field' ) ? (int) get_field( 'rev_rating', $id ) : 0;
+		if ( $r >= 1 && $r <= 5 ) {
+			$sum += $r;
+			++$n;
+		}
+	}
+
+	$stats = array(
+		'count' => count( $ids ),
+		'avg'   => $n ? round( $sum / $n, 1 ) : 0,
+	);
+	set_transient( 'artdom_rev_stats', $stats, HOUR_IN_SECONDS );
+	return $stats;
+}
+
+/** Отзыв опубликовали или сняли — счёт пересчитаем заново. */
+function artdom_drop_reviews_stats() {
+	delete_transient( 'artdom_rev_stats' );
+}
+add_action( 'save_post_artdom_review', 'artdom_drop_reviews_stats' );
+add_action( 'deleted_post', 'artdom_drop_reviews_stats' );
 
 /**
  * Хлебные крошки.

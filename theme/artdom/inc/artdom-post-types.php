@@ -415,3 +415,19 @@ function artdom_register_contacts_fields() {
 }
 add_action( 'acf/init', 'artdom_register_contacts_fields' );
 
+
+/**
+ * Сколько отзывов на страницу.
+ *
+ * Пять, а не десять по умолчанию: тексты длинные, и десяток превращает
+ * страницу в свиток. Остальные подгружаются кнопкой.
+ */
+function artdom_reviews_per_page( $query ) {
+	if ( is_admin() || ! $query->is_main_query() ) {
+		return;
+	}
+	if ( $query->is_post_type_archive( 'artdom_review' ) ) {
+		$query->set( 'posts_per_page', 5 );
+	}
+}
+add_action( 'pre_get_posts', 'artdom_reviews_per_page' );

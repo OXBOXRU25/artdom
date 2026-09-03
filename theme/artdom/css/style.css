@@ -1893,6 +1893,33 @@ body:not(.home) { padding-block-start: var(--hdr-h); }
 
 /* Лента: строки через волосяную линию. Первая без линии — над ней и так
    край секции. */
+/* Кружок с инициалами. Основа белая — она стоит на сером фоне ленты на
+   главной. На белых секциях белое по белому пропадает, поэтому там
+   переворачиваем: кружок серый. Цвет привязан к фону секции, а не к месту,
+   чтобы не заводить два разных аватара. */
+.sec--white .review__ava, .revpage .review__ava { background: var(--c-surface); }
+
+/* Частично закрашенная звезда: пустая снизу, залитая сверху и обрезанная
+   по доле. Доля приходит из PHP свойством --part. */
+.stars__part { position: relative; display: inline-grid; width: 1em; height: 1em; }
+.stars__part svg { grid-area: 1 / 1; width: 1em; height: 1em; }
+.stars__fill { clip-path: inset(0 calc(100% - var(--part, 50%)) 0 0); }
+
+/* Кнопка подгрузки. Не кнопка призыва, а служебный переключатель, поэтому
+   волосяная рамка, а не заливка: заливкой она спорила бы с «Оставить
+   отзыв» слева. */
+.revpage__more { margin-block-start: max(24px, calc(44 * var(--k))); }
+.revpage__more a {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 48px;
+  padding-inline: max(20px, calc(32 * var(--k)));
+  border: var(--dp) solid var(--c-rule);
+  border-radius: var(--r-btn-sm);
+  font-family: var(--f-ui); font-size: var(--t-body); line-height: 1;
+  transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.revpage__more a:hover { border-color: var(--c-accent); color: var(--c-accent); }
+
 .revrow { padding-block: max(24px, calc(44 * var(--k))); border-block-start: var(--dp) solid var(--c-rule); }
 .revrow:first-child { border-block-start: 0; padding-block-start: 0; }
 /* Имя и источник слева, дата справа на той же линии. */
