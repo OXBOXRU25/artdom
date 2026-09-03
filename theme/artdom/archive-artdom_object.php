@@ -76,7 +76,6 @@ set_query_var( 'artdom_head_lead', is_tax( 'artdom_object_type' ) ? term_descrip
     </div>
   </section>
 
-  <?php get_template_part( 'template-parts/cta-band' ); ?>
 </main>
 
 <?php

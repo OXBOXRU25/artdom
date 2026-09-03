@@ -25,7 +25,6 @@ while ( have_posts() ) :
     </div>
   </section>
 
-  <?php get_template_part( 'template-parts/cta-band' ); ?>
 </main>
 
 <?php

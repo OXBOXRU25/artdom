@@ -153,7 +153,6 @@ while ( have_posts() ) :
   set_query_var( 'artdom_cta_title', 'Хотите посмотреть вживую?' );
   set_query_var( 'artdom_cta_text', 'Организуем показ в удобное время и подготовим документы по объекту заранее.' );
   set_query_var( 'artdom_cta_btn', 'Записаться на просмотр' );
-  get_template_part( 'template-parts/cta-band' );
   ?>
 </main>
 

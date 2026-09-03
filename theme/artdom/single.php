@@ -61,7 +61,6 @@ while ( have_posts() ) :
   </section>
   <?php endif; ?>
 
-  <?php get_template_part( 'template-parts/cta-band' ); ?>
 </main>
 
 <?php

@@ -146,7 +146,6 @@ while ( have_posts() ) :
   set_query_var( 'artdom_cta_title', 'Познакомимся?' );
   set_query_var( 'artdom_cta_text', 'Расскажите о задаче — подберём брокера, который занимается именно вашим сегментом.' );
   set_query_var( 'artdom_cta_btn', 'Оставить заявку' );
-  get_template_part( 'template-parts/cta-band' );
   ?>
 </main>
 

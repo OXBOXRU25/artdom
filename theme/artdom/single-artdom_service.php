@@ -81,7 +81,6 @@ while ( have_posts() ) :
   set_query_var( 'artdom_cta_title', 'Обсудим вашу задачу?' );
   set_query_var( 'artdom_cta_text', 'Расскажите, что нужно&nbsp;— ответим в течение часа и предложим порядок действий.' );
   set_query_var( 'artdom_cta_btn', 'Оставить заявку' );
-  get_template_part( 'template-parts/cta-band' );
   ?>
 </main>
 

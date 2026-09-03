@@ -1055,40 +1055,138 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .ctaband__in { display: flex; align-items: center; justify-content: space-between; gap: var(--gutter); flex-wrap: wrap; }
 .ctaband__in .body { margin-block-start: max(8px, calc(12 * var(--k))); max-width: 46ch; color: var(--c-muted); }
 
-/* --- Карточка услуги ---------------------------------------------------------
-   Кнопки внутри нет: нажимается вся карточка. Внизу строка «цена — стрелка»,
-   она же и подсказывает, что карточка кликается. Синего на экране не
-   остаётся вовсе, и взгляд идёт по названиям и цифрам, а не по кнопкам. */
-.svc { background: var(--c-surface); border-radius: var(--r-chip); }
-.svc__link {
-  display: flex; flex-direction: column;
-  gap: max(10px, calc(14 * var(--k)));
-  height: 100%;                       /* карточки в ряду одной высоты */
-  padding: max(20px, calc(28 * var(--k)));
-  color: inherit;
-}
-.svc__title { font-size: var(--t-title); line-height: 1.15; }
-.svc__text { color: var(--c-muted); }
+/* --- Страница услуг ----------------------------------------------------------
+   Построение снято с symbolstudio.pl/en/services: слева липкое оглавление,
+   справа длинные блоки разбора. Замеры референса при 1440 — контейнер 1100,
+   колонки 136 / 470 / 494, оглавление 195 и sticky, название 32/38.4,
+   номер 12, подпись 11, список 14, вопрос 18, текст 15.
 
-/* Подвал карточки прижат к низу: у услуг описания разной длины, и без этого
-   цена с стрелкой скакали бы по ряду на разной высоте. */
-.svc__foot {
-  margin-block-start: auto;
-  padding-block-start: max(14px, calc(18 * var(--k)));
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  border-block-start: var(--dp) solid var(--c-rule-soft);
+   Числа у нас берутся из наших же токенов, а не копируются пикселями:
+   шрифт другой, слова русские и длиннее, и жёсткие кегли референса дали бы
+   на них другую плотность. Сохраняем построение и пропорции колонок. */
+.svcpage__in {
+  display: grid;
+  grid-template-columns: minmax(160px, 195px) minmax(0, 1fr);
+  gap: max(24px, calc(44 * var(--k)));
+  margin-block-start: max(24px, calc(40 * var(--k)));
+}
+
+/* Оглавление. Липкое — на длинной странице человек всё время видит, где он
+   и сколько осталось. Отступ сверху равен высоте шапки плюс воздух. */
+.svcnav { position: sticky; top: calc(var(--hdr-h, 72px) + 24px); align-self: start; }
+.svcnav__cap {
+  font-family: var(--f-ui); font-size: var(--t-chip);
+  text-transform: uppercase; letter-spacing: .08em; color: var(--c-muted);
+  margin-block-end: max(10px, calc(16 * var(--k)));
+}
+.svcnav__list { display: grid; gap: 2px; }
+.svcnav__list a {
+  display: flex; gap: 10px; align-items: baseline;
+  min-height: 32px; padding-block: 4px;
+  font-family: var(--f-ui); font-size: var(--t-nav); line-height: 1.25;
+  color: var(--c-muted);
+  transition: color var(--dur) var(--ease);
+}
+.svcnav__list a:hover { color: var(--c-ink); }
+.svcnav__n { flex: none; font-size: var(--t-chip); color: var(--c-rule); }
+
+/* --- Блок услуги -------------------------------------------------------------
+   Четыре колонки: номер, подпись «Что входит», сам список, правая колонка с
+   вопросом и текстом. Название лежит поверх второй и третьей — оно должно
+   начинаться там же, где начинается список, иначе строка разваливается. */
+.svclist { display: grid; gap: max(56px, calc(120 * var(--k))); }
+/* Три колонки, как у референса: слева служебная (номер и подпись «Что
+   входит»), в середине название и список, справа вопрос с текстом.
+   Замер референса при 1440: колонки начинаются на 239 / 375 / 845 при
+   контейнере 1100. Номер и подпись стоят В ОДНОЙ колонке — на первом
+   заходе я развёл их по разным, и строка развалилась. */
+.svcrow {
+  display: grid;
+  grid-template-columns: minmax(96px, 136px) minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: max(16px, calc(28 * var(--k)));
+  row-gap: max(18px, calc(30 * var(--k)));
+  align-items: start;
+}
+.svcrow__n {
+  grid-column: 1; grid-row: 1;
+  font-family: var(--f-ui); font-size: var(--t-chip); line-height: 1.6;
+  color: var(--c-muted);
+}
+.svcrow__title {
+  grid-column: 2 / -1; grid-row: 1;
+  font-size: var(--t-h2); line-height: 1.1; font-weight: 400; letter-spacing: normal;
+}
+.svcrow__title a { transition: color var(--dur) var(--ease); }
+.svcrow__title a:hover { color: var(--c-accent); }
+
+.svcrow__cap {
+  grid-column: 1; grid-row: 2;
+  font-family: var(--f-ui); font-size: var(--t-chip); line-height: 1.6;
+  color: var(--c-muted);
+}
+.svcrow__scope {
+  grid-column: 2; grid-row: 2;
+  display: grid; gap: 6px;
+  font-size: var(--t-body); line-height: 1.5;
+}
+/* Тире вместо маркера — как у референса: список читается перечислением, а не
+   пунктами инструкции. Ставим псевдоэлементом, чтобы текст оставался чистым
+   и переносился с отступом. */
+.svcrow__scope li { display: grid; grid-template-columns: 14px 1fr; }
+.svcrow__scope li::before { content: "—"; color: var(--c-muted); }
+
+.svcrow__side { grid-column: 3; grid-row: 2; }
+.svcrow__q {
+  font-size: var(--t-lead); line-height: 1.3; color: var(--c-ink);
+  text-wrap: balance;
+}
+/* Короткий штрих под вопросом — единственный разделитель внутри блока.
+   У референса он ровно такой: 37px, волосок, отбит воздухом с обеих сторон. */
+.svcrow__tick {
+  display: block; width: 37px; height: var(--dp);
+  background: var(--c-ink);
+  margin-block: max(14px, calc(24 * var(--k)));
+}
+.svcrow__text { color: var(--c-muted); }
+.svcrow__text + .svcrow__text { margin-block-start: .8em; }
+
+.svcrow__foot {
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  gap: 8px max(12px, calc(20 * var(--k)));
+  margin-block-start: max(16px, calc(26 * var(--k)));
   font-family: var(--f-ui); font-size: var(--t-nav);
 }
-.svc__price { color: var(--c-ink); }
-.svc__arrow {
-  flex: none; width: 24px; color: var(--c-muted);
-  display: inline-flex; align-items: center;
-  transition: transform var(--dur) var(--ease), color var(--dur) var(--ease);
+.svcrow__price { color: var(--c-ink); }
+.svcrow__more { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--c-muted); transition: color var(--dur) var(--ease); }
+.svcrow__arrow { width: 22px; display: inline-flex; transition: transform var(--dur) var(--ease); }
+.svcrow__arrow svg { width: 100%; height: auto; }
+.svcrow__more:hover { color: var(--c-accent); }
+.svcrow__more:hover .svcrow__arrow { transform: translateX(6px); }
+
+/* Заглушка снимка: занимает ровно то место, которое займёт фотография.
+   Пропорция в стилях, а не в файле — иначе с первым настоящим снимком блок
+   подпрыгнет. */
+.svcrow__media {
+  grid-column: 2 / -1; grid-row: 3;
+  aspect-ratio: 3 / 1;
+  background: var(--c-surface);
+  display: grid; place-items: center;
 }
-.svc__arrow svg { width: 100%; height: auto; }
-.svc__link:hover .svc__arrow { color: var(--c-accent); transform: translateX(6px); }
-.svc__link:hover .svc__title { color: var(--c-accent); }
-.svc__link:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; border-radius: var(--r-chip); }
+.svcrow__stub { display: grid; place-items: center; color: var(--c-rule); width: 100%; }
+.svcrow__stub svg { width: 5%; min-width: 30px; height: auto; }
+
+@media (max-width: 1023px) {
+  /* Оглавление уходит: на планшете столбец съел бы треть ширины, а страница
+     и так листается одним движением. */
+  .svcpage__in { grid-template-columns: minmax(0, 1fr); }
+  .svcnav { display: none; }
+  .svcrow { grid-template-columns: minmax(24px, 32px) minmax(0, 1fr); }
+  .svcrow__title { grid-column: 2; }
+  .svcrow__cap   { grid-column: 2; grid-row: 2; }
+  .svcrow__scope { grid-column: 2; grid-row: 3; }
+  .svcrow__side  { grid-column: 2; grid-row: 4; }
+  .svcrow__media { grid-column: 2; grid-row: 5; aspect-ratio: 16 / 9; }
+}
 
 /* --- Порядок работы --- */
 .steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap-card) var(--gutter); margin-block-start: max(24px, calc(40 * var(--k))); }

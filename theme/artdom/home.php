@@ -55,7 +55,6 @@ set_query_var( 'artdom_head_lead', '' );
     </div>
   </section>
 
-  <?php get_template_part( 'template-parts/cta-band' ); ?>
 </main>
 
 <?php
