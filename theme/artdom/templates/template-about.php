@@ -111,8 +111,8 @@ while ( have_posts() ) :
 
   <?php if ( is_array( $team ) && $team ) : ?>
   <section class="sec sec--white abteam">
-    <div class="wrap">
-      <h2 class="abhead" data-rise><?php echo esc_html( artdom_field( 'ab_team_title' ) ); ?></h2>
+    <div class="wrap abteam__in">
+      <h2 class="abhead abteam__head" data-rise><?php echo esc_html( artdom_field( "ab_team_title" ) ); ?></h2>
       <ul class="abteam__list" role="list">
         <?php foreach ( $team as $person ) : ?>
         <li class="abteam__row" data-rise>
