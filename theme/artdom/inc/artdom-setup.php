@@ -149,7 +149,7 @@ add_action( 'init', 'artdom_maybe_flush_rules', 99 );
  * Создание идемпотентно, поэтому повторный проход ничего не дублирует.
  */
 function artdom_maybe_seed() {
-	$version = 9;
+	$version = 13;
 
 	if ( (int) get_option( 'artdom_seed_version' ) >= $version ) {
 		return;
@@ -165,6 +165,7 @@ function artdom_maybe_seed() {
 	artdom_drop_old_demo();
 	artdom_drop_wp_stubs();
 	artdom_spread_review_dates();
+	artdom_refresh_review_texts();
 	artdom_fill_demo();
 	artdom_drop_duplicates();
 	artdom_trim_contacts();
@@ -197,6 +198,34 @@ add_action( 'init', 'artdom_maybe_seed', 100 );
  *
  * Трогаем только наши заготовки, опознанные по заголовку: чужое не двигаем.
  */
+/**
+ * Обновить тексты демонстрационных отзывов.
+ *
+ * Все шесть были одинаково короткими — на них не проверялся ни обрез до двух
+ * строк в ленте, ни полный показ на странице раздела. Тексты переписаны
+ * разной длины, и здесь мы подтягиваем их в уже созданные записи.
+ *
+ * Трогаем только наши заготовки, опознанные по заголовку: если заказчик
+ * успел поправить текст руками, его правка дороже нашего примера, поэтому
+ * перезаписываем лишь то, что совпадает с прежним нашим текстом.
+ */
+function artdom_refresh_review_texts() {
+	if ( ! function_exists( 'artdom_demo_reviews' ) || ! function_exists( 'update_field' ) ) {
+		return;
+	}
+	foreach ( artdom_demo_reviews() as $r ) {
+		$post = get_page_by_path( sanitize_title( $r[0] ), OBJECT, 'artdom_review' );
+		if ( ! $post ) {
+			continue;
+		}
+		$now = (string) get_field( 'rev_text', $post->ID );
+		/* Совпадает начало — значит текст наш и не тронут. */
+		if ( '' === $now || 0 === strpos( $r[3], mb_substr( $now, 0, 40 ) ) ) {
+			update_field( 'field_artdom_rev_text', $r[3], $post->ID );
+		}
+	}
+}
+
 function artdom_spread_review_dates() {
 	if ( ! function_exists( 'artdom_demo_reviews' ) ) {
 		return;

@@ -983,14 +983,14 @@ textarea.field__input { resize: vertical; min-height: 96px; }
   display: inline-flex; align-items: center; gap: 6px;
   min-height: 44px; padding-inline: 16px;
   border-radius: var(--r-btn-sm); background: var(--c-chip); color: var(--c-ink-soft);
-  font-family: var(--f-ui); font-size: 14px;
+  font-family: var(--f-ui); font-size: 15px;
   transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
 }
 .filters__chip:hover { background: var(--c-rule); }
 .filters__chip[aria-current] { background: var(--c-ink); color: var(--c-white); }
 .filters__n { color: var(--c-muted); font-variant-numeric: tabular-nums; }
 .filters__chip[aria-current] .filters__n { color: var(--c-rule); }
-.catalog__count { margin: 0; font-family: var(--f-ui); font-size: 14px; white-space: nowrap; }
+.catalog__count { margin: 0; font-family: var(--f-ui); font-size: 15px; white-space: nowrap; }
 
 /* --- Сетка карточек ---
    Та же карточка, что в ленте на главной, но в сетке: три колонки, потом две,
@@ -1900,7 +1900,9 @@ section.blog .pcard:nth-child(3n + 1) { border-inline-start: 0; }
    столбца — иначе первый экран уходит под заголовок, а отзывы
    начинаются за сгибом.
    ============================================================ */
-.revpage { padding-block-start: max(24px, calc(40 * var(--k))); }
+/* Ровно та же линия, что у шапки прочих внутренних страниц: там крошки
+   садятся на 101px, здесь на 107 — шесть пикселей были видны. */
+.revpage { padding-block-start: max(20px, calc(32 * var(--k))); }
 .revpage__in {
   display: grid;
   grid-template-columns: minmax(0, 340fr) minmax(0, 940fr);

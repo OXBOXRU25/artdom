@@ -34,7 +34,11 @@ $thumb = get_the_post_thumbnail_url( get_the_ID(), 'large' );
   <ul class="card__facts selectable"><?php foreach ( $facts as $f ) : ?><li><?php echo esc_html( $f['value'] ); ?></li><?php endforeach; ?></ul>
   <?php endif; ?>
   <?php if ( $text ) : ?>
-  <p class="body card__text"><?php echo esc_html( wp_trim_words( $text, 34 ) ); ?></p>
+  <?php /* Обрез по СТРОКАМ, а не по числу слов: wp_trim_words не знает ширину
+           карточки и обрывал текст на середине мысли — например на одиноком
+           «В», хотя в строку влезало ещё три слова. Скрипт режет по последнему
+           слову, которое поместилось. */ ?>
+  <p class="body card__text" data-clip="4" data-clip-href="<?php echo esc_url( $link ); ?>"><?php echo esc_html( $text ); ?></p>
   <?php endif; ?>
   <?php if ( $price ) : ?>
   <p class="card__price selectable"><?php echo wp_kses( str_replace( '₽', '<sup>₽</sup>', esc_html( $price ) ), array( 'sup' => array() ) ); ?></p>
