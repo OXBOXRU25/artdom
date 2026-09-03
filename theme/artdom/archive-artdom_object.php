@@ -47,7 +47,6 @@ set_query_var( 'artdom_head_lead', is_tax( 'artdom_object_type' ) ? term_descrip
         <p class="catalog__count muted"><?php echo esc_html( $total ); ?> <?php echo esc_html( artdom_plural( $total, array( 'объект', 'объекта', 'объектов' ) ) ); ?></p>
       </div>
 
-      <div class="rule"></div>
 
       <?php if ( have_posts() ) : ?>
       <div class="grid-cards">

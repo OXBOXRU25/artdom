@@ -14,7 +14,9 @@ get_header();
 $artdom_blog_page = (int) get_option( 'page_for_posts' );
 
 set_query_var( 'artdom_head_title', $artdom_blog_page ? get_the_title( $artdom_blog_page ) : 'Блог' );
-set_query_var( 'artdom_head_lead', $artdom_blog_page ? get_the_excerpt( $artdom_blog_page ) : '' );
+/* Подводки нет: заголовок «Блог» и лента под ним объясняют раздел сами.
+   Описание страницы остаётся в админке — вернуть его сюда одна строка. */
+set_query_var( 'artdom_head_lead', '' );
 ?>
 
 <main id="main">

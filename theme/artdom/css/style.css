@@ -957,7 +957,12 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .crumbs [aria-current] { color: var(--c-ink); }
 
 /* --- Шапка внутренней страницы --- */
-.pagehead { padding-block: calc(var(--pad-top) * 1.1) calc(var(--pad-bot) * .7); }
+/* Нижнее поле шапки страницы и верхнее у следующей секции складывались в
+   74px пустоты между заголовком и содержимым — на «Объектах» это читалось
+   дырой. Ужато вдвое: 16 плюс 21. Числа держим рядом, потому что важна их
+   сумма, а порознь они и разъехались. */
+.pagehead { padding-block: calc(var(--pad-top) * 1.1) max(14px, calc(22 * var(--k))); }
+.pagehead + .sec { padding-block-start: max(16px, calc(28 * var(--k))); }
 .pagehead__title { margin-block-start: max(14px, calc(20 * var(--k))); max-width: 18ch; }
 .pagehead__lead { margin-block-start: max(12px, calc(18 * var(--k))); max-width: 52ch; color: var(--c-muted); }
 .pagehead__extra { margin-block-start: max(12px, calc(18 * var(--k))); }
