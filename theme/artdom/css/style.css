@@ -1097,7 +1097,7 @@ textarea.field__input { resize: vertical; min-height: 96px; }
   color: var(--c-ink);
   margin-block-end: calc(30 * var(--k));
 }
-.svcnav__list { display: grid; row-gap: calc(24 * var(--k)); }
+.svcnav__list { display: grid; row-gap: calc(13 * var(--k)); }
 .svcnav__list a {
   position: relative;
   display: block;
@@ -1129,12 +1129,18 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 
 /* Блоки разделены волоском, а не пустотой. Ритм референса (225 между
    блоками) я перенёс буквально — но там пролёт держат крупные фотографии,
-   а у нас на их месте заглушки, и пустота читалась дырой. Линия делает ту
-   же работу вчетверо меньшим расстоянием. */
-.svcrow + .svcrow {
-  margin-block-start: calc(90 * var(--k));
-  padding-block-start: calc(90 * var(--k));
-  border-block-start: var(--dp) solid var(--c-rule);
+   а у нас на их месте заглушки, и пустота читалась дырой.
+
+   Линию рисуем псевдоэлементом с вылетом влево на поле списка: так она
+   дотягивается до вертикального волоска и стык получается угловым. Через
+   border этого не сделать, не сдвинув всю сетку блока. */
+.svcrow { position: relative; }
+.svcrow + .svcrow { margin-block-start: calc(90 * var(--k)); padding-block-start: calc(90 * var(--k)); }
+.svcrow + .svcrow::before {
+  content: "";
+  position: absolute; inset-block-start: 0;
+  inset-inline-start: calc(-44 * var(--k)); inset-inline-end: 0;
+  height: var(--dp); background: var(--c-rule);
 }
 .svcrow {
   display: grid;
@@ -1177,7 +1183,7 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .svcrow__tick {
   display: block; width: 37px; height: var(--dp);
   background: var(--c-accent);
-  margin-block: calc(75 * var(--k));
+  margin-block: calc(64 * var(--k));   /* 56 -> 48, минус 15% */
 }
 .svcrow__text {
   font-size: clamp(13px, calc(20 * var(--k)), 19px); line-height: 1.4;

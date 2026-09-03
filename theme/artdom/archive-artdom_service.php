@@ -25,7 +25,6 @@
 get_header();
 
 set_query_var( 'artdom_head_title', 'Услуги' );
-set_query_var( 'artdom_head_lead', artdom_field( 'services_lead' ) );
 
 $artdom_items = array();
 if ( have_posts() ) {
@@ -52,7 +51,6 @@ if ( have_posts() ) {
     <div class="wrap svcpage__in">
 
       <nav class="svcnav" aria-label="Услуги на этой странице">
-        <p class="svcnav__cap">Навигация</p>
         <ul class="svcnav__list" role="list">
           <?php foreach ( $artdom_items as $artdom_s ) : ?>
           <li><a href="#<?php echo esc_attr( $artdom_s['id'] ); ?>" data-svcnav="<?php echo esc_attr( $artdom_s['id'] ); ?>"><?php echo esc_html( $artdom_s['title'] ); ?></a></li>
