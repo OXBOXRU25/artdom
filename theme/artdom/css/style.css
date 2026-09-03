@@ -2409,3 +2409,27 @@ form .btn {
   padding-block-start: max(10px, calc(22 * var(--k)));
 }
 .crumbbar .crumbs { justify-content: center; }
+
+/* --- Один отступ под крышкой листа ------------------------------------------
+   От края белого листа до первого содержимого — 69 при 1440. Число снято со
+   страницы контактов: там оно задано полем .chero и служит эталоном.
+
+   Правило общее, потому что у каждой внутренней страницы был свой отступ:
+   контакты 69, «О компании» 96 (поле секции плюс собственный отступ
+   заголовка), отзывы почти ноль. Одинаковым он не станет сам — у секций
+   разные внутренние поля, поэтому первое поле задаём здесь, а собственные
+   отступы первых элементов гасим. */
+.sheet > section:first-of-type { padding-block-start: calc(92 * var(--k)); }
+.sheet > section:first-of-type > .wrap > :first-child { margin-block-start: 0; }
+.chero--about .chero__title { margin-block-start: 0; }
+.sheet .svcpage__in,
+.sheet .blog__grid,
+.sheet .revpage__in { margin-block-start: 0; }
+/* Пустая шапка (заголовок скрыт с экрана) не должна отдавать отступ дважды:
+   сама она ничего не показывает, поэтому 69 отдаёт следующая секция. */
+/* :first-of-type весит как класс, поэтому правило выше (.sheet > section
+   :first-of-type) перебивало простое .sheet > .pagehead--bare — отступ
+   отдавался дважды, и на блоге с услугами набегало 138 вместо 69. */
+.sheet > section.pagehead--bare:first-of-type { padding-block: 0; }
+.sheet > .pagehead--bare + section { padding-block-start: calc(92 * var(--k)); }
+.sheet > section:first-of-type > .wrap > :first-child > :first-child { margin-block-start: 0; }
