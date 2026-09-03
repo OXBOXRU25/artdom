@@ -28,7 +28,7 @@ $artdom_count  = $artdom_stats['count'];
     <div class="wrap revpage__in">
 
       <aside class="revpage__side">
-        <h1 class="h1 revpage__title">Отзывы</h1>
+        <h1 class="h1 revpage__title vh">Отзывы</h1>
         <p class="body revpage__lead">Отзывы приходят с Яндекс.Карт, из Авито и напрямую от клиентов. Публикуем как есть.</p>
 
         <?php if ( $artdom_rating ) : ?>
