@@ -3,10 +3,22 @@
  * Template Name: О компании
  * Template Post Type: page
  *
- * Страница доверия, а не текстовая справка: человек приходит сюда решить,
- * можно ли доверить этим людям сделку на сотни миллионов. Поэтому блоки идут
- * в порядке возрастания доказательности — сперва кто мы, потом цифры, потом
- * принципы, потом путь и живые люди.
+ * Построение и размерный ряд сняты с symbolstudio.pl/en/about.
+ *
+ * ЗАМЕРЫ РЕФЕРЕНСА ПРИ 1440 (проверены в браузере):
+ *   поле слева   48, контент до 1377
+ *   утверждение  H1 40/44, вес 400, UPPERCASE, чёрный, ширина 1329
+ *   подзаголовок H3 28/36.4, обычный регистр, во второй колонке (l=275)
+ *   крупная фраза H1 64/70.4, UPPERCASE, белым поверх коллажа
+ *   серое утверждение H2 32/38.4, UPPERCASE, #747881, ширина 665
+ *   раздел        H2 32/38.4, UPPERCASE, чёрный
+ *   «почему мы»   колонки: номер 14/21 полупрозрачный серый, заголовок 22/30.8
+ *   команда       имя H3 28/36.4, роль 14/21 серая справа, шаг 116
+ *   шаги          номер 64/83.2 акцентом, текст 15/21 во второй колонке (l=745)
+ *
+ * Блок с видео у референса не берём — заказчик отказался. Вместо снимков
+ * заглушки: пропорции заданы стилями, чтобы с появлением настоящих
+ * фотографий страница не поехала.
  *
  * Пустой блок не рисуется вовсе: недозаполненная страница должна выглядеть
  * короче, а не дырявой.
@@ -21,86 +33,108 @@ while ( have_posts() ) :
 
 	$intro_title = artdom_field( 'ab_intro_title' );
 	$intro_text  = artdom_field( 'ab_intro_text' );
-	$photo       = artdom_field( 'ab_photo' );
 	$principles  = artdom_field( 'ab_principles' );
 	$path        = artdom_field( 'ab_path' );
 	$team        = artdom_field( 'ab_team' );
 
+	$quote = artdom_field( 'about_quote' );
+	$paras = $intro_text ? preg_split( '/\R{2,}/u', trim( (string) $intro_text ) ) : array();
+
 	set_query_var( 'artdom_head_title', get_the_title() );
-	set_query_var( 'artdom_head_lead', has_excerpt() ? get_the_excerpt() : '' );
+	set_query_var( 'artdom_head_lead', '' );
 ?>
 
 <main id="main">
   <?php get_template_part( 'template-parts/page-head' ); ?>
 
-  <?php if ( $intro_text ) : ?>
-  <section class="sec sec--white abintro">
-    <div class="wrap abintro__in">
-      <div class="abintro__text" data-rise>
-        <?php if ( $intro_title ) : ?>
-        <h2 class="h2"><?php echo artdom_lines( $intro_title ); ?></h2>
-        <?php endif; ?>
-        <?php foreach ( preg_split( '/\R{2,}/u', trim( (string) $intro_text ) ) as $p ) : ?>
-        <p class="body"><?php echo artdom_lines( $p ); ?></p>
-        <?php endforeach; ?>
-      </div>
-      <figure class="abintro__media" data-rise="shutter">
-        <?php artdom_img( $photo, 'uslugi.webp', 'Офис компании АРТДОМ', array( 710, 722 ) ); ?>
-      </figure>
+  <?php if ( $intro_title ) : ?>
+  <?php /* Утверждение во всю ширину капсом — первое, что читает человек. */ ?>
+  <section class="sec sec--white abclaim">
+    <div class="wrap">
+      <h2 class="abclaim__t" data-rise><?php echo artdom_lines( $intro_title ); ?></h2>
     </div>
   </section>
   <?php endif; ?>
 
-  <?php get_template_part( 'template-parts/main/stats' ); ?>
+  <?php if ( $paras ) : ?>
+  <?php /* Текст не во всю ширину, а второй колонкой: у референса он сдвинут
+           от левого края и занимает примерно четверть строки. */ ?>
+  <section class="sec sec--white abtext">
+    <div class="wrap abtext__in">
+      <div class="abtext__col" data-rise>
+        <?php foreach ( $paras as $p ) : ?>
+        <p class="abtext__p"><?php echo artdom_lines( $p ); ?></p>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </section>
+  <?php endif; ?>
+
+  <?php if ( $quote ) : ?>
+  <?php /* Коллаж заглушек, поверх — фраза белым капсом. У референса слова
+           разнесены по разным точкам поверх картинок; мы держим ту же идею,
+           но без разброса по словам: по-русски он читался бы как ошибка
+           вёрстки, а не как приём. */ ?>
+  <section class="abstage" data-rise>
+    <div class="abstage__shots" aria-hidden="true">
+      <span class="abstage__shot abstage__shot--a"></span>
+      <span class="abstage__shot abstage__shot--b"></span>
+      <span class="abstage__shot abstage__shot--c"></span>
+    </div>
+    <blockquote class="abstage__q"><?php echo artdom_lines( $quote ); ?></blockquote>
+    <p class="abstage__who">
+      <?php echo esc_html( artdom_field( 'about_name' ) ); ?><span class="abstage__role"><?php echo esc_html( artdom_field( 'about_role' ) ); ?></span>
+    </p>
+  </section>
+  <?php endif; ?>
 
   <?php if ( is_array( $principles ) && $principles ) : ?>
-  <section class="sec sec--surface">
-    <div class="wrap">
-      <h2 class="h2" data-rise><?php echo esc_html( artdom_field( 'ab_principles_title' ) ); ?></h2>
-      <div class="rule"></div>
-      <ol class="steps steps--three">
-        <?php foreach ( $principles as $i => $pr ) : ?>
-        <li class="steps__item" data-rise>
-          <p class="steps__n" aria-hidden="true"><?php echo esc_html( str_pad( $i + 1, 2, '0', STR_PAD_LEFT ) ); ?></p>
-          <h3 class="steps__title"><?php echo esc_html( $pr['title'] ); ?></h3>
-          <p class="body"><?php echo artdom_lines( $pr['text'] ); ?></p>
-        </li>
-        <?php endforeach; ?>
-      </ol>
+  <section class="sec sec--white abwhy">
+    <h2 class="abwhy__grey" data-rise><?php echo esc_html( artdom_field( 'ab_principles_title' ) ); ?></h2>
+    <div class="wrap abwhy__in">
+      <?php foreach ( $principles as $i => $pr ) : ?>
+      <div class="abwhy__col" data-rise>
+        <p class="abwhy__n" aria-hidden="true"><?php echo esc_html( str_pad( $i + 1, 2, '0', STR_PAD_LEFT ) ); ?></p>
+        <h3 class="abwhy__t"><?php echo esc_html( $pr['title'] ); ?></h3>
+        <p class="abwhy__x"><?php echo artdom_lines( $pr['text'] ); ?></p>
+      </div>
+      <?php endforeach; ?>
     </div>
   </section>
   <?php endif; ?>
 
-  <?php /* Основатель: портрет и прямая речь. Те же поля, что на главной. */ ?>
-  <section class="sec sec--white founder">
-    <div class="wrap founder__in" data-rise>
-      <div class="founder__portrait">
-        <?php
-        artdom_img(
-          artdom_field( 'about_portrait' ),
-          'founder.webp',
-          artdom_field( 'about_name' ) . ', ' . artdom_field( 'about_role' ),
-          array( 181, 181 )
-        );
-        ?>
-      </div>
-      <blockquote class="founder__quote"><?php echo artdom_lines( artdom_field( 'about_quote' ) ); ?></blockquote>
-      <p class="founder__who"><?php echo esc_html( artdom_field( 'about_name' ) ); ?><span class="about__role"><?php echo esc_html( artdom_field( 'about_role' ) ); ?></span></p>
+  <?php if ( is_array( $team ) && $team ) : ?>
+  <section class="sec sec--white abteam">
+    <div class="wrap">
+      <h2 class="abhead" data-rise><?php echo esc_html( artdom_field( 'ab_team_title' ) ); ?></h2>
+      <ul class="abteam__list" role="list">
+        <?php foreach ( $team as $person ) : ?>
+        <li class="abteam__row" data-rise>
+          <span class="abteam__shot" aria-hidden="true"></span>
+          <h3 class="abteam__name"><?php echo esc_html( $person['name'] ); ?></h3>
+          <p class="abteam__role"><?php echo esc_html( $person['role'] ); ?></p>
+        </li>
+        <?php endforeach; ?>
+      </ul>
     </div>
   </section>
+  <?php endif; ?>
 
   <?php if ( is_array( $path ) && $path ) : ?>
-  <section class="sec sec--surface">
+  <?php /* «Как мы к этому пришли» — крупные номера акцентом слева, текст
+           второй колонкой. У референса номера 64 и оранжевые; у нас тот же
+           размер и наш синий. */ ?>
+  <section class="sec sec--white abpath">
     <div class="wrap">
-      <h2 class="h2" data-rise><?php echo esc_html( artdom_field( 'ab_path_title' ) ); ?></h2>
-      <ol class="path">
-        <?php foreach ( $path as $step ) : ?>
-        <li class="path__item" data-rise>
-          <p class="path__year"><?php echo esc_html( $step['year'] ); ?></p>
-          <div class="path__body">
-            <h3 class="path__title"><?php echo esc_html( $step['title'] ); ?></h3>
+      <h2 class="abhead" data-rise><?php echo esc_html( artdom_field( 'ab_path_title' ) ); ?></h2>
+      <ol class="abpath__list">
+        <?php foreach ( $path as $i => $step ) : ?>
+        <li class="abpath__row" data-rise>
+          <p class="abpath__n" aria-hidden="true"><?php echo esc_html( str_pad( $i + 1, 2, '0', STR_PAD_LEFT ) ); ?></p>
+          <div class="abpath__body">
+            <h3 class="abpath__t"><?php echo esc_html( $step['year'] ); ?> — <?php echo esc_html( $step['title'] ); ?></h3>
             <?php if ( ! empty( $step['text'] ) ) : ?>
-            <p class="body"><?php echo artdom_lines( $step['text'] ); ?></p>
+            <p class="abpath__x"><?php echo artdom_lines( $step['text'] ); ?></p>
             <?php endif; ?>
           </div>
         </li>
@@ -110,43 +144,11 @@ while ( have_posts() ) :
   </section>
   <?php endif; ?>
 
-  <?php if ( is_array( $team ) && $team ) : ?>
-  <section class="sec sec--white">
-    <div class="wrap">
-      <div class="sechead" data-rise>
-        <div class="sechead__text">
-          <h2 class="h2"><?php echo esc_html( artdom_field( 'ab_team_title' ) ); ?></h2>
-          <p class="body"><?php echo artdom_lines( artdom_field( 'ab_team_lead' ) ); ?></p>
-        </div>
-      </div>
-      <div class="rule"></div>
-      <ul class="team">
-        <?php foreach ( $team as $person ) : ?>
-        <li class="team__item" data-rise>
-          <span class="team__ava" aria-hidden="true"><?php echo esc_html( artdom_initials( $person['name'] ) ); ?></span>
-          <h3 class="team__name"><?php echo esc_html( $person['name'] ); ?></h3>
-          <p class="team__role muted"><?php echo esc_html( $person['role'] ); ?></p>
-          <?php if ( ! empty( $person['note'] ) ) : ?>
-          <p class="body team__note"><?php echo esc_html( $person['note'] ); ?></p>
-          <?php endif; ?>
-        </li>
-        <?php endforeach; ?>
-      </ul>
-    </div>
-  </section>
-  <?php endif; ?>
-
   <?php if ( trim( wp_strip_all_tags( get_the_content() ) ) ) : ?>
   <section class="sec sec--white">
     <div class="wrap prose" data-rise><?php the_content(); ?></div>
   </section>
   <?php endif; ?>
-
-  <?php
-  set_query_var( 'artdom_cta_title', 'Познакомимся?' );
-  set_query_var( 'artdom_cta_text', 'Расскажите о задаче — подберём брокера, который занимается именно вашим сегментом.' );
-  set_query_var( 'artdom_cta_btn', 'Оставить заявку' );
-  ?>
 </main>
 
 <?php

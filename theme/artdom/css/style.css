@@ -2212,3 +2212,145 @@ body:not(.home) { padding-block-start: var(--hdr-h); }
 form .btn {
   border-radius: 0;
 }
+
+/* --- Страница «О компании» ---------------------------------------------------
+   Построение и размерный ряд сняты с symbolstudio.pl/en/about при 1440:
+
+     утверждение   H1 40/44, вес 400, UPPERCASE, ширина 1329
+     подзаголовок  H3 28/36.4, обычный регистр, вторая колонка (l=275)
+     крупная фраза H1 64/70.4, UPPERCASE, белым поверх коллажа
+     серое         H2 32/38.4, UPPERCASE, #747881, ширина 665
+     раздел        H2 32/38.4, UPPERCASE, чёрный
+     «почему мы»   номер 14/21 полупрозрачный, заголовок 22/30.8
+     команда       имя 28/36.4, роль 14/21 серая справа, шаг строки 116
+     шаги          номер 64/83.2 акцентом, текст 15/21 во второй колонке
+
+   Кегли референса жёсткие, у нас от --k: при 1440 k = 0.75, поэтому 40px
+   это calc(53 * var(--k)), 64 — calc(85 * var(--k)), 32 — calc(43 * var(--k)),
+   28 — calc(37 * var(--k)), 22 — calc(29 * var(--k)). Оранжевый заменён
+   нашим синим: второй акцент на сайте заводить не из чего. */
+
+.abclaim { padding-block-start: 0; }
+.abclaim__t {
+  font-size: clamp(24px, calc(53 * var(--k)), 54px); line-height: 1.1;
+  font-weight: 500; letter-spacing: -.01em;
+  text-transform: uppercase;
+}
+
+/* Текст второй колонкой: у референса он начинается примерно на 19% строки и
+   занимает около четверти. */
+.abtext__in { display: grid; grid-template-columns: 19% minmax(0, 1fr); }
+.abtext__col { grid-column: 2; max-width: 58ch; }
+/* Первый абзац крупный — он и есть подзаголовок, как у референса.
+   Остальные обычным текстом: три абзаца подряд кеглем 28 давали колонку в
+   1431 пиксель высотой, то есть ту же дыру, из-за которой переделывали
+   услуги. */
+.abtext__p:first-child {
+  font-size: clamp(16px, calc(37 * var(--k)), 34px); line-height: 1.3;
+  font-weight: 400;
+}
+.abtext__p:not(:first-child) {
+  font-size: var(--t-mid); line-height: 1.5; color: var(--c-muted);
+}
+.abtext__p + .abtext__p { margin-block-start: .8em; }
+
+/* Сцена с коллажем: заглушки разного размера вразброс, поверх — фраза. */
+.abstage {
+  position: relative; isolation: isolate;
+  background: var(--c-ink);
+  padding-block: calc(150 * var(--k));
+  padding-inline: var(--gutter);
+  overflow: hidden;
+}
+.abstage__shots { position: absolute; inset: 0; z-index: -1; }
+.abstage__shot { position: absolute; display: block; background: rgba(255, 255, 255, .08); }
+/* Три пятна разного размера и пропорции — как у референса, где картинки
+   стоят вразброс, а не рядом. Проценты, а не пиксели: сцена резиновая. */
+.abstage__shot--a { inset-block-start: 8%;  inset-inline-start: 6%;  width: 13%; aspect-ratio: 187 / 131; }
+.abstage__shot--b { inset-block-start: 34%; inset-inline-end: 9%;    width: 15%; aspect-ratio: 216 / 239; }
+.abstage__shot--c { inset-block-end: 7%;    inset-inline-start: 22%; width: 15%; aspect-ratio: 216 / 116; }
+
+.abstage__q {
+  max-width: calc(1100 * var(--k));
+  margin-inline: auto;
+  font-size: clamp(28px, calc(85 * var(--k)), 88px); line-height: 1.1;
+  font-weight: 500; letter-spacing: -.02em;
+  text-transform: uppercase;
+  color: var(--c-white);
+  text-align: center;
+}
+.abstage__who {
+  margin-block-start: calc(40 * var(--k));
+  font-family: var(--f-ui); font-size: var(--t-nav);
+  color: rgba(255, 255, 255, .6);
+  text-align: center;
+}
+.abstage__role::before { content: " · "; }
+
+/* Серое утверждение над разделом — оно же его заголовок. */
+.abwhy__grey {
+  max-width: calc(665px + 2 * var(--gutter));
+  margin-inline-start: var(--gutter);
+  margin-block-end: calc(60 * var(--k));
+  font-size: clamp(20px, calc(43 * var(--k)), 44px); line-height: 1.2;
+  font-weight: 500; letter-spacing: -.01em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+.abwhy__in { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: calc(46 * var(--k)); row-gap: calc(60 * var(--k)); }
+.abwhy__n {
+  font-family: var(--f-ui); font-size: clamp(11px, calc(19 * var(--k)), 18px); line-height: 1.5;
+  color: color-mix(in srgb, var(--c-muted) 50%, transparent);
+}
+.abwhy__t {
+  margin-block-start: calc(6 * var(--k));
+  font-size: clamp(17px, calc(29 * var(--k)), 30px); line-height: 1.4; font-weight: 500;
+}
+.abwhy__x { margin-block-start: calc(16 * var(--k)); font-size: var(--t-body); line-height: 1.5; color: var(--c-muted); }
+
+/* Заголовок раздела — тот же кегль, что у серого утверждения, но чёрный. */
+.abhead {
+  font-size: clamp(20px, calc(43 * var(--k)), 44px); line-height: 1.2;
+  font-weight: 500; letter-spacing: -.01em; text-transform: uppercase;
+  margin-block-end: calc(50 * var(--k));
+}
+
+/* Команда: строки с волоском, портрет слева, имя, роль справа. */
+.abteam__list { display: grid; }
+.abteam__row {
+  display: grid;
+  grid-template-columns: calc(215 * var(--k)) minmax(0, 1fr) auto;
+  align-items: center; column-gap: calc(28 * var(--k));
+  padding-block: calc(20 * var(--k));
+  border-block-start: var(--dp) solid var(--c-rule);
+}
+.abteam__row:last-child { border-block-end: var(--dp) solid var(--c-rule); }
+.abteam__shot { display: block; width: calc(161 * var(--k)); min-width: 96px; aspect-ratio: 161 / 100; background: var(--c-surface); }
+.abteam__name { font-size: clamp(17px, calc(37 * var(--k)), 38px); line-height: 1.3; font-weight: 500; }
+.abteam__role { font-family: var(--f-ui); font-size: clamp(12px, calc(19 * var(--k)), 18px); line-height: 1.5; color: var(--c-muted); }
+
+/* Шаги: крупный номер акцентом слева, текст второй колонкой. */
+.abpath__list { display: grid; }
+.abpath__row {
+  display: grid;
+  grid-template-columns: calc(697 * var(--k)) minmax(0, 1fr);
+  column-gap: calc(28 * var(--k));
+  padding-block: calc(50 * var(--k));
+  border-block-start: var(--dp) solid var(--c-rule);
+}
+.abpath__row:last-child { border-block-end: var(--dp) solid var(--c-rule); }
+.abpath__n {
+  font-size: clamp(34px, calc(85 * var(--k)), 88px); line-height: 1.3;
+  font-weight: 500; color: var(--c-accent);
+}
+.abpath__t { font-size: clamp(17px, calc(29 * var(--k)), 30px); line-height: 1.4; font-weight: 500; }
+.abpath__x { margin-block-start: calc(14 * var(--k)); font-size: var(--t-body); line-height: 1.4; color: var(--c-muted); }
+
+@media (max-width: 860px) {
+  .abtext__in { grid-template-columns: minmax(0, 1fr); }
+  .abtext__col { grid-column: 1; }
+  .abwhy__in { grid-template-columns: minmax(0, 1fr); }
+  .abteam__row { grid-template-columns: 96px minmax(0, 1fr); row-gap: 4px; }
+  .abteam__role { grid-column: 2; }
+  .abpath__row { grid-template-columns: minmax(0, 1fr); row-gap: 10px; }
+}
