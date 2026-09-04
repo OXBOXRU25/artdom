@@ -2551,3 +2551,20 @@ form .btn {
   margin-block-start: calc(90 * var(--k));
   height: var(--dp); background: var(--c-rule);
 }
+
+/* Карточка цены: всё содержимое от одной вертикали ---------------------------
+   Плашка категории имеет собственное поле в 12px, и её ТЕКСТ стоял правее
+   цены — блок читался как сдвинутый. Утягиваем плашку влево ровно на это
+   поле: подложка выходит за колонку текста, а буквы встают на одну линию с
+   ценой и характеристиками.
+
+   Заодно ритм внутри: раньше первым шёл отступ .card__meta в 18px поверх
+   поля блока, из-за чего верх пустовал, а низ был плотным. */
+.pricebox .card__meta {
+  margin-block-start: 0;
+  margin-inline-start: calc(-1 * max(11px, calc(16 * var(--k))));
+}
+.pricebox__price { margin-block-start: max(10px, calc(14 * var(--k))); }
+.pricebox__sub   { margin-block-start: max(6px, calc(8 * var(--k))); }
+.pricebox .btn   { margin-block-start: max(18px, calc(26 * var(--k))); }
+.pricebox__note  { margin-block-start: max(10px, calc(14 * var(--k))); line-height: 1.4; }
