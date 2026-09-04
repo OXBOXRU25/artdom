@@ -26,7 +26,10 @@ const CODE = /\.(php|css|js)$/i;
 const MEDIA = /\.(svg|webp|jpg|jpeg|png|mp4|webm|woff2)$/i;
 const SEP = String.fromCharCode(92);   // обратный слеш, собранный кодом:
 // в heredoc он не переживает передачу и молча ломает регулярку.
-const пропустить = (f) => f.includes('.git') || f.includes('node_modules');
+/* .min.css исключён намеренно: его пересобирает сама выкладка, и без этого
+   сторож увидел бы изменившийся файл, запустил выкладку снова — и так по
+   кругу без остановки. */
+const пропустить = (f) => f.includes('.git') || f.includes('node_modules') || f.endsWith('.min.css');
 
 const время = () => new Date().toTimeString().slice(0, 8);
 let таймер = null;

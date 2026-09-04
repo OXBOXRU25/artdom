@@ -33,11 +33,22 @@ function artdom_scripts() {
 	// чтобы относительные пути к шрифтам и картинкам не зависели от его места.
 	wp_enqueue_style( 'artdom-theme', get_stylesheet_uri(), array(), ARTDOM_VERSION );
 
+	/* Сжатый файл берём только если он НЕ старше исходного. Иначе правка в
+	   style.css молча не доедет до сайта, и следующий час уйдёт на поиск
+	   призрака: в исходнике правило есть, на экране его нет. */
+	$artdom_css = '/css/style.css';
+	$artdom_min = '/css/style.min.css';
+	$artdom_dir = get_template_directory();
+	if ( file_exists( $artdom_dir . $artdom_min )
+		&& filemtime( $artdom_dir . $artdom_min ) >= filemtime( $artdom_dir . $artdom_css ) ) {
+		$artdom_css = $artdom_min;
+	}
+
 	wp_enqueue_style(
 		'artdom-main',
-		get_template_directory_uri() . '/css/style.css',
+		get_template_directory_uri() . $artdom_css,
 		array( 'artdom-theme' ),
-		artdom_asset_version( '/css/style.css' )
+		artdom_asset_version( $artdom_css )
 	);
 
 	wp_enqueue_script(
