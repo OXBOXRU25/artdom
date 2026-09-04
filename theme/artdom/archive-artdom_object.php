@@ -9,8 +9,6 @@
  * @package artdom
  */
 
-artdom_use_sheet();
-
 get_header();
 
 $terms   = get_terms( array( 'taxonomy' => 'artdom_object_type', 'hide_empty' => true ) );

@@ -22,8 +22,6 @@
  * @package artdom
  */
 
-artdom_use_sheet();
-
 get_header();
 
 set_query_var( 'artdom_head_hide', true );

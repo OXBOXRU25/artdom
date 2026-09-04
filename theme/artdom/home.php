@@ -9,8 +9,6 @@
  * @package artdom
  */
 
-artdom_use_sheet();
-
 get_header();
 
 $artdom_blog_page = (int) get_option( 'page_for_posts' );

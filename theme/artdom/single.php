@@ -9,8 +9,6 @@
  * @package artdom
  */
 
-artdom_use_sheet();
-
 get_header();
 
 while ( have_posts() ) :

@@ -16,7 +16,7 @@ set_query_var(
 );
 ?>
 
-<main id="main">
+<main id="main" class="sheet">
   <?php get_template_part( 'template-parts/page-head' ); ?>
 
   <section class="sec sec--white">

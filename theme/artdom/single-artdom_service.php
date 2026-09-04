@@ -19,7 +19,7 @@ while ( have_posts() ) :
 	set_query_var( 'artdom_head_lead', $lead );
 ?>
 
-<main id="main">
+<main id="main" class="sheet">
   <?php get_template_part( 'template-parts/page-head' ); ?>
 
   <?php if ( $text ) : ?>

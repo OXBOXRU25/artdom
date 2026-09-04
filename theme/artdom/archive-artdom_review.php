@@ -14,8 +14,6 @@
  * @package artdom
  */
 
-artdom_use_sheet();
-
 get_header();
 
 $artdom_stats  = artdom_reviews_stats();

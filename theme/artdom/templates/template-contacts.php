@@ -14,17 +14,6 @@
  * @package artdom
  */
 
-/* Серый фон и прозрачная шапка включаются классом на <body>: страница
-   единственная в своём роде, заводить ради неё отдельный шаблон шапки
-   было бы дороже. */
-add_filter(
-	'body_class',
-	static function ( $classes ) {
-		$classes[] = 'is-sheet';
-		return $classes;
-	}
-);
-
 get_header();
 
 $phone   = artdom_field( 'opt_phone', true );
