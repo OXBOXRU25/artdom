@@ -51,7 +51,11 @@ if ( ! is_array( $artdom_shots ) || ! $artdom_shots ) {
     <svg viewBox="0 0 24 16" aria-hidden="true"><use href="#i-arrow-xl"></use></svg>
   </button>
   <div class="lb__stage" data-lb-stage>
-    <img class="lb__img" data-lb-img alt="" draggable="false">
+    <?php /* Пустой src недопустим по стандарту, а картинку подставляет
+             скрипт. Кладём прозрачную точку: место занято, запрос лишний не
+             уходит, валидатор доволен. */ ?>
+    <img class="lb__img" data-lb-img alt="" draggable="false"
+         src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
   </div>
   <p class="lb__bar">
     <span class="lb__count" data-lb-count></span>
