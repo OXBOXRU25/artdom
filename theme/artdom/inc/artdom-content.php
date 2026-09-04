@@ -472,7 +472,16 @@ function artdom_fill_demo() {
 
 	/* --- Объекты --- */
 	foreach ( artdom_demo_objects() as $i => $o ) {
-		if ( get_page_by_path( sanitize_title( $o['title'] ), OBJECT, 'artdom_object' ) ) {
+		$artdom_obj = get_page_by_path( sanitize_title( $o['title'] ), OBJECT, 'artdom_object' );
+		if ( $artdom_obj ) {
+			/* Объект уже создан прошлым посевом: дозаполняем только пустую
+			   галерею — своё наполнение заказчика не трогаем. */
+			if ( ! get_field( 'obj_gallery', $artdom_obj->ID ) ) {
+				$artdom_gal = artdom_demo_gallery();
+				if ( $artdom_gal ) {
+					update_field( 'field_artdom_obj_gallery', $artdom_gal, $artdom_obj->ID );
+				}
+			}
 			continue;
 		}
 		$id = wp_insert_post(

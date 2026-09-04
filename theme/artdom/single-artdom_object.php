@@ -64,18 +64,22 @@ while ( have_posts() ) :
 
   <section class="sec sec--white object">
     <div class="wrap object__in">
-
       <div class="object__main">
+        <?php
+        /* Обложка и остальные снимки — одной лентой, той же, что в статьях:
+           приём на сайте один. Размер здесь свой, во всю ширину колонки:
+           объект смотрят ради фотографий, и ужимать их до газетного кадра
+           статьи было бы шагом назад. */
+        if ( is_array( $gallery ) && $gallery ) :
+          set_query_var( 'artdom_gallery', $gallery );
+        ?>
+        <div class="gal--wide" data-rise>
+          <?php get_template_part( 'template-parts/gallery' ); ?>
+        </div>
+        <?php else : ?>
         <figure class="object__cover" data-rise="shutter">
           <img draggable="false" src="<?php echo esc_url( $cover ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" width="1160" height="700" decoding="async">
         </figure>
-
-        <?php if ( is_array( $gallery ) && count( $gallery ) > 1 ) : ?>
-        <div class="object__gallery" role="group" aria-label="Фотографии объекта">
-          <?php foreach ( array_slice( $gallery, 1 ) as $g ) : ?>
-          <img draggable="false" src="<?php echo esc_url( $g['sizes']['large'] ); ?>" alt="<?php echo esc_attr( $g['alt'] ); ?>" width="580" height="395" loading="lazy" decoding="async">
-          <?php endforeach; ?>
-        </div>
         <?php endif; ?>
 
         <?php if ( $text ) : ?>
@@ -124,7 +128,7 @@ while ( have_posts() ) :
   $similar = new WP_Query(
     array(
       'post_type'      => 'artdom_object',
-      'posts_per_page' => 3,
+      'posts_per_page' => 12,
       'post__not_in'   => array( get_the_ID() ),
       'no_found_rows'  => true,
       'tax_query'      => $tax_ids ? array( array( 'taxonomy' => 'artdom_object_type', 'field' => 'term_id', 'terms' => $tax_ids ) ) : array(),
@@ -135,15 +139,28 @@ while ( have_posts() ) :
   <section class="sec sec--white">
     <div class="wrap">
       <h2 class="h2" data-rise>Похожие объекты</h2>
-      <div class="rule"></div>
-      <div class="grid-cards">
-        <?php
-        while ( $similar->have_posts() ) :
-          $similar->the_post();
-          get_template_part( 'template-parts/object-card' );
-        endwhile;
-        wp_reset_postdata();
-        ?>
+      <?php /* Лента, а не сетка из трёх: тот же примитив, что на главной, со
+               стрелками и бегунком. Ограничение в три карточки снято — сколько
+               подходящих объектов есть, столько и листается. */ ?>
+      <div class="slider" data-slider data-rise>
+        <div class="gal__frame">
+          <button class="gal__arrow gal__arrow--prev" type="button" data-slider-prev aria-label="Предыдущие объекты">
+            <svg viewBox="0 0 24 16" aria-hidden="true"><use href="#i-arrow-xl"></use></svg>
+          </button>
+          <button class="gal__arrow gal__arrow--next" type="button" data-slider-next aria-label="Следующие объекты">
+            <svg viewBox="0 0 24 16" aria-hidden="true"><use href="#i-arrow-xl"></use></svg>
+          </button>
+          <div class="slider__track" tabindex="0" role="group" aria-label="Похожие объекты, лента">
+            <?php
+            while ( $similar->have_posts() ) :
+              $similar->the_post();
+              get_template_part( 'template-parts/object-card' );
+            endwhile;
+            wp_reset_postdata();
+            ?>
+          </div>
+        </div>
+        <div class="slider__bar" aria-hidden="true"><div class="slider__thumb" data-thumb></div></div>
       </div>
     </div>
   </section>
