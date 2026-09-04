@@ -1,13 +1,17 @@
 <?php
 /**
- * Галерея с просмотром на весь экран.
+ * Галерея статьи: лента с одним крупным кадром.
  *
- * Одна часть на статьи и объекты: приём один, значит и код один — иначе
- * зум починят в одном месте и забудут во втором.
+ * Построение снято с profkamaz.ru (страница «Диалог с коллективом»): один
+ * снимок во всю ширину, стрелки СНАРУЖИ кадра, тонкая полоса прогресса под
+ * ним. Замеры при 1440: кадр 1092x515 (2.12), стрелки 40x40 по вертикали от
+ * середины кадра, полоса 420x2 в 22 под кадром.
  *
- * Раскладка не ровной сеткой: первый снимок крупный во всю ширину, дальше
- * пары. Ряд одинаковых прямоугольников читается как таблица, а не как
- * репортаж, а у нас снимки — часть рассказа.
+ * Лента — тот же примитив .slider, что у объектов и отзывов: он уже умеет
+ * прокрутку с доводкой, перетаскивание и полосу с бегунком. Заводить второй
+ * слайдер ради одной страницы значит чинить потом оба.
+ *
+ * Клик по кадру открывает просмотрщик с увеличением — он ниже.
  *
  * Ожидает переменную запроса artdom_gallery — массив ACF-галереи.
  *
@@ -18,24 +22,42 @@ $artdom_shots = get_query_var( 'artdom_gallery' );
 if ( ! is_array( $artdom_shots ) || ! $artdom_shots ) {
 	return;
 }
+$artdom_total = count( $artdom_shots );
 ?>
-<div class="gal" data-gal>
-  <?php foreach ( $artdom_shots as $artdom_k => $artdom_s ) : ?>
-  <?php
-  $artdom_full  = isset( $artdom_s['url'] ) ? $artdom_s['url'] : '';
-  $artdom_thumb = isset( $artdom_s['sizes']['large'] ) ? $artdom_s['sizes']['large'] : $artdom_full;
-  $artdom_alt   = isset( $artdom_s['alt'] ) ? $artdom_s['alt'] : '';
-  $artdom_cap   = isset( $artdom_s['caption'] ) ? $artdom_s['caption'] : '';
-  ?>
-  <button class="gal__cell<?php echo 0 === $artdom_k ? ' gal__cell--wide' : ''; ?>" type="button"
-          data-gal-open="<?php echo (int) $artdom_k; ?>"
-          data-gal-src="<?php echo esc_url( $artdom_full ); ?>"
-          data-gal-cap="<?php echo esc_attr( $artdom_cap ); ?>"
-          aria-label="Открыть фотографию <?php echo (int) $artdom_k + 1; ?> из <?php echo count( $artdom_shots ); ?>">
-    <img src="<?php echo esc_url( $artdom_thumb ); ?>" alt="<?php echo esc_attr( $artdom_alt ); ?>" loading="lazy" decoding="async" draggable="false">
-    <span class="gal__zoom" aria-hidden="true"><svg viewBox="0 0 12 12"><use href="#i-plus"></use></svg></span>
-  </button>
-  <?php endforeach; ?>
+<div class="gal slider slider--solo" data-slider data-gal>
+  <div class="gal__frame">
+    <?php if ( $artdom_total > 1 ) : ?>
+    <button class="gal__arrow gal__arrow--prev" type="button" data-slider-prev aria-label="Предыдущая фотография">
+      <svg viewBox="0 0 24 16" aria-hidden="true"><use href="#i-arrow-xl"></use></svg>
+    </button>
+    <button class="gal__arrow gal__arrow--next" type="button" data-slider-next aria-label="Следующая фотография">
+      <svg viewBox="0 0 24 16" aria-hidden="true"><use href="#i-arrow-xl"></use></svg>
+    </button>
+    <?php endif; ?>
+
+    <div class="slider__track gal__track" tabindex="0" role="group" aria-label="Фотографии к статье">
+      <?php foreach ( $artdom_shots as $artdom_k => $artdom_s ) : ?>
+      <?php
+      $artdom_full  = isset( $artdom_s['url'] ) ? $artdom_s['url'] : '';
+      $artdom_thumb = isset( $artdom_s['sizes']['large'] ) ? $artdom_s['sizes']['large'] : $artdom_full;
+      $artdom_alt   = isset( $artdom_s['alt'] ) ? $artdom_s['alt'] : '';
+      $artdom_cap   = isset( $artdom_s['caption'] ) ? $artdom_s['caption'] : '';
+      ?>
+      <button class="gal__cell" type="button"
+              data-gal-open="<?php echo (int) $artdom_k; ?>"
+              data-gal-src="<?php echo esc_url( $artdom_full ); ?>"
+              data-gal-cap="<?php echo esc_attr( $artdom_cap ); ?>"
+              aria-label="Открыть фотографию <?php echo (int) $artdom_k + 1; ?> из <?php echo (int) $artdom_total; ?> во весь экран">
+        <img src="<?php echo esc_url( $artdom_thumb ); ?>" alt="<?php echo esc_attr( $artdom_alt ); ?>" loading="lazy" decoding="async" draggable="false">
+        <span class="gal__zoom" aria-hidden="true"><svg viewBox="0 0 12 12"><use href="#i-plus"></use></svg></span>
+      </button>
+      <?php endforeach; ?>
+    </div>
+  </div>
+
+  <?php if ( $artdom_total > 1 ) : ?>
+  <div class="slider__bar gal__bar" aria-hidden="true"><div class="slider__thumb" data-thumb></div></div>
+  <?php endif; ?>
 </div>
 
 <?php /* Просмотрщик один на страницу, наполняется скриптом. Нативный dialog:
@@ -51,9 +73,8 @@ if ( ! is_array( $artdom_shots ) || ! $artdom_shots ) {
     <svg viewBox="0 0 24 16" aria-hidden="true"><use href="#i-arrow-xl"></use></svg>
   </button>
   <div class="lb__stage" data-lb-stage>
-    <?php /* Пустой src недопустим по стандарту, а картинку подставляет
-             скрипт. Кладём прозрачную точку: место занято, запрос лишний не
-             уходит, валидатор доволен. */ ?>
+    <?php /* Пустой src недопустим по стандарту, а картинку подставляет скрипт.
+             Кладём прозрачную точку: место занято, лишнего запроса нет. */ ?>
     <img class="lb__img" data-lb-img alt="" draggable="false"
          src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
   </div>

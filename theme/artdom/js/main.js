@@ -212,6 +212,26 @@
 
     window.addEventListener("resize", paint);
     paint();
+
+    /* Стрелки — часть общего примитива, а не отдельный слайдер под галерею.
+       Их может не быть: у лент на главной их нет, и код это переживает. */
+    var prev = slider.querySelector("[data-slider-prev]");
+    var next = slider.querySelector("[data-slider-next]");
+
+    function края() {
+      if (!prev && !next) return;
+      var max = track.scrollWidth - track.clientWidth;
+      /* Допуск в пиксель: дробные ширины кадра дают scrollLeft вроде 1091.5,
+         и без него стрелка «вперёд» гасла бы на предпоследнем снимке. */
+      if (prev) prev.disabled = track.scrollLeft <= 1;
+      if (next) next.disabled = track.scrollLeft >= max - 1;
+    }
+
+    if (prev) prev.addEventListener("click", function () { glide(track.scrollLeft - step(), 420); });
+    if (next) next.addEventListener("click", function () { glide(track.scrollLeft + step(), 420); });
+    track.addEventListener("scroll", края, { passive: true });
+    window.addEventListener("resize", края);
+    края();
   });
 
   /* ---------- Видео в первом экране ----------

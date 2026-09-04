@@ -2569,31 +2569,32 @@ form .btn {
 .pricebox .btn   { margin-block-start: max(18px, calc(26 * var(--k))); }
 .pricebox__note  { margin-block-start: max(10px, calc(14 * var(--k))); line-height: 1.4; }
 
-/* --- Галерея с просмотром ---------------------------------------------------
-   Раскладка не ровной сеткой: первый снимок во всю ширину, дальше пары. Ряд
-   одинаковых прямоугольников читается таблицей, а снимки в статье — часть
-   рассказа, у них должен быть свой ритм. */
-.gal {
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: max(10px, calc(14 * var(--k)));
-  margin-block-start: max(24px, calc(44 * var(--k)));
-}
+/* --- Галерея статьи: лента с одним кадром ------------------------------------
+   Построение снято с profkamaz.ru при 1440: кадр 1092x515 (пропорция 2.12),
+   стрелки 40x40 снаружи кадра по вертикали от его середины, полоса прогресса
+   420x2 в 22 под кадром.
+
+   Лента — общий примитив .slider: он уже умеет доводку, перетаскивание и
+   бегунок. Здесь только один кадр в кадре вместо трёх. */
+.gal { margin-block-start: max(24px, calc(44 * var(--k))); }
+.gal__frame { position: relative; }
+.slider--solo .slider__track { grid-auto-columns: 100%; gap: 0; }
+
 .gal__cell {
   position: relative; display: block; overflow: hidden;
   border: 0; padding: 0; margin: 0;
+  width: 100%; aspect-ratio: 1092 / 515;
   background: var(--c-surface);
   border-radius: var(--r-chip);
-  aspect-ratio: 3 / 2;
   cursor: zoom-in;
 }
-.gal__cell--wide { grid-column: 1 / -1; aspect-ratio: 16 / 9; }
-.gal__cell img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease); }
-.gal__cell:hover img, .gal__cell:focus-visible img { transform: scale(1.03); }
+.gal__cell img { width: 100%; height: 100%; object-fit: cover; }
 .gal__cell:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; }
-/* Значок увеличения проявляется при наведении: без наведения он спорил бы с
-   самой фотографией, а она тут главная. */
+
+/* Значок увеличения проявляется при наведении: без него он спорил бы с самой
+   фотографией, а она тут главная. */
 .gal__zoom {
-  position: absolute; inset-block-end: 12px; inset-inline-end: 12px;
+  position: absolute; inset-block-end: 14px; inset-inline-end: 14px;
   width: 38px; height: 38px; display: grid; place-items: center;
   border-radius: 50%; background: var(--c-white); color: var(--c-accent);
   opacity: 0; transform: scale(.9);
@@ -2602,6 +2603,36 @@ form .btn {
 .gal__zoom svg { width: 14px; height: auto; }
 .gal__cell:hover .gal__zoom, .gal__cell:focus-visible .gal__zoom { opacity: 1; transform: none; }
 
+/* Стрелки стоят СНАРУЖИ кадра, как у референса: поверх фотографии они
+   закрывали бы то, ради чего её открыли. */
+.gal__arrow {
+  position: absolute; inset-block-start: 50%; margin-block-start: -20px; z-index: 2;
+  width: 40px; height: 40px; display: grid; place-items: center;
+  border: var(--dp) solid var(--c-rule); border-radius: 50%;
+  background: var(--c-white); color: var(--c-ink);
+  cursor: pointer;
+  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease), opacity var(--dur) var(--ease);
+}
+.gal__arrow svg { width: 20px; height: auto; }
+/* Центр стрелки приходится ровно на кромку кадра — так у референса: стрелки
+   и не закрывают фотографию, и не уезжают за край страницы. */
+.gal__arrow--prev { inset-inline-start: -20px; }
+.gal__arrow--prev svg { rotate: 180deg; }
+.gal__arrow--next { inset-inline-end: -20px; }
+.gal__arrow:hover { background: var(--c-accent); color: var(--c-white); border-color: var(--c-accent); }
+.gal__arrow[disabled] { opacity: .35; pointer-events: none; }
+
+/* Полоса под кадром: у референса 420x2, у нас та же роль и тот же вес. */
+.gal__bar { margin-block-start: 22px; width: min(420px, 60%); height: 2px; }
+
+@media (max-width: 899px) {
+  /* На узком экране стрелки снаружи не помещаются — уводим их внутрь кадра,
+     к нижнему краю, где меньше всего важного. */
+  .gal__arrow { inset-block-start: auto; inset-block-end: 12px; margin-block-start: 0; }
+  .gal__arrow--prev { inset-inline-start: 12px; }
+  .gal__arrow--next { inset-inline-end: 12px; }
+  .gal__cell { aspect-ratio: 3 / 2; }
+}
 /* --- Просмотрщик ------------------------------------------------------------ */
 .lb {
   width: 100vw; max-width: 100vw; height: 100svh; max-height: 100svh;
