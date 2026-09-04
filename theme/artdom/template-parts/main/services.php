@@ -51,8 +51,6 @@ $photo = artdom_field( 'services_photo' );
             <?php
             $n    = $i + 1;
             $open = ( 0 === $i );
-            $link = ! empty( $item['btn_link'] ) ? $item['btn_link'] : '#';
-            $text = ! empty( $item['btn_text'] ) ? $item['btn_text'] : 'Узнать больше';
             ?>
           <div class="acc__item" data-open="<?php echo $open ? 'true' : 'false'; ?>">
             <h3>
@@ -65,7 +63,6 @@ $photo = artdom_field( 'services_photo' );
               <div class="acc__panelIn">
                 <div class="acc__body">
                   <p class="body"><?php echo artdom_lines( $item['text'] ); ?></p>
-                  <?php artdom_btn( $text, $link, 'btn btn--sm' ); ?>
                 </div>
               </div>
             </div>
