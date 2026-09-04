@@ -67,9 +67,22 @@ $artdom_total = count( $artdom_shots );
 <?php /* Просмотрщик один на страницу, наполняется скриптом. Нативный dialog:
          сам ловит Esc, держит фокус внутри и рисует подложку. */ ?>
 <dialog class="lb" data-lb aria-label="Просмотр фотографии">
-  <button class="lb__close" type="button" data-lb-close aria-label="Закрыть">
-    <svg viewBox="0 0 22 22" aria-hidden="true"><use href="#i-close"></use></svg>
-  </button>
+
+  <div class="lb__bar lb__bar--top">
+    <span class="lb__count" data-lb-count></span>
+    <span class="lb__tools">
+      <button class="lb__btn" type="button" data-lb-zoom aria-label="Увеличить">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21" stroke-linecap="round"/></svg>
+      </button>
+      <button class="lb__btn" type="button" data-lb-thumbs aria-label="Показать миниатюры" aria-pressed="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </button>
+      <button class="lb__btn" type="button" data-lb-close aria-label="Закрыть">
+        <svg viewBox="0 0 22 22" aria-hidden="true"><use href="#i-close"></use></svg>
+      </button>
+    </span>
+  </div>
+
   <button class="lb__nav lb__nav--prev" type="button" data-lb-prev aria-label="Предыдущая">
     <svg viewBox="0 0 24 16" aria-hidden="true"><use href="#i-arrow-xl"></use></svg>
   </button>
@@ -82,9 +95,9 @@ $artdom_total = count( $artdom_shots );
     <img class="lb__img" data-lb-img alt="" draggable="false"
          src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
   </div>
-  <p class="lb__bar">
-    <span class="lb__count" data-lb-count></span>
-    <span class="lb__cap" data-lb-cap></span>
-    <span class="lb__hint">Колесо или двойное нажатие — увеличить</span>
-  </p>
+  <p class="lb__cap" data-lb-cap></p>
+
+  <?php /* Лента миниатюр внизу — как в просмотрщике, который выбрал заказчик.
+           Наполняется скриптом из той же галереи. */ ?>
+  <div class="lb__thumbs" data-lb-thumbs-strip></div>
 </dialog>

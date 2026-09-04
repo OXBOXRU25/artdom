@@ -992,6 +992,27 @@
   var stage  = box.querySelector("[data-lb-stage]");
   var count  = box.querySelector("[data-lb-count]");
   var cap    = box.querySelector("[data-lb-cap]");
+  var strip  = box.querySelector("[data-lb-thumbs-strip]");
+  var prevBtn = box.querySelector("[data-lb-prev]");
+  var nextBtn = box.querySelector("[data-lb-next]");
+
+  /* Лента миниатюр собирается из той же галереи: второй список адресов
+     разошёлся бы с первым при первой же правке. */
+  var thumbs = cells.map(function (c, i) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "lb__thumb";
+    b.setAttribute("aria-label", "Фотография " + (i + 1));
+    var t = document.createElement("img");
+    var src = c.querySelector("img");
+    t.src = src ? src.getAttribute("src") : c.getAttribute("data-gal-src");
+    t.alt = "";
+    t.loading = "lazy";
+    b.appendChild(t);
+    b.addEventListener("click", function () { показать(i); });
+    strip.appendChild(b);
+    return b;
+  });
 
   var текущий = 0;
   var масштаб = 1, сдвигX = 0, сдвигY = 0;
@@ -1009,12 +1030,21 @@
   }
 
   function показать(i) {
-    текущий = (i + cells.length) % cells.length;
+    /* По кругу не листаем: у образца на краях стрелка гаснет, и человек
+       видит, что список кончился. */
+    if (i < 0 || i >= cells.length) return;
+    текущий = i;
     var c = cells[текущий];
     img.src = c.getAttribute("data-gal-src");
     img.alt = (c.querySelector("img") || {}).alt || "";
     cap.textContent = c.getAttribute("data-gal-cap") || "";
     count.textContent = (текущий + 1) + " / " + cells.length;
+    thumbs.forEach(function (t, k) { t.setAttribute("aria-current", k === текущий ? "true" : "false"); });
+    if (thumbs[текущий] && thumbs[текущий].scrollIntoView) {
+      thumbs[текущий].scrollIntoView({ block: "nearest", inline: "center" });
+    }
+    prevBtn.disabled = текущий === 0;
+    nextBtn.disabled = текущий === cells.length - 1;
     сброс();
   }
 
@@ -1023,8 +1053,24 @@
   });
 
   box.querySelector("[data-lb-close]").addEventListener("click", function () { box.close(); });
-  box.querySelector("[data-lb-prev]").addEventListener("click", function () { показать(текущий - 1); });
-  box.querySelector("[data-lb-next]").addEventListener("click", function () { показать(текущий + 1); });
+  prevBtn.addEventListener("click", function () { показать(текущий - 1); });
+  nextBtn.addEventListener("click", function () { показать(текущий + 1); });
+
+  /* Кнопка увеличения в панели — то же, что двойное нажатие по снимку. */
+  box.querySelector("[data-lb-zoom]").addEventListener("click", function () {
+    масштаб = масштаб > 1 ? 1 : 2;
+    сдвигX = 0; сдвигY = 0;
+    применить(true);
+  });
+
+  /* Миниатюры прячутся и возвращаются: на невысоком экране они забирают
+     восьмую часть высоты, а иногда нужен только снимок. */
+  var thumbsBtn = box.querySelector("[data-lb-thumbs]");
+  thumbsBtn.addEventListener("click", function () {
+    var on = box.dataset.thumbs !== "off";
+    box.dataset.thumbs = on ? "off" : "on";
+    thumbsBtn.setAttribute("aria-pressed", on ? "false" : "true");
+  });
 
   /* Клик по подложке закрывает, клик по самой картинке — нет. */
   box.addEventListener("click", function (e) {
