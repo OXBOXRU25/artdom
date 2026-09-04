@@ -1248,6 +1248,11 @@ textarea.field__input { resize: vertical; min-height: 96px; }
   .svcrow__side  { grid-column: 1; grid-row: 3; margin-block-start: calc(50 * var(--k)); }
   .svcrow__media { grid-column: 1; grid-row: 4; grid-template-columns: 1fr; gap: 10px; }
   .svcrow__shot--big { margin-inline-end: 0; margin-block-start: 0; }
+  /* На узком экране --k переопределён на 0.61, и отступ вокруг разделителя
+     из calc(90 * var(--k)) давал по 55 с каждой стороны — под последним
+     снимком набиралась дыра в полтора экрана. Здесь число фиксированное. */
+  .svcrow + .svcrow { margin-block-start: 34px; padding-block-start: 34px; }
+  .svcrow__media { margin-block-start: 28px; }
 }
 /* --- Порядок работы --- */
 .steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap-card) var(--gutter); margin-block-start: max(24px, calc(40 * var(--k))); }
