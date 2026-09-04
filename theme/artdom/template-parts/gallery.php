@@ -43,13 +43,17 @@ $artdom_total = count( $artdom_shots );
       $artdom_alt   = isset( $artdom_s['alt'] ) ? $artdom_s['alt'] : '';
       $artdom_cap   = isset( $artdom_s['caption'] ) ? $artdom_s['caption'] : '';
       ?>
+      <?php /* Подложка — та же фотография, растянутая по кадру и размытая: так
+               вертикальный или мелкий снимок виден целиком, а поля по бокам не
+               зияют пустотой. Адрес кладём переменной стиля — он у каждого
+               снимка свой. */ ?>
       <button class="gal__cell" type="button"
+              style="--shot: url('<?php echo esc_url( $artdom_thumb ); ?>')"
               data-gal-open="<?php echo (int) $artdom_k; ?>"
               data-gal-src="<?php echo esc_url( $artdom_full ); ?>"
               data-gal-cap="<?php echo esc_attr( $artdom_cap ); ?>"
               aria-label="Открыть фотографию <?php echo (int) $artdom_k + 1; ?> из <?php echo (int) $artdom_total; ?> во весь экран">
         <img src="<?php echo esc_url( $artdom_thumb ); ?>" alt="<?php echo esc_attr( $artdom_alt ); ?>" loading="lazy" decoding="async" draggable="false">
-        <span class="gal__zoom" aria-hidden="true"><svg viewBox="0 0 12 12"><use href="#i-plus"></use></svg></span>
       </button>
       <?php endforeach; ?>
     </div>

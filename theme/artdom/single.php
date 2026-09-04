@@ -29,17 +29,11 @@ while ( have_posts() ) :
     </div>
   </section>
 
-  <section class="sec sec--white postbody">
-    <div class="wrap postbody__in">
-      <div class="prose" data-rise>
-        <?php the_content(); ?>
-      </div>
-    </div>
-  </section>
-
   <?php
-  /* Галерея под текстом. Часть общая с объектами: приём один, значит и код
-     один — иначе увеличение починят в одном месте и забудут во втором. */
+  /* Галерея идёт СРАЗУ под заголовком, а не под текстом: снимки здесь
+     вводят в материал, а не иллюстрируют его конец. Часть общая с объектами:
+     приём один, значит и код один — иначе увеличение починят в одном месте
+     и забудут во втором. */
   $artdom_shots = get_field( 'post_gallery' );
   if ( is_array( $artdom_shots ) && $artdom_shots ) :
 	  set_query_var( 'artdom_gallery', $artdom_shots );
@@ -50,6 +44,14 @@ while ( have_posts() ) :
     </div>
   </section>
   <?php endif; ?>
+
+  <section class="sec sec--white postbody">
+    <div class="wrap postbody__in">
+      <div class="prose" data-rise>
+        <?php the_content(); ?>
+      </div>
+    </div>
+  </section>
 
   <?php
   /* Соседние записи: со статьи должен быть выход не только в подвал. */
