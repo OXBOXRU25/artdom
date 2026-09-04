@@ -1954,17 +1954,17 @@ body:not(.home) { padding-block-start: var(--hdr-h); }
   margin-inline: calc(-1 * var(--pcard-pad));
 }
 .pcard { padding-inline: var(--pcard-pad); }
-/* Волоски между колонками — и в подборке на главной, и в ленте раздела:
-   заказчик просил один ритм на всех блоках сайта. Раньше в ленте их не было
-   (селектор был section.blog), и лента раздела шла без разделителей.
+/* Волоски между колонками — только в подборке на главной: в ленте раздела
+   заказчик их снял, там страница и так плотная. Расстояние между карточками
+   при этом одинаковое в обоих местах, разделитель просто не рисуется.
 
-   Про сам селектор: писать просто .blog нельзя — WordPress на странице
-   записей ставит <body class="blog">, и правило совпадает со всем телом
-   страницы. Поэтому цепляемся за сетку, а не за секцию. */
-.blog__grid .pcard { border-inline-start: var(--dp) solid var(--c-rule); }
+   Селектор именно section.blog, а не .blog: WordPress на странице записей
+   ставит <body class="blog">, и короткий селектор совпал бы со всем телом
+   страницы — волоски вернулись бы ровно туда, откуда их убрали. */
+section.blog .pcard { border-inline-start: var(--dp) solid var(--c-rule); }
 /* Волосок снимаем только у первой в строке: он разделяет колонки, а слева от
    первой делить нечего. */
-.blog__grid .pcard:nth-child(3n + 1) { border-inline-start: 0; }
+section.blog .pcard:nth-child(3n + 1) { border-inline-start: 0; }
 
 /* Обложка. Пропорция задана здесь, а не размерами файла: пока снимков нет,
    заглушка обязана занимать ровно столько же места, иначе с появлением
@@ -2074,8 +2074,8 @@ body:not(.home) { padding-block-start: var(--hdr-h); }
   /* В двух колонках без волоска остаётся каждый нечётный. Поля у ВСЕХ
      карточек одинаковые: снятие крайних делает колонки разной ширины, и
      обложка в узкой садится ниже соседней. */
-  .blog__grid .pcard:nth-child(3n + 1) { border-inline-start: var(--dp) solid var(--c-rule); }
-  .blog__grid .pcard:nth-child(odd) { border-inline-start: 0; }
+  section.blog .pcard:nth-child(3n + 1) { border-inline-start: var(--dp) solid var(--c-rule); }
+  section.blog .pcard:nth-child(odd) { border-inline-start: 0; }
 }
 
 @media (max-width: 767px) {
@@ -2465,11 +2465,17 @@ form .btn {
   min-height: calc(400 * var(--k));
   padding: calc(28 * var(--k));
   background: var(--c-surface);
+  /* Прозрачная рамка стоит с самого начала: если добавлять её только при
+     наведении, плитка подпрыгивает на два пикселя и ряд дёргается. */
+  border: var(--dp) solid transparent;
   border-radius: 6px;
   overflow: hidden;
-  transition: background-color var(--dur) var(--ease);
+  transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease);
 }
-.abtile:hover, .abtile:focus-visible { background: color-mix(in srgb, var(--c-surface) 84%, var(--c-accent)); }
+/* При наведении плитка белеет и обводится волоском того же цвета, что
+   разделители на сайте. Заливка акцентом читалась как выделенное состояние,
+   а не как «сюда можно навести». */
+.abtile:hover, .abtile:focus-visible { background: var(--c-white); border-color: var(--c-rule); }
 .abtile:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
 .abtile__n {
   font-family: var(--f-ui); font-size: clamp(11px, calc(19 * var(--k)), 18px); line-height: 1.5;
@@ -2500,7 +2506,9 @@ form .btn {
   transition: rotate var(--dur) var(--ease), background-color var(--dur) var(--ease);
 }
 .abtile__plus svg { width: 42%; height: auto; }
-.abtile:hover .abtile__plus, .abtile:focus-visible .abtile__plus { rotate: 90deg; }
+/* На белой плитке белый кружок пропал бы — на наведении он становится
+   серым, того же тона, что была сама плитка. */
+.abtile:hover .abtile__plus, .abtile:focus-visible .abtile__plus { rotate: 90deg; background: var(--c-surface); }
 
 @media (max-width: 1180px) { .abwhy__in { grid-template-columns: repeat(2, minmax(0, 1fr)); } .abwhy__head, .abwhy__lead { grid-column: 1 / -1; } }
 @media (max-width: 639px)  { .abwhy__in { grid-template-columns: minmax(0, 1fr); } }
