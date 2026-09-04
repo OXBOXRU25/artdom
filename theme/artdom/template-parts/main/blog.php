@@ -34,14 +34,20 @@ if ( $artdom_posts->have_posts() ) :
 
       <div class="rule"></div>
 
-      <div class="blog__grid">
-        <?php
-        while ( $artdom_posts->have_posts() ) :
-          $artdom_posts->the_post();
-          get_template_part( 'template-parts/post-card' );
-        endwhile;
-        wp_reset_postdata();
-        ?>
+      <?php /* На телефоне подборка листается лентой, на широком экране это
+               сетка из трёх. Разметка одна: класс слайдера висит всегда, а
+               правила решают, чем ему быть на этой ширине. */ ?>
+      <div class="slider blog__slider" data-slider>
+        <div class="blog__grid slider__track">
+          <?php
+          while ( $artdom_posts->have_posts() ) :
+            $artdom_posts->the_post();
+            get_template_part( "template-parts/post-card" );
+          endwhile;
+          wp_reset_postdata();
+          ?>
+        </div>
+        <div class="slider__bar" aria-hidden="true"><div class="slider__thumb" data-thumb></div></div>
       </div>
     </div>
   </section>

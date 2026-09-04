@@ -2768,3 +2768,28 @@ form .btn {
 /* Лента, которая влезла целиком: бегунок и стрелки убираем — листать нечего,
    а полоса под рядом читается как обещание, что там есть продолжение. */
 .slider--static .slider__bar, .slider--static .gal__arrow { display: none; }
+
+/* --- Подборка блога: лента на телефоне ---------------------------------------
+   На широком экране это сетка из трёх, на узком — лента: три карточки в
+   столбик занимают полтора экрана прокрутки, а листаются они лучше. */
+.blog__slider .slider__bar { display: none; }
+
+@media (max-width: 767px) {
+  .blog__slider .slider__bar { display: block; }
+  /* Трек снова становится лентой: колонка на кадр, зазор как между блоками. */
+  .blog__grid.slider__track {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 82%;
+    margin-inline: 0;
+  }
+  /* Волоски между колонками в один столбец делить нечего — а второй карточке
+     он доставался и висел слева от неё. */
+  section.blog .pcard { border-inline-start: 0; padding-inline: 0; }
+  .blog__grid.slider__track > * + * { margin-inline-start: max(12px, calc(20 * var(--k))); }
+
+  /* Статья: воздух под галереей и под текстом был рассчитан на широкий экран
+     и на телефоне читался провалом. */
+  .postgal { padding-block-end: max(16px, calc(26 * var(--k))); }
+  .postbody { padding-block: max(16px, calc(26 * var(--k))); }
+}
