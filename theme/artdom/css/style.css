@@ -852,7 +852,10 @@ body.is-locked { overflow: hidden; }
 }
 /* min-height: 0 обязателен: без него элемент флекса не сжимается меньше
    своего содержимого, и прокрутка не появляется вовсе. */
-.modal__fields { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+/* Полосу прокрутки не показываем: она делит форму пополам и читается как
+   часть оформления. Прокрутка остаётся — колесом, пальцем и с клавиатуры. */
+.modal__fields { flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: none; }
+.modal__fields::-webkit-scrollbar { width: 0; height: 0; }
 .modal__box > .modal__submit, .modal__box > .modal__note { flex: none; }
 @media (max-width: 860px) { .modal__box { padding: 32px 20px 28px; } }
 
@@ -964,7 +967,11 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .modal__submit { margin-block-start: calc(30 * var(--k)); }
 .modal__submit:disabled { opacity: .55; cursor: default; }
 .is-sending .modal__submit { pointer-events: none; }
-.modal__note { margin-block-start: 14px; font-size: var(--t-body); min-block-size: 1.5em; }
+/* Пустое сообщение не занимает места: раньше под кнопкой всегда висел
+   резерв в полторы строки плюс отступ, и низ формы выглядел провальным.
+   Место появляется вместе с текстом. */
+.modal__note { font-size: var(--t-body); }
+.modal__note:not(:empty) { margin-block-start: 14px; }
 .modal__note.is-ok { color: var(--c-accent); }
 .modal__note.is-bad { color: #c2334d; }
 .is-done .modal__fields, .is-done .modal__submit { opacity: .35; pointer-events: none; transition: opacity var(--dur) var(--ease); }
@@ -1241,7 +1248,10 @@ textarea.field__input { resize: vertical; min-height: 96px; }
      листается одним движением. Волосок вместе с ним. */
   .svcpage__in { grid-template-columns: minmax(0, 1fr); }
   .svcnav { display: none; }
-  .svclist { padding-inline-start: 0; border-inline-start: 0; gap: calc(120 * var(--k)); }
+  /* gap: 0 — расстояние между блоками задают поля вокруг волоска. Здесь
+     оставался прежний зазор 120k (73.75 при --k = 0.61), и он складывался с
+     ними: под последним снимком набегала дыра в 130 вместо 34. */
+  .svclist { padding-inline-start: 0; border-inline-start: 0; gap: 0; }
   .svcrow { grid-template-columns: minmax(0, 1fr); }
   .svcrow__title { grid-column: 1; }
   .svcrow__scope { grid-column: 1; grid-row: 2; margin-block-start: calc(30 * var(--k)); }
