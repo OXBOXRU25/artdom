@@ -93,17 +93,26 @@ while ( have_posts() ) :
     </p>
   </section>
   <?php endif; ?>
-
   <?php if ( is_array( $principles ) && $principles ) : ?>
+
+  <?php
+  /* Сетка плиток по референсу: заголовок занимает первую ячейку, подводка —
+     вторую, дальше шесть плиток. В плитке номер, название и кружок с плюсом
+     внизу; описание выезжает при наведении.
+
+     tabindex у плитки не для красоты: описание показывается по наведению, а
+     с клавиатуры навести нельзя — фокус открывает то же самое. */
+  ?>
   <section class="sec sec--white abwhy">
-    <h2 class="abhead abwhy__head" data-rise><?php echo esc_html( artdom_field( 'ab_principles_title' ) ); ?></h2>
     <div class="wrap abwhy__in">
-      <?php foreach ( $principles as $i => $pr ) : ?>
-      <div class="abwhy__col" data-rise>
-        <p class="abwhy__n" aria-hidden="true"><?php echo esc_html( str_pad( $i + 1, 2, '0', STR_PAD_LEFT ) ); ?></p>
-        <h3 class="abwhy__t"><?php echo esc_html( $pr['title'] ); ?></h3>
-        <p class="abwhy__x"><?php echo artdom_lines( $pr['text'] ); ?></p>
-      </div>
+      <h2 class="abhead abwhy__head" data-rise><?php echo esc_html( artdom_field( 'ab_principles_title' ) ); ?></h2>
+      <?php foreach ( $principles as $artdom_i => $pr ) : ?>
+      <article class="abtile" data-rise tabindex="0">
+        <p class="abtile__n" aria-hidden="true"><?php echo esc_html( str_pad( $artdom_i + 1, 2, '0', STR_PAD_LEFT ) ); ?></p>
+        <h3 class="abtile__t"><?php echo esc_html( $pr['title'] ); ?></h3>
+        <p class="abtile__x"><?php echo artdom_lines( $pr['text'] ); ?></p>
+        <span class="abtile__plus" aria-hidden="true"><svg viewBox="0 0 12 12"><use href="#i-plus"></use></svg></span>
+      </article>
       <?php endforeach; ?>
     </div>
   </section>

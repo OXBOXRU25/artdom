@@ -1224,8 +1224,9 @@ textarea.field__input { resize: vertical; min-height: 96px; }
   column-gap: 8px;                            /* зазор между двумя правыми */
   align-items: start;
 }
-/* Между крупным и парой у референса 37, а не 8 — добираем полем на первом. */
-.svcrow__shot--big { margin-inline-end: calc(39 * var(--k)); }
+/* Зазор между всеми тремя снимками одинаковый — 8. У референса между крупным
+   и парой он был 37, но там снимки настоящие и разная отбивка читается
+   композицией; на одинаковых серых заглушках она читается ошибкой. */
 .svcrow__shot {
   aspect-ratio: 281 / 250;
   background: var(--c-surface);
@@ -2289,20 +2290,8 @@ form .btn {
    часть их палитры и повторяется по всей странице; у нас единственный серый
    заголовок на сайте читался бы ошибкой, а не приёмом. Цвет как у всех
    остальных заголовков. */
-.abwhy__head {
-  max-width: calc(665px + 2 * var(--gutter));
-  margin-inline-start: var(--gutter);
-}
-.abwhy__in { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: calc(46 * var(--k)); row-gap: calc(60 * var(--k)); }
-.abwhy__n {
-  font-family: var(--f-ui); font-size: clamp(11px, calc(19 * var(--k)), 18px); line-height: 1.5;
-  color: color-mix(in srgb, var(--c-muted) 50%, transparent);
-}
-.abwhy__t {
-  margin-block-start: calc(6 * var(--k));
-  font-size: clamp(17px, calc(29 * var(--k)), 30px); line-height: 1.4; font-weight: 500;
-}
-.abwhy__x { margin-block-start: calc(16 * var(--k)); font-size: var(--t-body); line-height: 1.5; color: var(--c-muted); }
+
+
 
 /* Заголовок раздела — тот же кегль, что у серого утверждения, но чёрный. */
 .abhead {
@@ -2450,3 +2439,78 @@ form .btn {
 }
 .postbody__in { display: grid; justify-items: center; }
 .postbody__in > .prose { max-width: min(760px, 100%); width: 100%; }
+
+/* --- «Почему мы»: сетка плиток ----------------------------------------------
+   Построение с symbolstudio.pl/en/about. Замеры при 1440 (пересчёт с кадра
+   1870): плитка 343x300, зазор 8, ряды 4 колонки — заголовок и подводка
+   занимают две первые ячейки первого ряда, дальше шесть плиток подряд.
+   Номер 14/21 полупрозрачный серый, название 22/30.8, кружок 34 внизу слева.
+
+   Описание в плитке спрятано и выезжает снизу при наведении и при фокусе с
+   клавиатуры: у референса так же, а без фокуса блок был бы недоступен тем,
+   кто не пользуется мышью. */
+.abwhy__in {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+/* Заголовок занимает всю первую строку сетки: он длиннее английского
+   «WHY US?», и в одной ячейке ломался бы на три строки. Отступ под ним
+   такой же, как у прочих разделов страницы. */
+.abwhy__head { grid-column: 1 / -1; align-self: start; margin-block-end: calc(50 * var(--k)); }
+
+.abtile {
+  position: relative; isolation: isolate;
+  display: flex; flex-direction: column;
+  min-height: calc(400 * var(--k));
+  padding: calc(28 * var(--k));
+  background: var(--c-surface);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: background-color var(--dur) var(--ease);
+}
+.abtile:hover, .abtile:focus-visible { background: color-mix(in srgb, var(--c-surface) 84%, var(--c-accent)); }
+.abtile:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+.abtile__n {
+  font-family: var(--f-ui); font-size: clamp(11px, calc(19 * var(--k)), 18px); line-height: 1.5;
+  color: color-mix(in srgb, var(--c-muted) 50%, transparent);
+}
+.abtile__t {
+  margin-block-start: calc(6 * var(--k));
+  font-size: clamp(17px, calc(29 * var(--k)), 30px); line-height: 1.4; font-weight: 500;
+}
+/* Текст лежит ниже своей строки и проявляется вместе с подъёмом. Прячем
+   прозрачностью и сдвигом, а не display: none — иначе выезжать нечему. */
+.abtile__x {
+  margin-block-start: calc(14 * var(--k));
+  font-size: var(--t-body); line-height: 1.5; color: var(--c-muted);
+  opacity: 0; transform: translateY(14px);
+  transition: opacity .45s var(--ease), transform .45s var(--ease);
+}
+.abtile:hover .abtile__x, .abtile:focus-visible .abtile__x { opacity: 1; transform: none; }
+
+/* Кружок с плюсом внизу слева: белый круг, плюс наш синий. Диаметр 34 при
+   1440 — снят с референса. При наведении плюс доворачивается на четверть. */
+.abtile__plus {
+  margin-block-start: auto;
+  width: calc(45 * var(--k)); min-width: 34px; aspect-ratio: 1;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--c-white); color: var(--c-accent);
+  transition: rotate var(--dur) var(--ease), background-color var(--dur) var(--ease);
+}
+.abtile__plus svg { width: 42%; height: auto; }
+.abtile:hover .abtile__plus, .abtile:focus-visible .abtile__plus { rotate: 90deg; }
+
+@media (max-width: 1180px) { .abwhy__in { grid-template-columns: repeat(2, minmax(0, 1fr)); } .abwhy__head, .abwhy__lead { grid-column: 1 / -1; } }
+@media (max-width: 639px)  { .abwhy__in { grid-template-columns: minmax(0, 1fr); } }
+/* Первая плитка начинается со второй колонки: под заголовком у референса
+   ячейка пустая, и ряды идут [—][01][02][03] / [04][05][06][—]. */
+.abwhy__in > .abtile:first-of-type { grid-column-start: 2; }
+@media (max-width: 1180px) { .abwhy__in > .abtile:first-of-type { grid-column-start: auto; } }
+/* Волосок под сеткой плиток — тот же разделитель, что между блоками услуг. */
+.abwhy__in::after {
+  content: ""; grid-column: 1 / -1;
+  margin-block-start: calc(90 * var(--k));
+  height: var(--dp); background: var(--c-rule);
+}
