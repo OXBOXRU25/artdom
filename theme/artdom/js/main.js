@@ -146,8 +146,17 @@
       if (!fine) return;
       var s = step();
       if (!s) return;
-      /* учитываем скорость броска: сильный рывок должен перекинуть на карточку дальше */
-      var projected = track.scrollLeft + velocity * 90;
+
+      /* velocity приходит в пикселях за СЕКУНДУ, а множитель 90 читался как
+         «миллисекунды инерции» — бросок улетал на десятки тысяч пикселей и
+         ленту кидало сразу в конец. Считаем честно: 0.12 с выбега. */
+      var projected = track.scrollLeft + velocity * 0.12;
+
+      /* И ограничиваем броском на два кадра: даже резкий рывок мышью не
+         должен пролистывать всю ленту — человек теряет место. */
+      var предел = s * 2;
+      projected = Math.max(track.scrollLeft - предел, Math.min(track.scrollLeft + предел, projected));
+
       glide(Math.round(projected / s) * s, 780);
     }
 
