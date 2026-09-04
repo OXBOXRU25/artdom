@@ -2353,9 +2353,21 @@ form .btn {
   .abtext__in { grid-template-columns: minmax(0, 1fr); }
   .abtext__col { grid-column: 1; }
   .abwhy__in { grid-template-columns: minmax(0, 1fr); }
-  .abteam__list { margin-inline-start: 0; }
-  .abteam__row { grid-template-columns: 96px minmax(0, 1fr); row-gap: 4px; min-height: 0; padding-block: 14px; border-block-start: var(--dp) solid var(--c-rule); }
+  /* Заголовок уходит НАД списком: в узком экране двухколоночная сетка
+     оставляла ему четверть ширины, и «КОМАНДА» налезала на первую строку.
+     Сетку блока разбираем целиком, а не только список внутри неё. */
+  .abteam__in { grid-template-columns: minmax(0, 1fr); }
+  .abteam__head { grid-column: 1; margin-block-end: calc(30 * var(--k)); }
+  .abteam__list { grid-column: 1; margin-inline-start: 0; }
+  .abteam__row {
+    grid-template-columns: 96px minmax(0, 1fr);
+    align-items: start; column-gap: 14px; row-gap: 4px;
+    min-height: 0; padding-block: 14px;
+    border-block-start: var(--dp) solid var(--c-rule);
+  }
+  .abteam__name { grid-column: 2; align-self: center; }
   .abteam__role { grid-column: 2; }
+  .abteam__shot { grid-row: 1 / span 2; width: 96px; }
   .abpath__row { grid-template-columns: minmax(0, 1fr); row-gap: 10px; }
 }
 
