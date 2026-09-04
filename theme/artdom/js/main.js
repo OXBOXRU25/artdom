@@ -219,8 +219,13 @@
     var next = slider.querySelector("[data-slider-next]");
 
     function края() {
-      if (!prev && !next) return;
+      /* Лента, которая влезла целиком, перестаёт быть лентой: ни бегунка, ни
+         стрелок. Проверяем по факту, а не по числу карточек — на узком
+         экране три штуки уже не помещаются, а на широком и четыре влезут. */
       var max = track.scrollWidth - track.clientWidth;
+      slider.classList.toggle("slider--static", max <= 1);
+
+      if (!prev && !next) return;
       /* Допуск в пиксель: дробные ширины кадра дают scrollLeft вроде 1091.5,
          и без него стрелка «вперёд» гасла бы на предпоследнем снимке. */
       if (prev) prev.disabled = track.scrollLeft <= 1;
