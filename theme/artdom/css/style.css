@@ -2793,3 +2793,10 @@ form .btn {
   .postgal { padding-block-end: max(16px, calc(26 * var(--k))); }
   .postbody { padding-block: max(16px, calc(26 * var(--k))); }
 }
+
+@media (max-width: 599px) {
+  /* Контакты в столбик: подпись сверху, значение под ней. В две колонки на
+     узком экране значению остаётся половина ширины, и адрес с почтой рвутся
+     посреди слова. */
+  .crows__row { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+}
