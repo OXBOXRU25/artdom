@@ -255,6 +255,25 @@ function artdom_register_inner_fields() {
 			'active'   => true,
 		)
 	);
+
+	/* Галерея у статьи. Та же роль, что у объекта, поэтому и поле такое же:
+	   заказчику не надо помнить два разных способа добавить фотографии. */
+	acf_add_local_field_group(
+		array(
+			'key'      => 'group_artdom_post_media',
+			'title'    => 'Фотографии к статье',
+			'fields'   => array(
+				artdom_f(
+					'post_gallery',
+					'Галерея',
+					'gallery',
+					array( 'return_format' => 'array', 'instructions' => 'Показывается под текстом статьи. Открывается на весь экран с увеличением.' )
+				),
+			),
+			'location' => array( array( array( 'param' => 'post_type', 'operator' => '==', 'value' => 'post' ) ) ),
+			'active'   => true,
+		)
+	);
 }
 add_action( 'acf/init', 'artdom_register_inner_fields' );
 

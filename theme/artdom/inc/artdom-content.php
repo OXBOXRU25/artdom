@@ -622,10 +622,18 @@ function artdom_fill_demo() {
 		$pages[ $p['slug'] ] = $id;
 		++$made['pages'];
 	}
-
 	/* --- Записи блога --- */
 	foreach ( artdom_demo_posts() as $i => $p ) {
-		if ( get_page_by_path( sanitize_title( $p['title'] ), OBJECT, 'post' ) ) {
+		$artdom_have = get_page_by_path( sanitize_title( $p['title'] ), OBJECT, 'post' );
+		if ( $artdom_have ) {
+			/* Запись уже создана прошлым посевом: дозаполняем только пустую
+			   галерею. Своё наполнение заказчика не трогаем. */
+			if ( ! get_field( 'post_gallery', $artdom_have->ID ) ) {
+				$artdom_gal = artdom_demo_gallery();
+				if ( $artdom_gal ) {
+					update_field( 'field_artdom_post_gallery', $artdom_gal, $artdom_have->ID );
+				}
+			}
 			continue;
 		}
 		$id = wp_insert_post(
@@ -643,6 +651,10 @@ function artdom_fill_demo() {
 		);
 		if ( ! is_wp_error( $id ) ) {
 			++$made['posts'];
+			$artdom_gal = artdom_demo_gallery();
+			if ( $artdom_gal ) {
+				update_field( "field_artdom_post_gallery", $artdom_gal, $id );
+			}
 		}
 	}
 
@@ -907,4 +919,22 @@ function artdom_fill_about( $page_id ) {
 	if ( $post && false !== mb_strpos( (string) $post->post_content, 'Как мы работаем' ) ) {
 		wp_update_post( array( 'ID' => $page_id, 'post_content' => '' ) );
 	}
+}
+
+/**
+ * Набор демонстрационных снимков для галерей.
+ *
+ * Своих фотографий к статьям у компании пока нет, поэтому берём файлы темы —
+ * те же, что у объектов. Смысл галереи здесь показать построение и работу
+ * увеличения, а не выдать эти кадры за иллюстрации к тексту.
+ */
+function artdom_demo_gallery() {
+	$out = array();
+	foreach ( array( 'object.webp', 'garanty.webp', 'garanty-2.webp', 'garanty-3.webp', 'uslugi.webp' ) as $file ) {
+		$id = artdom_demo_image( $file );
+		if ( $id ) {
+			$out[] = $id;
+		}
+	}
+	return $out;
 }

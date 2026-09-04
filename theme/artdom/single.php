@@ -38,6 +38,20 @@ while ( have_posts() ) :
   </section>
 
   <?php
+  /* Галерея под текстом. Часть общая с объектами: приём один, значит и код
+     один — иначе увеличение починят в одном месте и забудут во втором. */
+  $artdom_shots = get_field( 'post_gallery' );
+  if ( is_array( $artdom_shots ) && $artdom_shots ) :
+	  set_query_var( 'artdom_gallery', $artdom_shots );
+  ?>
+  <section class="sec sec--white postgal">
+    <div class="wrap" data-rise>
+      <?php get_template_part( 'template-parts/gallery' ); ?>
+    </div>
+  </section>
+  <?php endif; ?>
+
+  <?php
   /* Соседние записи: со статьи должен быть выход не только в подвал. */
   $artdom_prev = get_previous_post();
   $artdom_next = get_next_post();

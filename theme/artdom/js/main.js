@@ -951,3 +951,109 @@
   window.addEventListener("resize", смотреть);
   смотреть();
 })();
+
+/* Просмотр фотографий на весь экран с увеличением.
+   Нативный <dialog>: Esc, ловушка фокуса и подложка достаются даром.
+
+   Масштаб держим на самой картинке трансформацией, а не размерами: так
+   браузер не пересчитывает раскладку на каждый шаг колеса, и увеличение
+   идёт плавно даже на слабой машине. */
+(function () {
+  "use strict";
+
+  var gal = document.querySelector("[data-gal]");
+  var box = document.querySelector("[data-lb]");
+  if (!gal || !box || typeof box.showModal !== "function") return;
+
+  var cells = Array.prototype.slice.call(gal.querySelectorAll("[data-gal-open]"));
+  if (!cells.length) return;
+
+  var img    = box.querySelector("[data-lb-img]");
+  var stage  = box.querySelector("[data-lb-stage]");
+  var count  = box.querySelector("[data-lb-count]");
+  var cap    = box.querySelector("[data-lb-cap]");
+
+  var текущий = 0;
+  var масштаб = 1, сдвигX = 0, сдвигY = 0;
+  var тянем = false, стартX = 0, стартY = 0;
+
+  function применить(плавно) {
+    img.style.transition = плавно ? "transform .28s var(--ease, ease)" : "none";
+    img.style.transform = "translate(" + сдвигX + "px," + сдвигY + "px) scale(" + масштаб + ")";
+    box.dataset.zoom = масштаб > 1 ? "on" : "off";
+  }
+
+  function сброс() {
+    масштаб = 1; сдвигX = 0; сдвигY = 0;
+    применить(false);
+  }
+
+  function показать(i) {
+    текущий = (i + cells.length) % cells.length;
+    var c = cells[текущий];
+    img.src = c.getAttribute("data-gal-src");
+    img.alt = (c.querySelector("img") || {}).alt || "";
+    cap.textContent = c.getAttribute("data-gal-cap") || "";
+    count.textContent = (текущий + 1) + " / " + cells.length;
+    сброс();
+  }
+
+  cells.forEach(function (c, i) {
+    c.addEventListener("click", function () { показать(i); box.showModal(); });
+  });
+
+  box.querySelector("[data-lb-close]").addEventListener("click", function () { box.close(); });
+  box.querySelector("[data-lb-prev]").addEventListener("click", function () { показать(текущий - 1); });
+  box.querySelector("[data-lb-next]").addEventListener("click", function () { показать(текущий + 1); });
+
+  /* Клик по подложке закрывает, клик по самой картинке — нет. */
+  box.addEventListener("click", function (e) {
+    if (e.target === box || e.target === stage) box.close();
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (!box.open) return;
+    if (e.key === "ArrowLeft") показать(текущий - 1);
+    if (e.key === "ArrowRight") показать(текущий + 1);
+  });
+
+  /* Колесо: увеличение к точке под курсором, а не к центру — иначе на
+     большом снимке нужная деталь уезжает за край. */
+  stage.addEventListener("wheel", function (e) {
+    e.preventDefault();
+    var было = масштаб;
+    масштаб = Math.min(4, Math.max(1, масштаб * (e.deltaY < 0 ? 1.18 : 1 / 1.18)));
+    if (масштаб === было) return;
+
+    var r = img.getBoundingClientRect();
+    var кx = e.clientX - (r.left + r.width / 2);
+    var кy = e.clientY - (r.top + r.height / 2);
+    var k = масштаб / было;
+    сдвигX = сдвигX - кx * (k - 1);
+    сдвигY = сдвигY - кy * (k - 1);
+    if (масштаб === 1) { сдвигX = 0; сдвигY = 0; }
+    применить(false);
+  }, { passive: false });
+
+  img.addEventListener("dblclick", function () {
+    масштаб = масштаб > 1 ? 1 : 2;
+    сдвигX = 0; сдвигY = 0;
+    применить(true);
+  });
+
+  /* Перетаскивание увеличенного снимка. Указатели, а не мышь: одним кодом
+     работает и палец, и трекпад. */
+  img.addEventListener("pointerdown", function (e) {
+    if (масштаб === 1) return;
+    тянем = true; стартX = e.clientX - сдвигX; стартY = e.clientY - сдвигY;
+    img.setPointerCapture(e.pointerId);
+  });
+  img.addEventListener("pointermove", function (e) {
+    if (!тянем) return;
+    сдвигX = e.clientX - стартX; сдвигY = e.clientY - стартY;
+    применить(false);
+  });
+  img.addEventListener("pointerup", function () { тянем = false; });
+
+  box.addEventListener("close", сброс);
+})();
