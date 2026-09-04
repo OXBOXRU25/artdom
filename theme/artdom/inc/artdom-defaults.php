@@ -532,3 +532,56 @@ function artdom_sheet_body_class( $classes ) {
 	return $classes;
 }
 add_filter( "body_class", "artdom_sheet_body_class" );
+
+/**
+ * Описание страницы и карточка ссылки для мессенджеров.
+ *
+ * Раньше в <head> не было ни того, ни другого: в выдаче поисковик сочинял
+ * описание сам, а ссылка в переписке разворачивалась без картинки. Значения
+ * берутся по цепочке — своё поле страницы, потом её отрывок, потом общее из
+ * настроек сайта; заполнять ничего не обязательно.
+ */
+function artdom_meta_tags() {
+	$id    = is_singular() ? get_queried_object_id() : 0;
+	$title = $id ? (string) get_field( 'seo_title', $id ) : '';
+	$desc  = $id ? (string) get_field( 'seo_desc', $id ) : '';
+	$image = $id ? (string) get_field( 'seo_image', $id ) : '';
+
+	if ( '' === $title ) {
+		$title = is_front_page() ? get_bloginfo( 'name' ) : wp_get_document_title();
+	}
+
+	if ( '' === $desc && $id ) {
+		/* Отрывок годится в описание: он и пишется как краткий пересказ.
+		   get_the_excerpt() сам соберёт его из текста, если поле пустое. */
+		$desc = wp_strip_all_tags( get_the_excerpt( $id ) );
+	}
+	if ( '' === $desc ) {
+		$desc = (string) artdom_field( 'opt_seo_desc', true );
+	}
+	$desc = trim( preg_replace( '/\s+/u', ' ', $desc ) );
+	if ( mb_strlen( $desc ) > 200 ) {
+		$desc = mb_substr( $desc, 0, 197 ) . '…';
+	}
+
+	if ( '' === $image && $id && has_post_thumbnail( $id ) ) {
+		$image = (string) get_the_post_thumbnail_url( $id, 'large' );
+	}
+	if ( '' === $image ) {
+		$image = (string) artdom_field( 'opt_seo_image', true );
+	}
+
+	if ( '' !== $desc ) {
+		printf( '<meta name="description" content="%s">' . "\n", esc_attr( $desc ) );
+		printf( '<meta property="og:description" content="%s">' . "\n", esc_attr( $desc ) );
+	}
+	printf( '<meta property="og:title" content="%s">' . "\n", esc_attr( $title ) );
+	printf( '<meta property="og:type" content="%s">' . "\n", is_singular( 'post' ) ? 'article' : 'website' );
+	printf( '<meta property="og:url" content="%s">' . "\n", esc_url( home_url( add_query_arg( array() ) ) ) );
+	printf( '<meta property="og:site_name" content="%s">' . "\n", esc_attr( get_bloginfo( 'name' ) ) );
+	if ( '' !== $image ) {
+		printf( '<meta property="og:image" content="%s">' . "\n", esc_url( $image ) );
+		echo '<meta name="twitter:card" content="summary_large_image">' . "\n";
+	}
+}
+add_action( 'wp_head', 'artdom_meta_tags', 2 );

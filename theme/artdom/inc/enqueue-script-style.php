@@ -88,9 +88,14 @@ function artdom_preload_fonts() {
 			esc_url( get_template_directory_uri() . '/fonts/' . $font )
 		);
 	}
-	printf(
-		'<link rel="icon" href="%s" type="image/svg+xml">' . "\n",
-		esc_url( get_template_directory_uri() . '/favicon.svg' )
-	);
+	/* Значок сайта: если заказчик загрузил свой в «Настройки — Общие», его
+	   выводит сам WordPress, и наш дублировать не нужно. Файл темы остаётся
+	   запасным, чтобы вкладка не была безымянной на новом сайте. */
+	if ( ! has_site_icon() ) {
+		printf(
+			'<link rel="icon" href="%s" type="image/svg+xml">' . "\n",
+			esc_url( get_template_directory_uri() . '/favicon.svg' )
+		);
+	}
 }
 add_action( 'wp_head', 'artdom_preload_fonts', 1 );

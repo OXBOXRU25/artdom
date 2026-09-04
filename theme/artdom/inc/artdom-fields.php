@@ -184,6 +184,8 @@ function artdom_register_fields() {
 				artdom_f( 'opt_email', 'Почта', 'text', array( 'wrapper' => array( 'width' => 33 ) ) ),
 				artdom_f( 'opt_address', 'Адрес', 'text', array( 'wrapper' => array( 'width' => 33 ) ) ),
 				artdom_f( 'opt_copyright', 'Строка копирайта' ),
+				artdom_f( 'opt_seo_desc', 'Описание сайта для поиска', 'textarea', array( 'rows' => 2, 'instructions' => 'Показывается на главной и там, где у страницы нет своего описания.' ) ),
+				artdom_f( 'opt_seo_image', 'Картинка для ссылок', 'image', array( 'return_format' => 'url', 'instructions' => 'Подставляется, когда ссылку на сайт кидают в мессенджер. Годится 1200x630.' ) ),
 				artdom_f(
 					'opt_email_send',
 					'Куда слать заявки',
@@ -267,3 +269,37 @@ function artdom_register_options_page() {
 	);
 }
 add_action( 'acf/init', 'artdom_register_options_page' );
+
+/**
+ * Поля для поиска и ссылок — на страницах, записях, объектах и услугах.
+ *
+ * Без них заказчик не мог задать ни описание в выдаче, ни картинку, которая
+ * подставляется, когда ссылку кидают в мессенджер. Пусто — берём отрывок и
+ * изображение записи, поэтому заполнять необязательно.
+ */
+function artdom_register_seo_fields() {
+	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
+		return;
+	}
+
+	acf_add_local_field_group(
+		array(
+			'key'         => 'group_artdom_seo',
+			'title'       => 'Для поиска и ссылок',
+			'description' => 'Как страница выглядит в поиске и когда ссылку отправляют в мессенджер. Пустые поля берутся из самой страницы.',
+			'fields'      => array(
+				artdom_f( 'seo_title', 'Заголовок в поиске', 'text', array( 'instructions' => 'Пусто — берётся название страницы.' ) ),
+				artdom_f( 'seo_desc', 'Описание', 'textarea', array( 'rows' => 2, 'instructions' => 'Полторы строки, до 160 знаков: длиннее поиск обрезает.' ) ),
+				artdom_f( 'seo_image', 'Картинка для ссылки', 'image', array( 'return_format' => 'url', 'instructions' => 'Пусто — берётся изображение записи, а если и его нет, общая из настроек сайта.' ) ),
+			),
+			'location'    => array(
+				array( array( 'param' => 'post_type', 'operator' => '==', 'value' => 'page' ) ),
+				array( array( 'param' => 'post_type', 'operator' => '==', 'value' => 'post' ) ),
+				array( array( 'param' => 'post_type', 'operator' => '==', 'value' => 'artdom_object' ) ),
+				array( array( 'param' => 'post_type', 'operator' => '==', 'value' => 'artdom_service' ) ),
+			),
+			'active'      => true,
+		)
+	);
+}
+add_action( 'acf/init', 'artdom_register_seo_fields' );

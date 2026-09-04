@@ -763,6 +763,7 @@ function artdom_fill_options( $pages ) {
 		'field_artdom_opt_email'     => 'info@artdom.ru',
 		'field_artdom_opt_address'   => 'Москва, Пресненская наб., 8',
 		'field_artdom_opt_copyright' => 'АРТДОМ © ' . gmdate( 'Y' ),
+		'field_artdom_opt_seo_desc'  => 'Подбираем и сопровождаем сделки с премиальной недвижимостью: клубные дома, резиденции и апартаменты в лучших локациях города.',
 	);
 	foreach ( $defaults as $key => $value ) {
 		$name = str_replace( 'field_artdom_', '', $key );
