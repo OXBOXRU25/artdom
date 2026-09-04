@@ -2695,3 +2695,8 @@ form .btn {
   .gal__cell--wide { aspect-ratio: 3 / 2; }
   .lb__hint { display: none; }
 }
+/* Галерея идёт сразу за датой: своего верхнего поля у её секции нет, иначе
+   между шапкой статьи и первым снимком зияет пустой экран. */
+.chero--post { padding-block-end: 36px; }
+.postgal { padding-block-start: 0; }
+.postgal .gal { margin-block-start: 0; }

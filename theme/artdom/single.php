@@ -22,9 +22,6 @@ while ( have_posts() ) :
   <section class="chero chero--post">
     <div class="wrap chero__in">
       <h1 class="chero__title"><?php the_title(); ?></h1>
-      <?php if ( has_excerpt() ) : ?>
-      <p class="chero__lead"><?php echo esc_html( get_the_excerpt() ); ?></p>
-      <?php endif; ?>
       <p class="chero__date"><time datetime="<?php echo esc_attr( get_the_date( "c" ) ); ?>"><?php echo esc_html( get_the_date( "j F Y" ) ); ?></time></p>
     </div>
   </section>
