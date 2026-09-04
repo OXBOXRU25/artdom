@@ -71,23 +71,40 @@ $artdom_total = count( $artdom_shots );
   <div class="lb__bar lb__bar--top">
     <span class="lb__count" data-lb-count></span>
     <span class="lb__tools">
+      <?php /* Набор кнопок повторяет образец: увеличить, слайдшоу, во весь
+               экран, миниатюры, закрыть. Знаки нарисованы здесь, а не взяты
+               из спрайта сайта: у спрайта своя стрелка с крупной головкой —
+               фирменная, но в просмотрщике она читается тяжело. */ ?>
       <button class="lb__btn" type="button" data-lb-zoom aria-label="Увеличить">
-        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21" stroke-linecap="round"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/><path d="M10.5 7.5v6M7.5 10.5h6"/>
+        </svg>
+      </button>
+      <button class="lb__btn" type="button" data-lb-play aria-label="Слайдшоу" aria-pressed="false">
+        <svg class="lb__i-play" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>
+        <svg class="lb__i-pause" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><rect x="7" y="5" width="3.6" height="14" rx="1"/><rect x="13.4" y="5" width="3.6" height="14" rx="1"/></svg>
+      </button>
+      <button class="lb__btn" type="button" data-lb-full aria-label="Во весь экран">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>
+        </svg>
       </button>
       <button class="lb__btn" type="button" data-lb-thumbs aria-label="Показать миниатюры" aria-pressed="true">
         <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       </button>
       <button class="lb__btn" type="button" data-lb-close aria-label="Закрыть">
-        <svg viewBox="0 0 22 22" aria-hidden="true"><use href="#i-close"></use></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 5 19 19M19 5 5 19"/></svg>
       </button>
     </span>
   </div>
 
+  <?php /* Стрелки — тонкие шевроны, как в образце: они не спорят с фотографией
+           и не превращаются в кнопки поверх неё. */ ?>
   <button class="lb__nav lb__nav--prev" type="button" data-lb-prev aria-label="Предыдущая">
-    <svg viewBox="0 0 24 16" aria-hidden="true"><use href="#i-arrow-xl"></use></svg>
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4 7 12l8 8"/></svg>
   </button>
   <button class="lb__nav lb__nav--next" type="button" data-lb-next aria-label="Следующая">
-    <svg viewBox="0 0 24 16" aria-hidden="true"><use href="#i-arrow-xl"></use></svg>
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4l8 8-8 8"/></svg>
   </button>
   <div class="lb__stage" data-lb-stage>
     <?php /* Пустой src недопустим по стандарту, а картинку подставляет скрипт.

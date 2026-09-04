@@ -1053,14 +1053,42 @@
   });
 
   box.querySelector("[data-lb-close]").addEventListener("click", function () { box.close(); });
-  prevBtn.addEventListener("click", function () { показать(текущий - 1); });
-  nextBtn.addEventListener("click", function () { показать(текущий + 1); });
+  prevBtn.addEventListener("click", function () { стоп(); показать(текущий - 1); });
+  nextBtn.addEventListener("click", function () { стоп(); показать(текущий + 1); });
 
   /* Кнопка увеличения в панели — то же, что двойное нажатие по снимку. */
   box.querySelector("[data-lb-zoom]").addEventListener("click", function () {
     масштаб = масштаб > 1 ? 1 : 2;
     сдвигX = 0; сдвигY = 0;
     применить(true);
+  });
+
+  /* Слайдшоу: листает само, пока не остановят. Останавливается и при ручном
+     переходе — иначе человек листает, а через секунду его сносит дальше. */
+  var показ = null;
+  var playBtn = box.querySelector("[data-lb-play]");
+
+  function стоп() {
+    if (!показ) return;
+    clearInterval(показ); показ = null;
+    playBtn.setAttribute("aria-pressed", "false");
+  }
+
+  playBtn.addEventListener("click", function () {
+    if (показ) { стоп(); return; }
+    playBtn.setAttribute("aria-pressed", "true");
+    показ = setInterval(function () {
+      /* На последнем снимке начинаем сначала: у показа нет конца, иначе он
+         молча замирает и кнопка врёт, что всё ещё идёт. */
+      показать(текущий === cells.length - 1 ? 0 : текущий + 1);
+    }, 3200);
+  });
+
+  /* Во весь экран — средствами браузера, своего «псевдополного» не делаем:
+     на нём остаётся адресная строка, и это видно. */
+  box.querySelector("[data-lb-full]").addEventListener("click", function () {
+    if (document.fullscreenElement) { document.exitFullscreen(); return; }
+    if (box.requestFullscreen) box.requestFullscreen();
   });
 
   /* Миниатюры прячутся и возвращаются: на невысоком экране они забирают
@@ -1121,5 +1149,5 @@
   });
   img.addEventListener("pointerup", function () { тянем = false; });
 
-  box.addEventListener("close", сброс);
+  box.addEventListener("close", function () { стоп(); сброс(); });
 })();

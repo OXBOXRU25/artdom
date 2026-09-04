@@ -2683,21 +2683,25 @@ form .btn {
 }
 .lb__count { font-family: var(--f-ui); font-size: 17px; padding-inline-start: 16px; }
 .lb__tools { display: flex; align-items: center; gap: 2px; }
+/* Подсветка кнопки — скруглённый квадрат, а не круг: так в образце. Круг я
+   поставил по привычке нашего сайта, и панель перестала быть похожей. */
 .lb__btn, .lb__nav {
   width: 48px; height: 48px; display: grid; place-items: center;
-  border: 0; border-radius: 50%;
+  border: 0; border-radius: 6px;
   background: transparent; color: var(--c-white);
   cursor: pointer;
   transition: background-color var(--dur) var(--ease), opacity var(--dur) var(--ease);
 }
-.lb__btn:hover, .lb__nav:hover { background: rgba(255, 255, 255, .16); }
-.lb__btn svg { width: 22px; height: auto; }
+.lb__btn:hover, .lb__nav:hover { background: rgba(255, 255, 255, .1); }
+.lb__btn svg { width: 24px; height: auto; }
+/* У кнопки слайдшоу два знака: показываем тот, что соответствует состоянию. */
+.lb__i-pause, .lb__btn[aria-pressed="true"] .lb__i-play { display: none; }
+.lb__btn[aria-pressed="true"] .lb__i-pause { display: block; }
 .lb__btn[aria-pressed="false"] { opacity: .5; }
 
 .lb__nav { position: absolute; inset-block-start: 50%; margin-block-start: -24px; z-index: 3; }
 .lb__nav svg { width: 27px; height: auto; }
 .lb__nav--prev { inset-inline-start: 8px; }
-.lb__nav--prev svg { rotate: 180deg; }
 .lb__nav--next { inset-inline-end: 8px; }
 .lb__nav[disabled] { opacity: .25; pointer-events: none; }
 
