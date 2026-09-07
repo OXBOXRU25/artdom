@@ -73,7 +73,16 @@ systemctl reload nginx
 echo "==> nginx перезагружен"
 
 echo "==> Что отдаёт сервер теперь"
+# Обычный GET, а не HEAD: на HEAD этот nginx заголовок сжатия не отдаёт, и
+# первая версия проверки написала «СЖАТИЯ НЕТ» на работающем сжатии. Заодно
+# печатаем реальный вес по сети — он и есть ответ.
 for f in css/style.min.css js/main.js; do
-  enc=$(curl -sI -H 'Accept-Encoding: gzip' "https://artdom.oxboxdigital.ru/wp-content/themes/artdom/$f" | tr -d '\r' | awk -F': ' '/^[Cc]ontent-[Ee]ncoding/{print $2}')
-  echo "  $f -> ${enc:-СЖАТИЯ НЕТ}"
+  url="https://artdom.oxboxdigital.ru/wp-content/themes/artdom/$f"
+  сжато=$(curl -s -o /dev/null -w '%{size_download}' -H 'Accept-Encoding: gzip' "$url")
+  сырое=$(curl -s -o /dev/null -w '%{size_download}' -H 'Accept-Encoding: identity' "$url")
+  if [ "$сжато" -lt "$сырое" ]; then
+    echo "  $f: $((сырое / 1024)) КБ -> $((сжато / 1024)) КБ по сети"
+  else
+    echo "  $f: СЖАТИЯ НЕТ ($((сырое / 1024)) КБ)"
+  fi
 done
