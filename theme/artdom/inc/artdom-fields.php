@@ -184,6 +184,25 @@ function artdom_register_fields() {
 				artdom_f( 'opt_email', 'Почта', 'text', array( 'wrapper' => array( 'width' => 33 ) ) ),
 				artdom_f( 'opt_address', 'Адрес', 'text', array( 'wrapper' => array( 'width' => 33 ) ) ),
 				artdom_f( 'opt_copyright', 'Строка копирайта' ),
+				artdom_f(
+					'cookie_text',
+					'Плашка про cookie: текст',
+					'textarea',
+					array(
+						'rows'         => 2,
+						'instructions' => 'Показывается один раз в углу и прячется после нажатия. Пусто — возьмём текст по умолчанию. Появится Яндекс.Метрика — текст надо переписать: сейчас в нём сказано, что счётчиков нет.',
+					)
+				),
+				artdom_f( 'cookie_link', 'Плашка про cookie: надпись ссылки', 'text', array( 'wrapper' => array( 'width' => 60 ), 'instructions' => 'Ведёт на первый документ из списка правовых ниже.' ) ),
+				artdom_f( 'cookie_btn', 'Плашка про cookie: кнопка', 'text', array( 'wrapper' => array( 'width' => 40 ) ) ),
+				artdom_f(
+					'opt_metrika',
+					'Яндекс.Метрика: номер счётчика',
+					'text',
+					array(
+						'instructions' => 'Только цифры, например 12345678. Вписали — счётчик заработает, а плашка про cookie сама перестроится: текст про аналитику и две кнопки, «Принять» и «Отклонить». До нажатия «Принять» счётчик НЕ загружается и cookie не ставит. Пусто — счётчика нет.',
+					)
+				),
 				artdom_f( 'opt_seo_desc', 'Описание сайта для поиска', 'textarea', array( 'rows' => 2, 'instructions' => 'Показывается на главной и там, где у страницы нет своего описания.' ) ),
 				artdom_f( 'opt_seo_image', 'Картинка для ссылок', 'image', array( 'return_format' => 'url', 'instructions' => 'Подставляется, когда ссылку на сайт кидают в мессенджер. Годится 1200x630.' ) ),
 				artdom_f(

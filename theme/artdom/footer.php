@@ -142,6 +142,8 @@ $legal   = artdom_field( 'opt_legal', true );
 
 <?php get_template_part( 'template-parts/form-modal' ); ?>
 
+<?php get_template_part( 'template-parts/cookie-note' ); ?>
+
 <?php wp_footer(); ?>
 </body>
 </html>

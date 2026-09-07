@@ -25,7 +25,10 @@ $artdom_count  = $artdom_stats['count'];
   <section class="sec sec--white revpage">
     <div class="wrap revpage__in">
 
-      <aside class="revpage__side">
+      <?php /* Имя обязательно: с появлением плашки про cookie на странице
+               стало два ориентира complementary, и безымянный скринридер
+               объявляет просто «дополнительно». */ ?>
+      <aside class="revpage__side" aria-label="Оценка и общий рейтинг">
         <h1 class="h1 revpage__title vh">Отзывы</h1>
         <p class="body revpage__lead">Отзывы приходят с Яндекс.Карт, из Авито и напрямую от клиентов. Публикуем как есть.</p>
 

@@ -33,7 +33,15 @@ if ( $slides ) :
         <?php /* Увеличение и отставание живут на этой обёртке, а не на завесе:
                  иначе вместе с фотографией растягивалось бы и затемнение. */ ?>
         <div class="guaranty__media">
-          <img draggable="false" src="<?php echo esc_url( $src ); ?>" alt=""<?php echo $first ? '' : ' loading="lazy"'; ?> decoding="async">
+          <?php /* Первый кадр сцены раньше грузился жадно, чтобы она не мигала
+                   при доскролле. Замер под дросселем PageSpeed показал цену:
+                   128 КБ уходили в канал одновременно со стилями, а отрисовка
+                   всей страницы ждёт как раз стилей — style.min.css приходил
+                   на 2093 мс. Сцена лежит через четыре экрана, времени у неё
+                   вагон, поэтому ленивая тоже. Приоритет низкий явно: даже
+                   ленивая картинка не должна спорить за полосу с первым
+                   экраном. */ ?>
+          <img draggable="false" src="<?php echo esc_url( $src ); ?>" alt="" loading="lazy" fetchpriority="low" decoding="async">
         </div>
         <div class="guaranty__veil" aria-hidden="true"></div>
         <div class="guaranty__content wrap">

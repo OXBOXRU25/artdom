@@ -22,6 +22,7 @@ $artdom_parts = array(
 	'/inc/artdom-content.php',        // демонстрационное наполнение: объекты, услуги, страницы
 	'/inc/artdom-demo.php',           // кнопка «Заполнить примерами»
 	'/inc/artdom-forms.php',          // формы: обработчик и журнал заявок
+	'/inc/artdom-analytics.php',      // счётчик по согласию + плашка про cookie
 	'/inc/enqueue-script-style.php',  // стили и скрипты
 	'/inc/ajax-request.php',          // обработчик форм
 	'/inc/template-tags.php',
@@ -66,35 +67,3 @@ add_filter(
 	}
 );
 
-/* ВРЕМЕННЫЙ ЩУП. Отвечает по секретному ключу и печатает, что видит сам сервер:
-   версию PHP, наличие наших функций и свежесть файлов темы. Логов на боевом
-   у меня нет, а гадать о причине 500 дороже, чем спросить. УДАЛИТЬ ПОСЛЕ. */
-add_action(
-	'init',
-	function () {
-		if ( ! isset( $_GET['artdom_probe'] ) || '9f0834d93b9f495c9e' !== $_GET['artdom_probe'] ) {
-			return;
-		}
-		$dir = get_template_directory();
-		$files = array( 'inc/artdom-defaults.php', 'inc/artdom-post-types.php', 'archive-artdom_object.php', 'template-parts/page-head.php', 'template-parts/cta-band.php', 'template-parts/object-card.php' );
-		$out = array(
-			'php'        => PHP_VERSION,
-			'wp'         => get_bloginfo( 'version' ),
-			'functions'  => array(),
-			'files'      => array(),
-			'objects'    => (int) wp_count_posts( 'artdom_object' )->publish,
-			'permalinks' => get_option( 'permalink_structure' ),
-			'acf'        => function_exists( 'get_field' ),
-		);
-		foreach ( array( 'artdom_plural', 'artdom_btn', 'artdom_img', 'artdom_stars', 'artdom_crumbs', 'artdom_forms_config' ) as $fn ) {
-			$out['functions'][ $fn ] = function_exists( $fn );
-		}
-		foreach ( $files as $f ) {
-			$p = $dir . '/' . $f;
-			$out['files'][ $f ] = file_exists( $p ) ? gmdate( 'H:i:s', filemtime( $p ) ) . ' UTC, ' . filesize( $p ) . ' б' : 'НЕТ';
-		}
-		header( 'Content-Type: application/json; charset=utf-8' );
-		echo wp_json_encode( $out, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT );
-		exit;
-	}
-);

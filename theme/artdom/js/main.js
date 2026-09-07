@@ -510,7 +510,14 @@
   function подрезать(el) {
     if (el.dataset.clipDone === "open") return;   /* раскрыт человеком — не трогаем */
 
+    /* На узком экране карточка занимает всю ширину, и число строк, снятое с
+       раскладки в три колонки, режет текст вчетверо сильнее нужного: отзыв
+       на 684 знака показывался 79 знаками. Кто хочет другое число на телефоне
+       — ставит data-clip-narrow. Порог тот же 860, что у раскладки. */
     var строк = parseInt(el.dataset.clip, 10) || 2;
+    if (el.dataset.clipNarrow && window.matchMedia("(max-width: 860px)").matches) {
+      строк = parseInt(el.dataset.clipNarrow, 10) || строк;
+    }
 
     if (!el.dataset.clipFull) {
       el.dataset.clipFull = el.textContent.replace(/\s+/g, " ").trim();
@@ -1164,4 +1171,84 @@
   img.addEventListener("pointerup", function () { тянем = false; });
 
   box.addEventListener("close", function () { стоп(); сброс(); });
+})();
+
+/* ---------- Плашка про cookie ----------
+   Уведомление, а не диалог: фокус не перехватываем и страницу не блокируем.
+   Показываем ПОСЛЕ полной загрузки — до неё плашка лежит под hidden, чтобы
+   не влезать в замер LCP и не дёргать раскладку.
+
+   Ответ запоминаем в localStorage, а не в куке: ставить куку ради согласия
+   на куки — ровно то, от чего мы человека предупреждаем. Хранилище может
+   быть недоступно (приватное окно, запрет на данные сайта) — тогда плашка
+   покажется снова, и это лучше, чем упавший скрипт.
+
+   КУДА ВЕШАТЬ СЧЁТЧИК. Появится Яндекс.Метрика — её код подключать на
+   событие artdom:cookie-ok, а не в <head>. Событие приходит в момент
+   согласия и сразу при загрузке, если человек согласился раньше. Без этого
+   счётчик грузится до нажатия, и кнопка ничего не решает — та самая ошибка,
+   что у обоих образцов, с которых снималось построение. */
+(function () {
+  var плашка = document.querySelector("[data-cookie]");
+  if (!плашка) return;
+
+  var КЛЮЧ = "artdom-cookie-ok";
+
+  function прочитать() {
+    try { return localStorage.getItem(КЛЮЧ); } catch (e) { return null; }
+  }
+  function записать(значение) {
+    try { localStorage.setItem(КЛЮЧ, значение); } catch (e) { /* приватное окно — переживём */ }
+  }
+  function согласие() {
+    document.dispatchEvent(new CustomEvent("artdom:cookie-ok"));
+  }
+
+  /* Уже отвечал — плашки нет вовсе. Согласие поднимает счётчик, отказ не
+     делает ничего: ни счётчика, ни повторного вопроса. */
+  var прежний = прочитать();
+  if (прежний) {
+    if (прежний === "yes" || прежний === "1") согласие();
+    return;
+  }
+
+  function показать() {
+    плашка.hidden = false;
+    /* Кадр между снятием hidden и классом: без него переход не проигрывается,
+       браузер склеивает оба изменения в одну отрисовку. */
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { плашка.classList.add("is-in"); });
+    });
+  }
+
+  if (document.readyState === "complete") {
+    setTimeout(показать, 600);
+  } else {
+    window.addEventListener("load", function () { setTimeout(показать, 600); });
+  }
+
+  function убрать() {
+    плашка.classList.remove("is-in");
+    /* Убираем из дерева только после ухода, иначе исчезает рывком. */
+    setTimeout(function () { плашка.hidden = true; }, 400);
+  }
+
+  var да = плашка.querySelector("[data-cookie-ok]");
+  if (да) {
+    да.addEventListener("click", function () {
+      записать("yes");
+      согласие();
+      убрать();
+    });
+  }
+
+  /* Кнопки отказа в разметке нет, пока в настройках не задан счётчик:
+     отказываться было бы не от чего. */
+  var нет = плашка.querySelector("[data-cookie-no]");
+  if (нет) {
+    нет.addEventListener("click", function () {
+      записать("no");
+      убрать();
+    });
+  }
 })();

@@ -3,3 +3,4 @@ wp/
 _tools/node_modules/
 *.log
 _dl/
+_review/

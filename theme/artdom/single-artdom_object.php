@@ -103,7 +103,10 @@ while ( have_posts() ) :
         <?php endif; ?>
       </div>
 
-      <aside class="object__side">
+      <?php /* Имя обязательно: с появлением плашки про cookie на странице
+               стало два ориентира complementary, и безымянный скринридер
+               объявляет просто «дополнительно». */ ?>
+      <aside class="object__side" aria-label="Цена и запись на просмотр">
         <div class="pricebox">
           <?php if ( $terms && ! is_wp_error( $terms ) ) : ?>
           <div class="card__meta"><span class="chip"><?php echo esc_html( $terms[0]->name ); ?></span></div>
@@ -139,26 +142,22 @@ while ( have_posts() ) :
   <section class="sec sec--white">
     <div class="wrap">
       <h2 class="h2" data-rise>Похожие объекты</h2>
-      <?php /* Лента, а не сетка из трёх: тот же примитив, что на главной, со
-               стрелками и бегунком. Ограничение в три карточки снято — сколько
-               подходящих объектов есть, столько и листается. */ ?>
+      <?php /* Лента ровно та же, что на главной: трек и бегунок, без стрелок.
+               Круглые стрелки здесь садились поверх карточки — по центру всей
+               рамки, то есть на чип и на цену, — и на телефоне висели всегда:
+               правило .gal__arrow ниже 899 держит их видимыми. Листание тут
+               пальцем и протяжкой, как в остальных лентах сайта.
+               Ограничение в три карточки снято — сколько подходящих объектов
+               есть, столько и листается. */ ?>
       <div class="slider" data-slider data-rise>
-        <div class="gal__frame">
-          <button class="gal__arrow gal__arrow--prev" type="button" data-slider-prev aria-label="Предыдущие объекты">
-            <svg viewBox="0 0 24 16" aria-hidden="true"><use href="#i-arrow-xl"></use></svg>
-          </button>
-          <button class="gal__arrow gal__arrow--next" type="button" data-slider-next aria-label="Следующие объекты">
-            <svg viewBox="0 0 24 16" aria-hidden="true"><use href="#i-arrow-xl"></use></svg>
-          </button>
-          <div class="slider__track" tabindex="0" role="group" aria-label="Похожие объекты, лента">
-            <?php
-            while ( $similar->have_posts() ) :
-              $similar->the_post();
-              get_template_part( 'template-parts/object-card' );
-            endwhile;
-            wp_reset_postdata();
-            ?>
-          </div>
+        <div class="slider__track" tabindex="0" role="group" aria-label="Похожие объекты, лента">
+          <?php
+          while ( $similar->have_posts() ) :
+            $similar->the_post();
+            get_template_part( 'template-parts/object-card' );
+          endwhile;
+          wp_reset_postdata();
+          ?>
         </div>
         <div class="slider__bar" aria-hidden="true"><div class="slider__thumb" data-thumb></div></div>
       </div>

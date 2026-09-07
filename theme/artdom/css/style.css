@@ -160,8 +160,12 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   transition: transform .55s var(--ease);
 }
 .btn__arrow svg:nth-child(2) { transform: translateX(-165%); }
+@media (hover: hover) {
 .btn:hover .btn__arrow svg:nth-child(1) { transform: translateX(165%); }
+}
+@media (hover: hover) {
 .btn:hover .btn__arrow svg:nth-child(2) { transform: translateX(0); }
+}
 
 .btn:active { transform: translateY(1px); }
 
@@ -254,7 +258,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   transform: scaleX(0); transform-origin: left center;
   transition: transform .5s var(--ease);
 }
+@media (hover: hover) {
 .nav a:hover::after, .hdr__tel:hover::after { transform: scaleX(1); }
+}
 .hdr__burger { display: none; }
 
 /* --- Hero ----------------------------------------------------------------- */
@@ -288,7 +294,16 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   padding-block-end: calc(56 * var(--k));
   color: var(--c-white);
 }
-@keyframes heroIn { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+/* Прозрачности в кадрах НЕТ намеренно, только выезд. С `both` первый кадр
+   применяется ещё до отрисовки, элемент впервые рисуется с opacity: 0 — и
+   Chrome вычёркивает его из кандидатов в LCP навсегда, даже когда он
+   проявится. На первом экране под этой анимацией лежат заголовок, лид и
+   кнопка, то есть всё крупное; постер видео Chrome не берёт отдельно, как
+   картинку во весь экран. Кандидатов не оставалось совсем, PageSpeed отдавал
+   NO_LCP и вместе с ним терял половину отчёта.
+   Замер 07.09.2026, боевой, телефон: с прозрачностью — 0 кандидатов;
+   снял только эту анимацию — <h1>, площадь 75112, 2.6 с. */
+@keyframes heroIn { from { transform: translateY(28px); } to { transform: none; } }
 .hero__title { max-width: calc(760 * var(--k)); animation: heroIn 1s var(--ease) both; }
 .hero__aside {
   display: flex; flex-direction: column; align-items: flex-start; gap: calc(48 * var(--k));
@@ -312,8 +327,12 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   text-align: start; font-size: var(--t-mid); font-weight: 500; color: var(--c-ink-soft);
   transition: color var(--dur) var(--ease);
 }
+@media (hover: hover) {
 .acc__btn:hover { color: var(--c-accent); }
+}
+@media (hover: hover) {
 .acc__btn:hover .acc__icon { transform: rotate(90deg); }
+}
 .acc__icon {
   flex: none; width: calc(38 * var(--k)); min-width: 30px; aspect-ratio: 1;
   border-radius: 50%; background: var(--c-accent);
@@ -367,7 +386,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .card { display: flex; flex-direction: column; }
 .card__media { position: relative; aspect-ratio: 580 / 395; overflow: hidden; }
 .card__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s var(--ease); }
+@media (hover: hover) {
 .card:hover .card__media img { transform: scale(1.04); }
+}
 .card__meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-block-start: calc(24 * var(--k)); }
 .chip {
   font-size: var(--t-chip); line-height: 1; color: var(--c-muted);
@@ -386,10 +407,16 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   position: absolute; inset-block-start: .14em; inset-inline-start: 0; width: 100%;
   transform: translateY(calc(100% + .3em));
 }
+@media (hover: hover) {
 .card:hover .roll__a, .btn:hover .roll__a { transform: translateY(calc(-100% - .3em)); }
+}
+@media (hover: hover) {
 .card:hover .roll__b, .btn:hover .roll__b { transform: translateY(0); }
+}
 a[draggable="false"], img { -webkit-user-drag: none; }   /* НЕ наследуется: картинке нужно своё */
+@media (hover: hover) {
 .card:hover .card__title .roll { color: var(--c-accent); }
+}
 .card__media { display: block; }
 .card__facts { display: flex; align-items: center; margin-block-start: calc(20 * var(--k)); font-size: var(--t-body); }
 .card__facts li + li { border-inline-start: var(--dp) solid var(--c-rule); margin-inline-start: calc(20 * var(--k)); padding-inline-start: calc(20 * var(--k)); }
@@ -607,7 +634,9 @@ a[draggable="false"], img { -webkit-user-drag: none; }   /* НЕ наследу�
 /* Ховер в подвале — цветом, а не подчёркиванием: в макете он и показан так,
    голубым WhatsApp. Оттенок осветлён под тёмный фон: 7.50:1 против ровно 4.50
    у фирменного #4d6dd9, то есть у акцента на каждой подложке своя роль. */
+@media (hover: hover) {
 .ftr :where(a:not(.btn, .fnext__card)):hover { color: var(--c-accent-dark); }
+}
 .ftr a.ftr__tel, .ftr a.ftr__mail { transition: color var(--dur) var(--ease); }
 
 .ftr__bottom { display: flex; align-items: center; justify-content: space-between; gap: 20px; font-family: var(--f-ui); font-size: var(--t-nav); }
@@ -809,7 +838,9 @@ html.rise-failsafe.rise-failsafe [data-rise="shutter"] {
   width: 48px; height: 48px; display: grid; place-items: center;
   transition: rotate var(--dur) var(--ease);
 }
+@media (hover: hover) {
 .menu__close:hover { rotate: 90deg; }
+}
 .menu__close svg { width: 22px; }
 body.is-locked { overflow: hidden; }
 
@@ -868,7 +899,9 @@ body.is-locked { overflow: hidden; }
   transition: color var(--dur) var(--ease), rotate var(--dur) var(--ease);
 }
 .modal__close svg { width: 16px; }
+@media (hover: hover) {
 .modal__close:hover { color: var(--c-ink); rotate: 90deg; }
+}
 
 .modal__title { margin-block-end: calc(12 * var(--k)); }
 .modal__lead { margin-block-end: calc(30 * var(--k)); max-width: 46ch; }
@@ -891,7 +924,9 @@ body.is-locked { overflow: hidden; }
    человек прочитает. em считается от кегля самого поля, поэтому доля
    держится на любой ширине. */
 .field__input::placeholder { color: var(--c-muted); font-size: .85em; }
+@media (hover: hover) {
 .field__input:hover { background: color-mix(in srgb, var(--c-surface) 88%, var(--c-accent)); }
+}
 .field__input:focus-visible { outline: none; border-color: var(--c-accent); background: var(--c-white); }
 textarea.field__input { resize: vertical; min-height: 96px; }
 
@@ -918,9 +953,15 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .rate__in:checked ~ .rate__star { color: var(--c-accent); }
 /* Наведение перебивает выбор: пока палец на третьей звезде, показываем три,
    даже если выбрано пять. */
+@media (hover: hover) {
 .rate:hover .rate__star { color: var(--c-rule); }
+}
+@media (hover: hover) {
 .rate__star:hover, .rate__star:hover ~ .rate__star { color: var(--c-accent); }
+}
+@media (hover: hover) {
 .rate__star:hover { transform: scale(1.1); }
+}
 .rate__in:focus-visible + .rate__star { outline: 2px solid var(--c-accent); outline-offset: 2px; border-radius: 6px; }
 /* У поля с оценкой заголовок стоит над звёздами, а не рядом. */
 .field--rating { gap: 2px; }
@@ -988,7 +1029,9 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: max(6px, calc(8 * var(--k))); font-family: var(--f-ui); font-size: var(--t-chip); color: var(--c-muted); }
 .crumbs > * + *::before { content: "/"; margin-inline-end: max(6px, calc(8 * var(--k))); color: var(--c-rule); }
 .crumbs a { color: var(--c-muted); transition: color var(--dur) var(--ease); }
+@media (hover: hover) {
 .crumbs a:hover { color: var(--c-ink); }
+}
 .crumbs [aria-current] { color: var(--c-ink); }
 
 /* --- Шапка внутренней страницы --- */
@@ -1021,7 +1064,9 @@ textarea.field__input { resize: vertical; min-height: 96px; }
   font-family: var(--f-ui); font-size: 15px;
   transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
 }
+@media (hover: hover) {
 .filters__chip:hover { background: var(--c-rule); }
+}
 .filters__chip[aria-current] { background: var(--c-ink); color: var(--c-white); }
 .filters__n { color: var(--c-muted); font-variant-numeric: tabular-nums; }
 .filters__chip[aria-current] .filters__n { color: var(--c-rule); }
@@ -1049,7 +1094,9 @@ textarea.field__input { resize: vertical; min-height: 96px; }
   transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
 }
 .pager a { background: var(--c-chip); color: var(--c-ink-soft); }
+@media (hover: hover) {
 .pager a:hover { background: var(--c-rule); }
+}
 .pager .current { background: var(--c-ink); color: var(--c-white); }
 .pager .dots { padding-inline: 4px; color: var(--c-muted); }
 
@@ -1137,7 +1184,9 @@ textarea.field__input { resize: vertical; min-height: 96px; }
   color: var(--c-muted);
   transition: color var(--dur) var(--ease);
 }
+@media (hover: hover) {
 .svcnav__list a:hover { color: var(--c-ink); }
+}
 /* Точка перед текущим пунктом. Псевдоэлементом слева от строки, чтобы текст
    не сдвигался при подсветке. */
 .svcnav__list a.is-here { color: var(--c-accent); }
@@ -1186,7 +1235,9 @@ textarea.field__input { resize: vertical; min-height: 96px; }
   text-transform: uppercase;
 }
 .svcrow__title a { transition: color var(--dur) var(--ease); }
+@media (hover: hover) {
 .svcrow__title a:hover { color: var(--c-accent); }
+}
 
 /* 57 при 1440 — воздух между названием и строкой ниже. */
 .svcrow__scope { grid-column: 1; grid-row: 2; margin-block-start: calc(76 * var(--k)); }
@@ -1287,7 +1338,9 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .results { border-block-start: 1px solid var(--c-rule); }
 .results__item { padding-block: max(14px, calc(20 * var(--k))); border-block-end: 1px solid var(--c-rule); }
 .results__title { font-size: var(--t-mid); }
+@media (hover: hover) {
 .results__title a:hover { color: var(--c-accent); }
+}
 .results__item .body { margin-block-start: 4px; color: var(--c-muted); }
 .notfound { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gutter); }
 
@@ -1308,7 +1361,9 @@ textarea.field__input { resize: vertical; min-height: 96px; }
    собственный фон, — и потому невидимо до фокуса. В модалке подложка белая,
    поэтому там проблемы нет. Меняем ролями: поле белое, панель серая. */
 .contacts__form .field__input { background: var(--c-white); border-color: var(--c-rule); }
+@media (hover: hover) {
 .contacts__form .field__input:hover { background: var(--c-white); border-color: var(--c-muted); }
+}
 
 /* ============================================================
    СТРАНИЦА «О КОМПАНИИ»
@@ -1490,7 +1545,9 @@ body.is-sheet .hdr--solid { background: transparent; }
 .crows dt { font-family: var(--f-ui); font-size: clamp(12px, calc(15 * var(--k)), 14px); text-transform: uppercase; color: var(--c-muted); }
 .crows dd { margin: 0; font-size: clamp(16px, calc(24 * var(--k)), 22px); line-height: 1.3; color: var(--c-ink); }
 .crows dd a { transition: color var(--dur) var(--ease); }
+@media (hover: hover) {
 .crows dd a:hover { color: var(--c-accent); }
+}
 .crows__soc { display: flex; flex-wrap: wrap; gap: max(12px, calc(20 * var(--k))); }
 .crows__soc a { color: var(--c-accent); }
 /* Прижат к низу колонки: правая заканчивается кнопкой, и текст встаёт с
@@ -1516,7 +1573,9 @@ body.is-sheet .hdr--solid { background: transparent; }
   font-size: var(--t-mid);
   transition: border-color var(--dur) var(--ease);
 }
+@media (hover: hover) {
 .ccols__right .field__input:hover { border-color: var(--c-muted); background: none; }
+}
 .ccols__right .field__input:focus-visible { outline: none; border-color: var(--c-accent); border-block-end-width: 2px; }
 .ccols__right .modal__submit { margin-block-start: max(24px, calc(44 * var(--k))); }
 .ccols__right .check { margin-block-start: max(6px, calc(10 * var(--k))); }
@@ -1555,7 +1614,9 @@ body.is-sheet .hdr--solid { background: transparent; }
   text-decoration: underline; text-underline-offset: 3px;
   transition: color var(--dur) var(--ease);
 }
+@media (hover: hover) {
 .caddr__link a:hover { color: var(--c-accent); }
+}
 
 .caddr__clock { display: flex; flex-wrap: wrap; align-items: baseline; gap: max(8px, calc(12 * var(--k))); font-size: var(--t-body); color: var(--c-muted); }
 .caddr__clock time { color: var(--c-ink); font-weight: 500; font-variant-numeric: tabular-nums; }
@@ -1640,7 +1701,9 @@ body.is-sheet .hdr--solid { background: transparent; }
   transition: opacity .45s var(--ease), transform .45s var(--ease);
 }
 .fnext__card > * { position: relative; z-index: 1; }
+@media (hover: hover) {
 .fnext__card:hover::before { opacity: 1; transform: scale(1); }
+}
 
 .fnext__word {
   font-size: clamp(24px, calc(70 * var(--k)), 70px);
@@ -1650,7 +1713,9 @@ body.is-sheet .hdr--solid { background: transparent; }
   color: #8b8e99;
   transition: color var(--dur) var(--ease);
 }
+@media (hover: hover) {
 .fnext__card:hover .fnext__word { color: var(--c-white); }
+}
 
 .fnext__bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: max(16px, calc(32 * var(--k))); }
 /* Белый сразу, без перекраски по наведению: это пояснение к разделу, его
@@ -1676,7 +1741,9 @@ body.is-sheet .hdr--solid { background: transparent; }
   transition: opacity .45s var(--ease) .08s, transform .45s var(--ease) .08s;
 }
 .fnext__circle svg { width: var(--arrow-w); height: auto; }   /* общий токен со стрелкой в кнопках */
+@media (hover: hover) {
 .fnext__card:hover .fnext__circle { opacity: 1; transform: scale(1); }
+}
 
 /* На телефоне карточки становятся настоящими карточками: своя подложка,
    скруглённые углы, кружок со стрелкой под текстом слева. Построение с
@@ -1737,6 +1804,16 @@ body.is-sheet .hdr--solid { background: transparent; }
      «О компании», отправка формы. Кнопка в бургерном меню исключена —
      там своя центрированная композиция. */
   .btn--wide:not(.menu__btn) { width: 100%; }
+  /* Высота крупной кнопки перестаёт быть числом. 90 макетных пикселей на
+     телефоне ужимаются до 55, а объявленные поля 18 сверху и 18 снизу плюс
+     надпись в них не влезают: по факту оставалось 6 и 6, текст упирался в
+     края коробки. Число оставляем нижней границей, высоту держит содержимое. */
+  .btn--wide:not(.menu__btn) { height: auto; min-height: 55px; }
+  /* Перенос строки в надписи задан в разметке под кнопку 291x90 — там текст
+     нарочно в две строки. Кнопке во всю ширину экрана он не нужен: «Добавить
+     свой отзыв» встаёт в строку и без него. Перенос снимаем, а не прячем
+     текст: пробел после <br> в разметке остаётся и склеивает слова. */
+  .btn--wide:not(.menu__btn) .roll br { display: none; }
   .about__main .btn { width: 100%; }
 }
 
@@ -1867,7 +1944,9 @@ body.is-sheet .hdr--solid { background: transparent; }
   white-space: nowrap;
   transition: background-color var(--dur) var(--ease);
 }
+@media (hover: hover) {
 .hdr__cta:hover { background: #3f5cc4; }
+}
 /* Точка целыми пикселями и покрупнее. Шесть пикселей в круг не
    складываются: сглаживание размазывает их в мутный овал, и рядом с
    буквами это читается как «криво». Восемь на целой сетке рисуются
@@ -1994,7 +2073,9 @@ section.blog .pcard:nth-child(3n + 1) { border-inline-start: 0; }
   margin-block-end: max(14px, calc(24 * var(--k)));
 }
 .pcard__media img { width: 100%; height: 100%; object-fit: cover; transition: transform .9s var(--ease); }
+@media (hover: hover) {
 .pcard:hover .pcard__media img { transform: scale(1.04); }
+}
 /* Заглушка: знак в четверть ширины, приглушённый до цвета линий. Читается
    как «здесь будет снимок», а не как элемент оформления. */
 .pcard__stub {
@@ -2018,9 +2099,15 @@ section.blog .pcard:nth-child(3n + 1) { border-inline-start: 0; }
   letter-spacing: normal;
 }
 .pcard__title .roll { transition: color var(--dur) var(--ease); }
+@media (hover: hover) {
 .pcard:hover .pcard__title .roll { color: var(--c-accent); }
+}
+@media (hover: hover) {
 .pcard:hover .roll__a { transform: translateY(calc(-100% - .3em)); }
+}
+@media (hover: hover) {
 .pcard:hover .roll__b { transform: translateY(0); }
+}
 .pcard__text { margin-block-start: max(10px, calc(16 * var(--k))); }
 
 /* В ленте раздела записей больше трёх — нужен зазор между строками. */
@@ -2048,7 +2135,32 @@ section.blog .pcard:nth-child(3n + 1) { border-inline-start: 0; }
   cursor: pointer;
   transition: opacity var(--dur) var(--ease);
 }
+@media (hover: hover) {
 .clip__more:hover { opacity: .7; }
+}
+/* В отзыве это КНОПКА, и единственная: страницы у отзыва нет, текст
+   раскрывается на месте. А сама надпись — три точки 12x19, то есть втрое
+   мельче минимума 44 и вдвое мельче нижней границы WCAG 2.5.8 (24). Зону
+   нажатия расширяем псевдоэлементом: коробка кнопки остаётся в строке текста
+   и ничего не двигает, а палец попадает в квадрат 44.
+   В карточках объектов и записей тот же хвостик — ссылка, дублирующая
+   заголовок карточки; ей расширение не нужно и оно накрыло бы соседний текст. */
+/* Запасная обрезка на случай, когда скрипт не поднялся, у отзыва оборачивается
+   тупиком: многоточия-кнопки без скрипта нет, и раскрыть текст нечем — человек
+   остаётся с двумя строками навсегда. На телефоне, где строк не жалко, обрезку
+   снимаем совсем: ряд поедет по высоте, зато отзыв читается. */
+@media (max-width: 860px) {
+  .review__text[data-clip]:not([data-clip-on]) {
+    display: block; -webkit-line-clamp: none; overflow: visible;
+  }
+}
+button.clip__more { position: relative; }
+button.clip__more::after {
+  content: "";
+  position: absolute; inset-block-start: 50%; inset-inline-start: 50%;
+  width: 44px; height: 44px;
+  transform: translate(-50%, -50%);
+}
 
 /* Дата под заголовком статьи. */
 .pagehead__date {
@@ -2069,7 +2181,9 @@ section.blog .pcard:nth-child(3n + 1) { border-inline-start: 0; }
 .postnav__item--next { text-align: end; justify-items: end; grid-column: 2; }
 .postnav__label { font-family: var(--f-ui); font-size: var(--t-body); color: var(--c-muted); }
 .postnav__title { font-size: var(--t-mid); line-height: 1.25; transition: color var(--dur) var(--ease); }
+@media (hover: hover) {
 .postnav__item:hover .postnav__title { color: var(--c-accent); }
+}
 
 /* Постраничная навигация ленты. */
 .pagination { margin-block-start: max(28px, calc(52 * var(--k))); }
@@ -2083,7 +2197,9 @@ section.blog .pcard:nth-child(3n + 1) { border-inline-start: 0; }
   font-family: var(--f-ui); font-size: var(--t-body); line-height: 1;
   transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
 }
+@media (hover: hover) {
 .pagination a.page-numbers:hover { border-color: var(--c-accent); color: var(--c-accent); }
+}
 .pagination .page-numbers.current { background: var(--c-ink); border-color: var(--c-ink); color: var(--c-white); }
 
 @media (max-width: 1180px) {
@@ -2166,7 +2282,9 @@ section.blog .pcard:nth-child(3n + 1) { border-inline-start: 0; }
   font-family: var(--f-ui); font-size: var(--t-body); line-height: 1;
   transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
 }
+@media (hover: hover) {
 .revpage__more a:hover { border-color: var(--c-accent); color: var(--c-accent); }
+}
 
 .revrow { padding-block: max(24px, calc(44 * var(--k))); border-block-start: var(--dp) solid var(--c-rule); }
 .revrow:first-child { border-block-start: 0; padding-block-start: 0; }
@@ -2210,7 +2328,9 @@ section.blog .pcard:nth-child(3n + 1) { border-inline-start: 0; }
   transition: background-color var(--dur) var(--ease);
 }
 .srch__go svg { width: 20px; height: auto; }
+@media (hover: hover) {
 .srch__go:hover { background: var(--c-ink); }
+}
 
 /* --- Формы: прямые углы ------------------------------------------------------
    Заказчик просил снять скругления со всех четырёх сторон у всего, что
@@ -2504,7 +2624,10 @@ form .btn {
 /* При наведении плитка белеет и обводится волоском того же цвета, что
    разделители на сайте. Заливка акцентом читалась как выделенное состояние,
    а не как «сюда можно навести». */
-.abtile:hover, .abtile:focus-visible { background: var(--c-white); border-color: var(--c-rule); }
+@media (hover: hover) {
+.abtile:hover { background: var(--c-white); border-color: var(--c-rule); }
+}
+.abtile:focus-visible { background: var(--c-white); border-color: var(--c-rule); }
 .abtile:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
 .abtile__n {
   font-family: var(--f-ui); font-size: clamp(11px, calc(19 * var(--k)), 18px); line-height: 1.5;
@@ -2522,7 +2645,10 @@ form .btn {
   opacity: 0; transform: translateY(14px);
   transition: opacity .45s var(--ease), transform .45s var(--ease);
 }
-.abtile:hover .abtile__x, .abtile:focus-visible .abtile__x { opacity: 1; transform: none; }
+@media (hover: hover) {
+.abtile:hover .abtile__x { opacity: 1; transform: none; }
+}
+.abtile:focus-visible .abtile__x { opacity: 1; transform: none; }
 
 /* Кружок с плюсом внизу слева: белый круг, плюс наш синий. Диаметр 34 при
    1440 — снят с референса. При наведении плюс доворачивается на четверть. */
@@ -2537,7 +2663,10 @@ form .btn {
 .abtile__plus svg { width: 42%; height: auto; }
 /* На белой плитке белый кружок пропал бы — на наведении он становится
    серым, того же тона, что была сама плитка. */
-.abtile:hover .abtile__plus, .abtile:focus-visible .abtile__plus { rotate: 90deg; background: var(--c-surface); }
+@media (hover: hover) {
+.abtile:hover .abtile__plus { rotate: 90deg; background: var(--c-surface); }
+}
+.abtile:focus-visible .abtile__plus { rotate: 90deg; background: var(--c-surface); }
 
 @media (max-width: 1180px) { .abwhy__in { grid-template-columns: repeat(2, minmax(0, 1fr)); } .abwhy__head, .abwhy__lead { grid-column: 1 / -1; } }
 @media (max-width: 639px)  { .abwhy__in { grid-template-columns: minmax(0, 1fr); } }
@@ -2593,7 +2722,10 @@ form .btn {
   border: 0; padding: 0; margin: 0;
   width: 100%; aspect-ratio: 1092 / 515;
   background: var(--c-ink);
-  border-radius: 24px;
+  /* Скругления нет: в проекте нет ни одной скруглённой картинки — ни в
+     карточках объектов, ни в записях, ни в закреплённой сцене. Здесь оно
+     осталось от образца просмотрщика и выбивалось из общего языка.
+     Галерея одна на страницу объекта и на статью, так что правило чинит оба. */
   cursor: zoom-in;
 }
 /* Размытая подложка. Растянута чуть шире кадра: у blur края расплываются, и
@@ -2625,13 +2757,17 @@ form .btn {
 /* :not([disabled]) обязателен: правило наведения весит больше, чем
    .gal__arrow[disabled], и на последнем кадре гашёная стрелка снова
    проявлялась под курсором. */
-.gal__frame:hover .gal__arrow:not([disabled]),
+@media (hover: hover) {
+.gal__frame:hover .gal__arrow:not([disabled]) { opacity: 1; }
+}
 .gal__arrow:focus-visible { opacity: 1; }
 .gal__arrow svg { width: 16px; height: auto; }
 .gal__arrow--prev { inset-inline-start: 14px; }
 .gal__arrow--prev svg { rotate: 180deg; }
 .gal__arrow--next { inset-inline-end: 14px; }
+@media (hover: hover) {
 .gal__arrow:hover { background: var(--c-ink); }
+}
 .gal__arrow[disabled] { opacity: 0; pointer-events: none; }
 
 .gal__bar { margin-block-start: 22px; width: min(420px, 60%); height: 2px; }
@@ -2639,7 +2775,7 @@ form .btn {
 @media (max-width: 899px) {
   /* На узком экране наведения нет — стрелки показываем всегда. */
   .gal__arrow { opacity: 1; }
-  .gal__cell { aspect-ratio: 3 / 2; border-radius: 16px; }
+  .gal__cell { aspect-ratio: 3 / 2; }
 }
 /* --- Просмотрщик -------------------------------------------------------------
    Вид снят с fancybox на melodesign.ru — просмотрщик, который выбрал
@@ -2696,7 +2832,9 @@ form .btn {
   cursor: pointer;
   transition: background-color var(--dur) var(--ease), opacity var(--dur) var(--ease);
 }
+@media (hover: hover) {
 .lb__btn:hover, .lb__nav:hover { background: rgba(255, 255, 255, .1); }
+}
 .lb__btn svg { width: 24px; height: auto; }
 /* У кнопки слайдшоу два знака: показываем тот, что соответствует состоянию. */
 .lb__i-pause, .lb__btn[aria-pressed="true"] .lb__i-play { display: none; }
@@ -2735,7 +2873,9 @@ form .btn {
   transition: opacity var(--dur) var(--ease);
 }
 .lb__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+@media (hover: hover) {
 .lb__thumb:hover { opacity: .85; }
+}
 .lb__thumb[aria-current="true"] { opacity: 1; outline: 2px solid var(--c-white); outline-offset: -2px; }
 
 @media (max-width: 639px) {
@@ -2799,4 +2939,94 @@ form .btn {
      узком экране значению остаётся половина ширины, и адрес с почтой рвутся
      посреди слова. */
   .crows__row { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+}
+
+/* ============================================================
+   ПЛАШКА ПРО COOKIE
+   Уведомление в углу, а не диалог: страницу не затемняет и ничего не
+   блокирует. У образца (poedimdostavka.ru) подложка rgba(0,0,0,.7) на весь
+   экран — читать сайт нельзя, пока не ткнёшь; приём не взят.
+
+   Замеры образца при 1280: карточка 300x196, скругление 12, поля 52/16/16,
+   от правого края 39, от низа 24, кнопка 84x32 пилюлей.
+   Взято: угол, ширина карточки и порядок «текст, потом кнопка».
+   Не взято: затемнение; кнопка 84x32 — ниже нашего норматива зоны нажатия
+   в 44, у нас она обычная .btn--sm с min-height 48.
+   ============================================================ */
+.cookie {
+  position: fixed; z-index: 45;   /* ниже модалки (50) и бургерного меню */
+  inset-block-end: var(--gutter);
+  /* Угол ЛЕВЫЙ, а не правый как у образца: справа внизу на первом экране
+     стоит кнопка призыва, и плашка садилась ровно на неё — закрывала главное
+     действие страницы. Слева внизу пусто на всех шаблонах. */
+  inset-inline-start: var(--gutter);
+  /* Шире, чем нужно тексту при одной кнопке: со счётчиком кнопок две, и
+     колонка текста иначе ужимается до четырёх строк, а плашка растёт вверх
+     и лезет на заголовок первого экрана. */
+  width: min(620px, calc(100vw - 2 * var(--gutter)));
+  /* Текст и кнопка в строку, а не столбиком. Столбиком карточка выходила
+     196 в высоту и накрывала заголовок первого экрана — тот самый, что
+     только что вернули в кандидаты LCP. В строку она вдвое ниже. */
+  display: flex; align-items: center;
+  gap: max(14px, calc(20 * var(--k)));
+  padding: max(18px, calc(26 * var(--k)));
+  background: var(--c-white);
+  /* Скругление как у плиток «Почему мы»: у подложек в проекте оно есть,
+     у картинок нет. Собственного числа не заводим. */
+  border-radius: 6px;
+  border: var(--dp) solid var(--c-rule);
+  /* Тень вместо затемнения экрана: карточка обязана читаться поверх любого
+     блока, а гасить страницу ради уведомления мы не будем. */
+  box-shadow: 0 18px 40px rgba(16, 18, 22, .16);
+}
+/* Авторский display перебивает браузерное [hidden] { display: none } —
+   специфичность та же, а авторский стиль весит больше. Без этой строки
+   плашка висела бы на экране вопреки атрибуту. */
+.cookie[hidden] { display: none; }
+.cookie__text {
+  font-size: var(--t-body); line-height: 1.5; color: var(--c-muted);
+}
+/* Кнопки не ужимаются под длинный текст: их ширина — зона нажатия. */
+.cookie__acts { flex: none; display: flex; align-items: center; gap: max(6px, calc(10 * var(--k))); }
+/* Отказ подан текстовой кнопкой, а не второй заливкой: два равных
+   прямоугольника рядом заставляют выбирать между ними, а согласие здесь
+   основное действие. Зона нажатия при этом полная — 48 по высоте. */
+.cookie__no {
+  flex: none;
+  min-height: 48px; padding-inline: max(10px, calc(14 * var(--k)));
+  border: 0; background: none; cursor: pointer;
+  font-family: inherit; font-size: var(--t-body); line-height: 1.2;
+  color: var(--c-muted);
+  text-decoration: underline; text-underline-offset: 3px;
+  transition: color var(--dur) var(--ease);
+}
+@media (hover: hover) {
+  .cookie__no:hover { color: var(--c-ink); }
+}
+/* Поля по вертикали у строчного элемента не двигают строку, но зону нажатия
+   расширяют: 19 своих плюс 26 полей дают 45. inline-block тут не годится —
+   ссылка переносится на две строки, а он бы её склеил в одну коробку. */
+.cookie__text a {
+  color: var(--c-accent);
+  text-decoration: underline; text-underline-offset: 2px;
+  padding-block: 13px;
+}
+@media (hover: hover) {
+  .cookie__text a:hover { color: var(--c-ink); }
+}
+/* Появление снизу. Класс ставит скрипт после полной загрузки: до неё плашка
+   лежит под hidden и не участвует ни в отрисовке, ни в замере LCP. */
+.cookie { opacity: 0; transform: translateY(14px); transition: opacity .4s var(--ease), transform .4s var(--ease); }
+.cookie.is-in { opacity: 1; transform: none; }
+
+@media (max-width: 639px) {
+  /* На телефоне угол не нужен: карточка во всю рабочую ширину внизу —
+     иначе она отъедает половину экрана и всё равно перекрывает контент. */
+  .cookie {
+    inset-inline: var(--gutter);
+    width: auto;
+    /* Здесь наоборот столбиком: в строку на 335 доступной ширины тексту
+       остаётся половина, и он рвётся по два слова в строку. */
+    flex-direction: column; align-items: flex-start;
+  }
 }
