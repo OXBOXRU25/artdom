@@ -591,8 +591,14 @@
   if (списокОтзывов && ещёОтзывы) {
     ещёОтзывы.addEventListener("click", function (e) {
       var ссылка = e.target.closest("a");
-      if (!ссылка || ещёОтзывы.dataset.busy) return;
+      if (!ссылка) return;
+      /* preventDefault ВСЕГДА, ещё до проверки занятости. Раньше выход по
+         busy стоял раньше него, и второй клик во время загрузки уходил
+         браузеру: человек оказывался на /reviews/page/2/ вместо подгрузки.
+         На медленной сети двойное нажатие — обычное дело, а выглядит это
+         как «кнопка открыла другую страницу». */
       e.preventDefault();
+      if (ещёОтзывы.dataset.busy) return;
 
       var адрес = ссылка.href;
       var надпись = ссылка.textContent;
@@ -600,7 +606,13 @@
       ссылка.textContent = "Загружаем…";
 
       fetch(адрес, { credentials: "same-origin" })
-        .then(function (r) { return r.text(); })
+        .then(function (r) {
+          /* Без этой проверки страница 404 разбирается как обычная: отзывов
+             в ней нет, кнопки «дальше» тоже — и кнопка молча исчезала бы,
+             как будто всё показано. Пусть лучше вернётся надпись. */
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.text();
+        })
         .then(function (html) {
           var док = new DOMParser().parseFromString(html, "text/html");
           var новые = док.querySelectorAll("[data-revlist] .revrow");

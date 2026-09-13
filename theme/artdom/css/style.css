@@ -373,9 +373,14 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
    На тач-устройствах оставляем родную — там инерция системная и она лучше. */
 .slider.has-js .slider__track { scroll-snap-type: none; }
 @media (pointer: coarse) { .slider.has-js .slider__track { scroll-snap-type: x mandatory; } }
+/* Один вид на все ленты. Раньше бегунок лент был 4px и во всю ширину, а в
+   галерее объекта — 2px и узкий; заказчик 13.09.2026: «жирные скролы где
+   объекты, отзывы и статьи, везде в 1 стиле надо», образцом назвал галерею.
+   Числа взяты оттуда, а .gal__bar оставил себе только свой верхний отступ —
+   чтобы вид задавался в ОДНОМ месте, а не дублировался в двух. */
 .slider__bar {
-  margin: calc(66 * var(--k)) auto 0; width: calc(626 * var(--k)); max-width: 70%;
-  height: 4px; border-radius: 2px; background: var(--c-track); overflow: hidden;
+  margin: calc(66 * var(--k)) auto 0; width: min(420px, 60%);
+  height: 2px; border-radius: 2px; background: var(--c-track); overflow: hidden;
 }
 .slider__thumb {
   height: 100%; border-radius: 2px; background: var(--c-accent);
@@ -696,7 +701,10 @@ html.rise-failsafe.rise-failsafe [data-rise="shutter"] {
   .hero__title { max-width: none; }
   .sechead { flex-direction: column; }
   .slider__track { grid-auto-columns: 100%; }   /* один объект на экран целиком, без огрызков */
-  .slider__bar { max-width: 100%; }
+  /* Ширину бегунка на телефоне не растягиваем: правило снимало прежний
+     предел в 70%, когда полоса была 4px и во всю ширину. Теперь вид один
+     на все ленты и задан в .slider__bar — узкая полоска по центру, как в
+     галерее объекта. */
   .objects .slider__track > * + *::before,
   .reviews .slider__track > * + *::before { display: none; }
   .stats { grid-template-columns: 1fr; }
@@ -1097,7 +1105,14 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 }
 .grid-cards .card { width: auto; }
 @media (max-width: 1023px) { .grid-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 639px)  { .grid-cards { grid-template-columns: minmax(0, 1fr); } }
+/* В один столбец вертикальный зазор задаём отдельно от горизонтального.
+   Общий --gap-card на телефоне равен 20, и этого хватает между колонками,
+   но не между карточками, идущими друг под другом: снизу у карточки цена,
+   сверху у следующей сразу фотография, и 20 пикселей читались как одна
+   карточка, склеенная с другой. Токен не трогаем — он держит ещё и ленты. */
+@media (max-width: 639px)  {
+  .grid-cards { grid-template-columns: minmax(0, 1fr); row-gap: max(44px, calc(64 * var(--k))); }
+}
 
 /* --- Постраничная навигация --- */
 .pager { margin-block-start: max(28px, calc(48 * var(--k))); }
@@ -2792,7 +2807,9 @@ form .btn {
 }
 .gal__arrow[disabled] { opacity: 0; pointer-events: none; }
 
-.gal__bar { margin-block-start: 22px; width: min(420px, 60%); height: 2px; }
+/* Ширина и высота теперь общие, в .slider__bar. Здесь остаётся только свой
+   отступ сверху: в галерее он меньше, чем у лент на главной. */
+.gal__bar { margin-block-start: 22px; }
 
 @media (max-width: 899px) {
   /* На узком экране наведения нет — стрелки показываем всегда. */

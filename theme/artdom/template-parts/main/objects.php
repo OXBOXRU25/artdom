@@ -31,7 +31,9 @@ if ( $objects->have_posts() ) :
           <h2 class="h2"><?php echo esc_html( artdom_field( 'objects_title' ) ); ?></h2>
           <p class="body"><?php echo artdom_lines( artdom_field( 'objects_lead' ) ); ?></p>
         </div>
-        <?php artdom_btn( artdom_field( 'objects_btn_text' ), artdom_field( 'objects_btn_link' ), 'btn btn--wide' ); ?>
+        <?php /* В поле по умолчанию стояло «#» — кнопка не вела никуда вовсе.
+                 Тот же разрешатель, что у кнопки первого экрана. */ ?>
+        <?php artdom_btn( artdom_field( 'objects_btn_text' ), artdom_objects_link( artdom_field( 'objects_btn_link' ) ), 'btn btn--wide' ); ?>
       </div>
 
       <div class="rule"></div>

@@ -31,7 +31,11 @@ $poster = is_array( $poster ) && ! empty( $poster['url'] ) ? $poster['url'] : $u
       <h1 class="h1 hero__title"><?php echo artdom_lines( artdom_field( 'hero_title' ) ); ?></h1>
       <div class="hero__aside">
         <p class="lead"><?php echo artdom_lines( artdom_field( 'hero_lead' ) ); ?></p>
-        <?php artdom_btn( artdom_field( 'hero_btn_text' ), artdom_field( 'hero_btn_link' ), 'btn btn--wide' ); ?>
+        <?php /* Ссылка ведёт в РАЗДЕЛ объектов, а не якорем к секции ниже:
+                 по умолчанию в поле стояло «#objects», и кнопка первого
+                 экрана просто прокручивала страницу. Разрешение заглушки —
+                 в artdom_objects_link(), одно место на обе такие кнопки. */ ?>
+        <?php artdom_btn( artdom_field( 'hero_btn_text' ), artdom_objects_link( artdom_field( 'hero_btn_link' ) ), 'btn btn--wide' ); ?>
       </div>
     </div>
   </section>
