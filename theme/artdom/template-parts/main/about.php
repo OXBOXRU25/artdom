@@ -32,7 +32,10 @@ $paragraphs = preg_split( '/\R{2,}/u', trim( (string) artdom_field( 'about_text'
           <?php foreach ( $paragraphs as $p ) : ?>
           <p class="body"><?php echo artdom_lines( $p ); ?></p>
           <?php endforeach; ?>
-          <?php artdom_btn( artdom_field( 'about_btn_text' ), artdom_field( 'about_btn_link' ), 'btn btn--ghost' ); ?>
+          <?php /* В поле по умолчанию стоял якорь #contacts — кнопка «Узнать
+                   больше» вела к форме на той же странице вместо страницы
+                   «О компании». Разрешение заглушки — в artdom_about_link(). */ ?>
+          <?php artdom_btn( artdom_field( 'about_btn_text' ), artdom_about_link( artdom_field( 'about_btn_link' ) ), 'btn btn--ghost' ); ?>
         </div>
       </div>
     </div>
