@@ -708,10 +708,25 @@ html.rise-failsafe.rise-failsafe [data-rise="shutter"] {
      что снимать надо тем же селектором. */
   .stats__item:nth-child(2), .stats__item:nth-child(4) { border-inline-end: none; }
   .stats__label { margin-block-start: 12px; }
-  /* Экспертные решения: сперва основной текст, портрет с цитатой под ним */
-  .about__main { order: 1; }
-  .about__side { order: 2; margin-block-start: 40px; }
+  /* Экспертные решения: сперва портрет с цитатой, под ним основной текст.
+     Порядок перевёрнут 13.09.2026 по просьбе заказчика — раньше портрет
+     лежал под полотном текста и до него долистывали не все. Лицо и цитата
+     работают как вход в раздел, а не как подпись в конце.
+     Порядок в РАЗМЕТКЕ и так такой: order на телефоне просто убираем. */
+  .about__side { margin-block-start: 0; }
+  .about__main { margin-block-start: 0; }
   .about__quote { max-width: none; }
+  /* Заголовок влево: по центру он стоит на широком экране, где под ним
+     двухколоночная композиция и центр её держит. На телефоне колонка одна,
+     и центрированный заголовок над текстом с левым краем читается сбоем
+     выключки — ровно это заказчик и поймал. */
+  .h2--big { text-align: start; }
+  /* Переносы в заголовке заданы в поле под широкий экран: «Экспертные /
+     решения / в сфере / недвижимости». На 375 строка и так короткая, и эти
+     <br> дробят её до одинокого слова посреди блока — при выключке по
+     левому краю это читается рваниной. Снимаем перенос, а не текст:
+     пробел вокруг <br> остаётся и склеивает слова. */
+  .h2--big br { display: none; }
   /* Цифры: линейка не должна лежать вплотную к числу и подписи */
   .stats__item { padding-block: 28px 30px; }
   .ftr__cta, .ftr__mid { grid-template-columns: 1fr; gap: 44px; }
@@ -972,7 +987,7 @@ textarea.field__input { resize: vertical; min-height: 96px; }
    часть разговора с клиентом. Высоту его строки держим в токене — от неё
    считается вертикальное положение квадратика. */
 .check {
-  --t-check: calc(var(--t-body) * .85);
+  --t-check: max(14px, calc(var(--t-body) * .85));
   --line-check: calc(var(--t-check) * 1.45);
   display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; align-items: start;
 }
@@ -1169,8 +1184,11 @@ textarea.field__input { resize: vertical; min-height: 96px; }
    не как плотный столбик. */
 .svcnav { position: sticky; top: calc(var(--hdr-h, 72px) + 24px); align-self: start; }
 .svcnav__cap {
-  font-family: var(--f-ui); font-size: clamp(10px, calc(15 * var(--k)), 14px);
-  line-height: 1.45; text-transform: uppercase; letter-spacing: .04em;
+  font-family: var(--f-ui); font-size: clamp(13px, calc(15 * var(--k)), 14px);
+  /* Разрядки не ставим — правило заказчика. Писать normal, а не удалять
+     объявление: letter-spacing наследуется вычисленной длиной, и мелкий
+     текст внутри крупного получил бы чужие пиксели. */
+  line-height: 1.45; text-transform: uppercase; letter-spacing: normal;
   color: var(--c-ink);
   margin-block-end: calc(30 * var(--k));
 }
@@ -1179,8 +1197,8 @@ textarea.field__input { resize: vertical; min-height: 96px; }
   position: relative;
   display: block;
   font-family: var(--f-ui);
-  font-size: clamp(11px, calc(16 * var(--k)), 15px); line-height: 1.4;
-  letter-spacing: .01em;
+  font-size: clamp(14px, calc(16 * var(--k)), 15px); line-height: 1.4;
+  letter-spacing: normal;
   color: var(--c-muted);
   transition: color var(--dur) var(--ease);
 }
@@ -1218,7 +1236,11 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .svcrow + .svcrow::before {
   content: "";
   position: absolute; inset-block-start: 0;
-  inset-inline-start: calc(-44 * var(--k)); inset-inline-end: 0;
+  /* Слева вылет до вертикального волоска, справа — до края ОКНА: блок лежит
+     внутри .wrap с полем --gutter, и без этого вылета линия обрывалась за
+     двадцать пикселей до края. Заказчик поймал это и на десктопе, и на
+     телефоне — поле там одно и то же, поэтому и правка одна. */
+  inset-inline-start: calc(-44 * var(--k)); inset-inline-end: calc(-1 * var(--gutter));
   height: var(--dp); background: var(--c-rule);
 }
 .svcrow {
@@ -1245,7 +1267,7 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 
 .svcrow__scope {
   display: grid; gap: 0;
-  font-size: clamp(13px, calc(19 * var(--k)), 18px); line-height: 1.5;
+  font-size: clamp(15px, calc(19 * var(--k)), 18px); line-height: 1.5;
   color: var(--c-ink); font-weight: 500;
 }
 /* Маркер — маленький синий кружок, отдельной колонкой, чтобы вторая строка
@@ -1267,7 +1289,7 @@ textarea.field__input { resize: vertical; min-height: 96px; }
   margin-block: calc(64 * var(--k));   /* 56 -> 48, минус 15% */
 }
 .svcrow__text {
-  font-size: clamp(13px, calc(20 * var(--k)), 19px); line-height: 1.4;
+  font-size: clamp(15px, calc(20 * var(--k)), 19px); line-height: 1.4;
   color: var(--c-ink);
 }
 .svcrow__text + .svcrow__text { margin-block-start: 1.4em; }
@@ -1477,7 +1499,7 @@ body.is-sheet .hdr--solid { background: transparent; }
   border-radius: var(--r-btn-sm);
   background: var(--c-white);
   font-family: var(--f-ui);
-  font-size: clamp(12px, calc(18 * var(--k)), 16px);
+  font-size: clamp(13px, calc(18 * var(--k)), 16px);
   line-height: 1.2;
   text-transform: uppercase;
   color: var(--c-ink);
@@ -1542,7 +1564,7 @@ body.is-sheet .hdr--solid { background: transparent; }
   align-items: baseline;
   padding-block: max(10px, calc(14 * var(--k)));
 }
-.crows dt { font-family: var(--f-ui); font-size: clamp(12px, calc(15 * var(--k)), 14px); text-transform: uppercase; color: var(--c-muted); }
+.crows dt { font-family: var(--f-ui); font-size: clamp(13px, calc(15 * var(--k)), 14px); text-transform: uppercase; color: var(--c-muted); }
 .crows dd { margin: 0; font-size: clamp(16px, calc(24 * var(--k)), 22px); line-height: 1.3; color: var(--c-ink); }
 .crows dd a { transition: color var(--dur) var(--ease); }
 @media (hover: hover) {
@@ -1562,7 +1584,7 @@ body.is-sheet .hdr--solid { background: transparent; }
 .ccols__right .field { display: grid; gap: max(4px, calc(6 * var(--k))); }
 .ccols__right .field__label {
   font-family: var(--f-ui);
-  font-size: clamp(12px, calc(15 * var(--k)), 14px);
+  font-size: clamp(13px, calc(15 * var(--k)), 14px);
   text-transform: uppercase;
   color: var(--c-ink);
 }
@@ -2464,7 +2486,7 @@ form .btn {
 .abteam__row + .abteam__row { border-block-start: var(--dp) solid var(--c-rule); }
 .abteam__shot { display: block; width: calc(215 * var(--k)); min-width: 96px; aspect-ratio: 161 / 100; background: var(--c-surface); }
 .abteam__name { font-size: clamp(17px, calc(37 * var(--k)), 38px); line-height: 1.3; font-weight: 500; }
-.abteam__role { font-family: var(--f-ui); font-size: clamp(12px, calc(19 * var(--k)), 18px); line-height: 1.5; color: var(--c-muted); }
+.abteam__role { font-family: var(--f-ui); font-size: clamp(13px, calc(19 * var(--k)), 18px); line-height: 1.5; color: var(--c-muted); }
 
 /* Шаги: крупный номер акцентом слева, текст второй колонкой. */
 .abpath__list { display: grid; }
@@ -2630,7 +2652,7 @@ form .btn {
 .abtile:focus-visible { background: var(--c-white); border-color: var(--c-rule); }
 .abtile:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
 .abtile__n {
-  font-family: var(--f-ui); font-size: clamp(11px, calc(19 * var(--k)), 18px); line-height: 1.5;
+  font-family: var(--f-ui); font-size: clamp(13px, calc(19 * var(--k)), 18px); line-height: 1.5;
   color: color-mix(in srgb, var(--c-muted) 50%, transparent);
 }
 .abtile__t {
@@ -2916,16 +2938,34 @@ form .btn {
 
 @media (max-width: 767px) {
   .blog__slider .slider__bar { display: block; }
-  /* Трек снова становится лентой: колонка на кадр, зазор как между блоками. */
+  /* Трек снова становится лентой: колонка на кадр, зазор как между блоками.
+
+     Ширина колонки 100%, а не 82%. Восемьдесят два процента показывали
+     краешек соседней карточки как подсказку «листается» — но подсказку уже
+     несёт бегунок, а краешек на 375 выходит в 67 пикселей, и в них видны
+     обрывки чужого текста: под карточкой висело «ния…» от предыдущей.
+     У объектов и отзывов на телефоне колонка ровно 100%, блог был
+     единственным исключением. */
   .blog__grid.slider__track {
     grid-template-columns: none;
     grid-auto-flow: column;
-    grid-auto-columns: 82%;
+    grid-auto-columns: 100%;
     margin-inline: 0;
   }
   /* Волоски между колонками в один столбец делить нечего — а второй карточке
      он доставался и висел слева от неё. */
   section.blog .pcard { border-inline-start: 0; padding-inline: 0; }
+  /* Верхняя линия и отступ сверху заданы выше, в правилах для СТОЛБИКА
+     (одна колонка, карточки разделены горизонтальными волосками). На этой же
+     ширине трек становится ЛЕНТОЙ — и в ленте они превращаются в дефект:
+     над каждой карточкой, кроме первой, висит полоска, а сама карточка
+     съезжает вниз на высоту отступа, то есть вторая статья стоит ниже
+     первой. Два правила писались под разные раскладки и встретились на
+     одной ширине. В ленте снимаем оба. */
+  .blog__grid.slider__track > .pcard {
+    border-block-start: 0;
+    padding-block-start: 0;
+  }
   .blog__grid.slider__track > * + * { margin-inline-start: max(12px, calc(20 * var(--k))); }
 
   /* Статья: воздух под галереей и под текстом был рассчитан на широкий экран
@@ -3029,4 +3069,36 @@ form .btn {
        остаётся половина, и он рвётся по два слова в строку. */
     flex-direction: column; align-items: flex-start;
   }
+}
+
+/* ============================================================
+   ШАПКА УЕЗЖАЕТ ПРИ ПРОКРУТКЕ ВНИЗ (телефон и планшет)
+   Просьба заказчика 13.09.2026. Логотип и бургер висят фиксированным
+   слоем и на узком экране занимают треть ширины — при чтении они
+   постоянно лежат поверх заголовков. Листаешь вниз (читаешь) — уезжают;
+   листаешь вверх (ищешь навигацию) — возвращаются.
+
+   Порог ставится только ниже 1180: ровно там, где меню и телефон уже
+   спрятаны в бургер, то есть шапка сведена к логотипу и кнопке.
+   ============================================================ */
+@media (max-width: 1180px) {
+  /* Уезжают ВВЕРХ за край, а не гаснут прозрачностью: логотип выворачивается
+     разностным наложением, и полупрозрачный он даёт грязный серый. */
+  .logo, .hdr__burger, .hdr {
+    transition: transform .32s var(--ease);
+  }
+  html.hdr-away .logo,
+  html.hdr-away .hdr__burger,
+  html.hdr-away .hdr {
+    transform: translateY(calc(-100% - var(--hdr-pad, 18px)));
+  }
+  /* Открытое меню закрывает собой всё — прятать его кнопку нельзя, иначе
+     закрыть меню будет нечем. */
+  html.hdr-away .menu[data-open="true"] ~ .hdr__burger,
+  html.menu-open .hdr__burger,
+  html.menu-open .logo { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo, .hdr__burger, .hdr { transition: none; }
 }

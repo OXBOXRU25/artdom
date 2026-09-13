@@ -636,6 +636,10 @@
     if (open) menu.removeAttribute("inert"); else menu.setAttribute("inert", "");
     if (opener) opener.setAttribute("aria-expanded", open ? "true" : "false");
     document.body.classList.toggle("is-locked", open);
+    /* Пока меню открыто, шапку не прячем ни при каком направлении: закрыть
+       её будет нечем. Признак висит на <html>, там же где hdr-away. */
+    root.classList.toggle("menu-open", open);
+    if (open) root.classList.remove("hdr-away");
     if (open) { var first = menu.querySelector("a"); if (first) first.focus(); }
     else if (opener) opener.focus();
   }
@@ -1251,4 +1255,51 @@
       убрать();
     });
   }
+})();
+
+/* ---------- Шапка уезжает при прокрутке вниз ----------
+   Просьба заказчика 13.09.2026: на узком экране логотип и бургер лежат
+   поверх текста, потому что шапка фиксированная и без подложки. Листаешь
+   вниз — уезжают, листаешь вверх — возвращаются.
+
+   Порог в 6 пикселей обязателен: без него класс дёргается на каждом
+   микродвижении пальца и шапка мигает. Верхние 80 пикселей страницы
+   считаются «началом» — там шапка видна всегда, иначе на самом верху
+   она пряталась бы от короткого рывка.
+
+   Считаем в requestAnimationFrame, а не в самом обработчике: событие
+   прокрутки приходит чаще кадра, и чтение scrollY в нём заставляет
+   браузер пересчитывать раскладку. */
+(function () {
+  var root = document.documentElement;
+  var порог = 6;
+  var верх = 80;
+  var прошлый = window.scrollY;
+  var ждём = false;
+
+  function считать() {
+    ждём = false;
+    var y = window.scrollY;
+
+    /* Меню открыто — не трогаем вовсе. */
+    if (root.classList.contains("menu-open")) { прошлый = y; return; }
+
+    /* Отскок за край (iOS отдаёт отрицательный scrollY) — это не движение. */
+    if (y < 0) { прошлый = 0; return; }
+
+    if (y <= верх) { root.classList.remove("hdr-away"); прошлый = y; return; }
+
+    var шаг = y - прошлый;
+    if (Math.abs(шаг) < порог) return;          /* дрожь пальца пропускаем */
+    root.classList.toggle("hdr-away", шаг > 0);
+    прошлый = y;
+  }
+
+  window.addEventListener("scroll", function () {
+    if (ждём) return;
+    ждём = true;
+    requestAnimationFrame(считать);
+  }, { passive: true });
+
+  считать();
 })();
