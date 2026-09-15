@@ -1149,7 +1149,10 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .pricebox { padding: max(20px, calc(28 * var(--k))); background: var(--c-surface); border-radius: var(--r-chip); }
 .pricebox__price { margin-block-start: max(8px, calc(10 * var(--k))); font-size: var(--t-h2); line-height: 1.05; }
 .pricebox__sub { margin-block-start: max(6px, calc(8 * var(--k))); font-size: var(--t-body); }
-.pricebox .btn { margin-block-start: max(16px, calc(22 * var(--k))); width: 100%; }
+/* min-width снимаем: у .btn--wide он 232px, а панель цены на промежуточных
+   ширинах уже — при 900 колонка 202, и кнопка торчала из неё на 50 пикселей.
+   Ширину здесь задаёт панель, а не собственный минимум кнопки. */
+.pricebox .btn { margin-block-start: max(16px, calc(22 * var(--k))); width: 100%; min-width: 0; }
 .pricebox__note { margin-block-start: max(10px, calc(14 * var(--k))); font-size: var(--t-chip); }
 
 @media (max-width: 899px) {
@@ -2085,6 +2088,21 @@ body:not(.home) { padding-block-start: var(--hdr-h); }
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-block-start: max(26px, calc(44 * var(--k)));
   margin-inline: calc(-1 * var(--pcard-pad));
+  /* Подборка блога носит класс .slider__track, чтобы ниже 767 стать лентой.
+     Но у трека В БАЗОВОМ правиле стоит grid-auto-flow: column — и на ширинах
+     768-1023, где колонок задано ДВЕ, третья карточка уходила в неявную
+     колонку и брала ширину по содержимому: замер 204 / 204 / 429 при 900.
+     Пока это сетка, поток строчный; ленточный возвращается своим
+     медиазапросом ниже. */
+  grid-auto-flow: row;
+  grid-auto-columns: auto;
+  /* И зазор оттуда же. Расстояние между карточками здесь держат их
+     собственные поля (17 + 17), а волосок рисуется по левому краю карточки —
+     ровно посередине. Чужой gap 34.5 вставал ДОПОЛНИТЕЛЬНО, и волосок
+     оказывался в 52 от левого текста против 17 от правого: заказчик увидел
+     это как «разделители не по центру». Ленте зазор не нужен — ниже 767 она
+     разводит карточки своим margin. */
+  column-gap: 0;
 }
 .pcard { padding-inline: var(--pcard-pad); }
 /* Волоски между колонками — только в подборке на главной: в ленте раздела
@@ -3098,23 +3116,27 @@ form .btn {
    Порог ставится только ниже 1180: ровно там, где меню и телефон уже
    спрятаны в бургер, то есть шапка сведена к логотипу и кнопке.
    ============================================================ */
-@media (max-width: 1180px) {
-  /* Уезжают ВВЕРХ за край, а не гаснут прозрачностью: логотип выворачивается
-     разностным наложением, и полупрозрачный он даёт грязный серый. */
-  .logo, .hdr__burger, .hdr {
-    transition: transform .32s var(--ease);
-  }
-  html.hdr-away .logo,
-  html.hdr-away .hdr__burger,
-  html.hdr-away .hdr {
-    transform: translateY(calc(-100% - var(--hdr-pad, 18px)));
-  }
-  /* Открытое меню закрывает собой всё — прятать его кнопку нельзя, иначе
-     закрыть меню будет нечем. */
-  html.hdr-away .menu[data-open="true"] ~ .hdr__burger,
-  html.menu-open .hdr__burger,
-  html.menu-open .logo { transform: none; }
+/* Медиазапроса здесь больше нет: 15.09.2026 заказчик попросил то же самое на
+   десктопе — «при скролле вниз лого и телефон убирать, а при скролле вверх
+   добавлять, как в телефоне мы делали». На широком экране вместе с логотипом
+   уезжает вся шапка: меню-пилюля, телефон и кнопка призыва живут внутри .hdr
+   и по отдельности не двигаются — иначе пилюля осталась бы висеть посреди
+   пустой полосы. */
+/* Уезжают ВВЕРХ за край, а не гаснут прозрачностью: логотип выворачивается
+   разностным наложением, и полупрозрачный он даёт грязный серый. */
+.logo, .hdr__burger, .hdr {
+  transition: transform .32s var(--ease);
 }
+html.hdr-away .logo,
+html.hdr-away .hdr__burger,
+html.hdr-away .hdr {
+  transform: translateY(calc(-100% - var(--hdr-pad, 18px)));
+}
+/* Открытое меню закрывает собой всё — прятать его кнопку нельзя, иначе
+   закрыть меню будет нечем. */
+html.hdr-away .menu[data-open="true"] ~ .hdr__burger,
+html.menu-open .hdr__burger,
+html.menu-open .logo { transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .logo, .hdr__burger, .hdr { transition: none; }
@@ -3158,3 +3180,41 @@ form .btn {
      и все 70 уходят в пустоту перед первым абзацем. */
   .revpage { padding-block-start: max(20px, calc(30 * var(--k))); }
 }
+
+/* ============================================================
+   ПОДБОРКА БЛОГА НА ГЛАВНОЙ — ЛЕНТА НА ВСЕХ ШИРИНАХ
+   Просьба заказчика 15.09.2026: «статьи тоже сделай слайдером на главной».
+   Раньше лентой она становилась только ниже 767, а выше была сеткой из
+   трёх — отсюда и тянулись дефекты на промежуточных ширинах.
+
+   Ленту вешаем на .blog__grid.slider__track: этот класс есть ТОЛЬКО на
+   главной. В разделе блога разметка без него, там сетка и остаётся.
+   ============================================================ */
+.blog__grid.slider__track {
+  /* Колонки и зазор берём у общего трека — те же, что у объектов и отзывов,
+     чтобы все три ленты жили по одним числам. */
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 2 * var(--gap-card)) / 3);
+  column-gap: var(--gap-card);
+  margin-inline: 0;
+}
+/* Поля и волосок были приёмом СЕТКИ: карточка несла padding с обеих сторон,
+   а линия рисовалась по её левому краю. В ленте расстояние держит gap,
+   поэтому поля снимаем, иначе зазор удвоится. */
+.blog__grid.slider__track > .pcard {
+  padding-inline: 0;
+  border-inline-start: 0;
+}
+/* Волосок между карточками — тем же приёмом, что у объектов и отзывов:
+   псевдоэлемент ровно на середине зазора. Одно построение на три ленты. */
+.blog__slider .slider__track > * + * { position: relative; }
+.blog__slider .slider__track > * + *::before {
+  content: ""; position: absolute; inset-block: 0;
+  inset-inline-start: calc(-1 * var(--gap-card) / 2);
+  width: var(--dp); background: var(--c-rule-soft);
+}
+/* Бегунок виден всегда: лента теперь на любой ширине, а прятался он за
+   ненадобностью, пока выше 767 была сетка. Если карточки влезли целиком,
+   его снимет общий .slider--static. */
+.blog__slider .slider__bar { display: block; }
