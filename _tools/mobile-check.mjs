@@ -212,7 +212,7 @@ for (const [label, path] of PAGES) {
   await evalJs(`document.documentElement.classList.add('rise-failsafe');
     document.querySelectorAll('[data-rise]').forEach(function(e){e.classList.add('is-in')});
     var s=document.createElement('style');
-    s.textContent='[data-rise]{opacity:1!important;transform:none!important}';
+    s.textContent='[data-rise]{opacity:1!important;transform:none!important;transition:none!important;animation:none!important}';
     document.head.appendChild(s); 1`);
   await new Promise((r) => setTimeout(r, 300));
   const res = await evalJs(PROBE);

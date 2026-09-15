@@ -54,7 +54,7 @@ const evalJs = async (e) => {
 };
 
 const PROBE = String.raw`(function(){
-  var W = innerWidth, out = { over: [], escape: [], grid: [], narrow: [], known: [] };
+  var W = innerWidth, out = { over: [], escape: [], grid: [], narrow: [], known: [], dbl: [], слепых: 0, осмотрено: 0 };
   var имя = function (el) {
     var s = el.tagName.toLowerCase();
     var c = (el.getAttribute('class') || '').trim().split(/\s+/).filter(Boolean).slice(0, 2).join('.');
@@ -80,7 +80,12 @@ const PROBE = String.raw`(function(){
   var все = document.querySelectorAll('body *');
   for (var i = 0; i < все.length; i++) {
     var el = все[i], r = el.getBoundingClientRect();
+    /* Сколько блоков появления ОСТАЛИСЬ погашенными вопреки страховке. Это
+       счётчик слепоты самого щупа, а не дефект вёрстки: пока он больше нуля,
+       любая зелёная строка ниже врёт — см. заметку про переходы у впрыска. */
+    if (el.hasAttribute('data-rise') && getComputedStyle(el).opacity === '0') out.слепых++;
     if (!видим(el, r) || ловушка(el)) continue;
+    out.осмотрено++;
     var cs = getComputedStyle(el);
 
     if (!подРезкой(el) && (r.left < -1 || r.right > W + 1)) {
@@ -124,9 +129,26 @@ const PROBE = String.raw`(function(){
            Осознанные отступления печатаем отдельно, а не глушим. */
         var объявлено = (cs.gridTemplateColumns || '').trim().split(/\s+/).filter(function (x) { return x && x !== 'none'; }).length;
         var запись = { n: имя(el).split(' [')[0], колонки: первые, объявлено: объявлено };
-        if (объявлено && первые.length > объявлено) out.grid.push(запись);
+        /* Лишние дети в неявной дорожке — дефект только если они РАЗНОЙ
+           ширины: значит дорожка взяла размер по содержимому (204/204/429 у
+           подборки блога). Когда все равны, автор просто разложил ряд
+           неявным потоком и всё сошлось — это композиция, а не поломка.
+           Отбор по признаку, а не по имени элемента: перечислять исключения
+           поимённо — тот самый частный признак, который завтра промахнётся. */
+        if (объявлено && первые.length > объявлено && макс - мин > 4) out.grid.push(запись);
         else if (макс - мин > 4) out.known.push(запись);
       }
+    }
+
+    /* Двойной разделитель: у элемента И своя граница, И псевдоэлемент с
+       линией. Так бывает, когда правила старой раскладки продолжают раздавать
+       border, а новая рисует волосок псевдоэлементом: у карточки блога вышло
+       две линии подряд, и увидел это заказчик, а не щуп. */
+    var бордер = parseFloat(cs.borderLeftWidth) || 0;
+    if (бордер > 0 && cs.borderLeftStyle !== "none") {
+      var пс = getComputedStyle(el, "::before");
+      var естьЛиния = пс.content !== "none" && (parseFloat(пс.width) || 0) > 0 && (parseFloat(пс.width) || 0) < 4;
+      if (естьЛиния) out.dbl.push({ n: имя(el) });
     }
 
     /* Узкая текстовая колонка: меньше 12 знаков в строке читать невозможно. */
@@ -145,6 +167,7 @@ const PROBE = String.raw`(function(){
 const pad = (s, n) => String(s).padEnd(n);
 const осознанные = new Set();
 let всего = 0;
+let слепота = 0;
 
 for (const W of ШИРИНЫ) {
   await S('Emulation.setDeviceMetricsOverride', { width: W, height: 900, deviceScaleFactor: 1, mobile: false });
@@ -152,13 +175,25 @@ for (const W of ШИРИНЫ) {
   for (const [имя, path] of PAGES) {
     await S('Page.navigate', { url: BASE + path });
     await new Promise((r) => setTimeout(r, 1400));
+    /* transition/animation: none в этом впрыске — не украшение, а он и есть
+       страховка. Переход в каскаде CSS стоит ВЫШЕ важных объявлений автора,
+       поэтому `opacity: 1 !important` его не перебивает; а вкладка у нас
+       фоновая, переходы в ней не проигрываются — и значение навсегда залипает
+       на стартовом 0. С 15.09 по 15.09.2026 из-за этого все три щупа не видели
+       ни одного блока `data-rise`, то есть почти всей страницы, и зеленели на
+       пустом множестве. Гасим переходы — и важное объявление применяется. */
     await evalJs(`document.documentElement.classList.add('rise-failsafe');
       document.querySelectorAll('[data-rise]').forEach(function(e){e.classList.add('is-in')});
       var s=document.createElement('style');
-      s.textContent='[data-rise]{opacity:1!important;transform:none!important}';
+      s.textContent='[data-rise]{opacity:1!important;transform:none!important;transition:none!important;animation:none!important}';
       document.head.appendChild(s); 1`);
     const r = await evalJs(PROBE);
-    const n = r.over.length + r.escape.length + r.grid.length + r.narrow.length;
+    if (r.слепых) {
+      console.log('  ‼ ' + имя + ': ' + r.слепых + ' блоков появления остались на opacity 0 —');
+      console.log('     щуп их НЕ смотрел, любая зелёная строка ниже ничего не значит.');
+      слепота += r.слепых;
+    }
+    const n = r.over.length + r.escape.length + r.grid.length + r.narrow.length + r.dbl.length;
     r.known.forEach((o) => осознанные.add(o.n + '  ' + o.колонки.join(' / ')));
     всего += n;
     if (!n) continue;
@@ -166,11 +201,17 @@ for (const W of ШИРИНЫ) {
     r.over.slice(0, 4).forEach((o) => console.log('      за окно:      x=' + pad(o.x, 6) + 'ш=' + pad(o.w, 6) + o.n));
     r.escape.slice(0, 5).forEach((o) => console.log('      из родителя:  +' + pad(o.вылет, 5) + pad(o.n, 40) + '  внутри ' + o.род));
     r.grid.slice(0, 4).forEach((o) => console.log('      в неявной:    ' + pad(o.колонки.join(' / '), 26) + pad('объявлено ' + o.объявлено, 14) + o.n));
+    r.dbl.slice(0, 4).forEach((o) => console.log("      ДВЕ ЛИНИИ:    " + o.n));
     r.narrow.slice(0, 4).forEach((o) => console.log('      узкий текст:  ' + pad(o.знаков + ' зн.', 9) + pad('ш=' + o.ш, 8) + o.n));
   }
 }
 
 console.log('\nВСЕГО НАХОДОК: ' + всего);
+if (слепота) {
+  console.log('ПРОГОН НЕДЕЙСТВИТЕЛЕН: ' + слепота + ' погашенных блоков прошли мимо проверок.');
+  chrome.kill();
+  process.exit(2);
+}
 chrome.kill();
 try { rmSync(profile, { recursive: true, force: true }); } catch (e) { /* профиль занят */ }
 process.exit(0);
