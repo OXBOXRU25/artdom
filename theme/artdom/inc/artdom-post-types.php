@@ -239,7 +239,12 @@ function artdom_register_inner_fields() {
 				artdom_f( 'obj_area', 'Площадь, м²', 'number', array( 'wrapper' => array( 'width' => 25 ) ) ),
 				artdom_f( 'obj_rooms', 'Спален', 'number', array( 'wrapper' => array( 'width' => 25 ) ) ),
 				artdom_f( 'obj_floor', 'Этаж', 'text', array( 'wrapper' => array( 'width' => 25 ), 'placeholder' => '12 из 24' ) ),
-				artdom_f( 'obj_price_num', 'Цена, млн ₽', 'number', array( 'wrapper' => array( 'width' => 25 ), 'instructions' => 'Число для сортировки. Показывается поле «Цена».' ) ),
+				/* Поле «Цена, млн ₽» убрано из админки 16.09.2026. Оно было
+				   заведено под сортировку по цене, но сортировки на сайте нет:
+				   объекты идут по порядку и дате. Заказчик заполнял бы его
+				   впустую — а он ведёт сайт сам и проверить это ему негде.
+				   Значения в базе остались: понадобится сортировка — поле
+				   возвращается одной строкой, ничего не потеряно. */
 				artdom_f( 'obj_district', 'Район', 'text', array( 'wrapper' => array( 'width' => 34 ), 'placeholder' => 'Хамовники' ) ),
 				artdom_f( 'obj_metro', 'Метро', 'text', array( 'wrapper' => array( 'width' => 33 ), 'placeholder' => 'Парк культуры' ) ),
 				artdom_f( 'obj_complex', 'Жилой комплекс', 'text', array( 'wrapper' => array( 'width' => 33 ) ) ),
@@ -299,7 +304,7 @@ function artdom_register_about_fields() {
 				artdom_tab( 'Вводная часть' ),
 				artdom_f( 'ab_intro_title', 'Заголовок', 'textarea', array( 'rows' => 2 ) ),
 				artdom_f( 'ab_intro_text', 'Текст', 'textarea', array( 'rows' => 8, 'instructions' => 'Пустая строка между абзацами разделит их на сайте.' ) ),
-				artdom_f( 'ab_photo', 'Фотография', 'image', array( 'return_format' => 'array', 'preview_size' => 'medium' ) ),
+				artdom_f( 'ab_photo', 'Фотография', 'image', array( 'return_format' => 'array', 'preview_size' => 'medium', 'instructions' => 'Встаёт справа от текста вводной части. Горизонтальная, примерно 3:2. Пусто — текст идёт во всю ширину, как сейчас.' ) ),
 
 				artdom_tab( 'Принципы' ),
 				artdom_f( 'ab_principles_title', 'Заголовок' ),
@@ -405,21 +410,39 @@ function artdom_register_contacts_fields() {
 	acf_add_local_field_group(
 		array(
 			'key'            => 'group_artdom_contacts',
-			'title'          => 'Адрес и карта',
+			'title'          => 'Страница контактов',
 			'fields'         => array(
+
+				artdom_tab( 'Шапка страницы' ),
+				artdom_f( 'contacts_chip', 'Строка над заголовком', 'text', array( 'instructions' => 'Короткая пометка с точкой слева, например «Берём новые обращения». Пусто — пометки не будет.' ) ),
+				artdom_f( 'contacts_title', 'Заголовок страницы', 'textarea', array( 'rows' => 3, 'instructions' => 'Крупный заголовок вверху. Перенос строки в поле станет переносом на сайте.' ) ),
+				artdom_f( 'contacts_lead', 'Вступительный текст', 'textarea', array( 'rows' => 5, 'instructions' => 'Пустая строка между абзацами разделит их и на сайте.' ) ),
+				artdom_f( 'contacts_broker_note', 'Подпись под именем брокера', 'text', array( 'instructions' => 'Строка под фотографией, например «Ваш персональный брокер». Имя и должность берутся со страницы «О компании».' ) ),
+
+				artdom_tab( 'Форма' ),
+				artdom_f( 'contacts_form_title', 'Заголовок над формой', 'text' ),
+
+				artdom_tab( 'Адрес и карта' ),
 				artdom_f( 'ct_photo', 'Фотография офиса', 'image', array( 'return_format' => 'array', 'preview_size' => 'medium', 'instructions' => 'Горизонтальная, примерно 3:1.6.' ) ),
 				artdom_f( 'ct_org', 'Название организации', 'text' ),
 				artdom_f( 'ct_address', 'Адрес построчно', 'textarea', array( 'rows' => 4, 'instructions' => 'Перенос строки в поле станет переносом на сайте.' ) ),
-				artdom_f( 'ct_map_url', 'Ссылка на Яндекс.Карты', 'text', array( 'instructions' => 'Откроется в новой вкладке. Пусто — ссылки не будет.' ) ),
-				artdom_f( 'ct_claim', 'Заявление справа', 'textarea', array( 'rows' => 3 ) ),
+				artdom_f( 'ct_map_url', 'Ссылка на Яндекс.Карты', 'text', array( 'instructions' => 'Откроется в новой вкладке. Оставьте пустым — сайт сам построит ссылку по адресу выше.' ) ),
+				artdom_f( 'ct_tz', 'Подпись у часов', 'text', array( 'instructions' => 'Строка перед текущим временем, например «Сейчас в Москве». Часы идут сами.' ) ),
+				artdom_f( 'ct_claim', 'Текст справа от адреса', 'textarea', array( 'rows' => 3 ) ),
+				/* У этого поля были перепутаны аргументы: на месте имени стояло
+				   слово «Карта», на месте подписи — тип. В админке оно
+				   называлось «image», сохранялось под именем «Карта» и не
+				   читалось ни одним шаблоном. Теперь у него нормальное имя, и
+				   картинка выводится под адресом. */
 				artdom_f(
-					'Карта',
+					'ct_map',
+					'Картинка карты',
 					'image',
 					array(
 						'return_format' => 'array',
 						'preview_size'  => 'medium',
 						'library'       => 'all',
-						'instructions'  => 'SVG или PNG с прозрачным фоном. Пусто — блок карты не показывается вовсе.',
+						'instructions'  => 'Показывается под адресом и ведёт на Яндекс.Карты. Пусто — картинки не будет, останется только ссылка.',
 					)
 				),
 			),

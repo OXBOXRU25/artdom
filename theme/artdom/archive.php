@@ -31,7 +31,7 @@ set_query_var( 'artdom_head_lead', get_the_archive_description() );
       </ul>
       <?php the_posts_pagination( array( 'mid_size' => 2, 'prev_text' => 'Назад', 'next_text' => 'Дальше', 'class' => 'pager' ) ); ?>
       <?php else : ?>
-      <p class="body">Здесь пока пусто.</p>
+      <p class="body"><?php echo esc_html( artdom_field( 'empty_archive', true ) ); ?></p>
       <?php endif; ?>
     </div>
   </section>

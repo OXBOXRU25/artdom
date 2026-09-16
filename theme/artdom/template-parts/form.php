@@ -95,8 +95,8 @@ $started = time();
     <p class="check">
       <input class="check__box" type="checkbox" id="<?php echo esc_attr( $id ); ?>-consent" name="consent" required>
       <label class="check__label" for="<?php echo esc_attr( $id ); ?>-consent">
-        Согласен на обработку персональных данных и принимаю
-        <a class="selectable" href="<?php echo esc_url( $privacy ); ?>" target="_blank" rel="noopener">политику конфиденциальности</a>
+        <?php echo esc_html( artdom_field( "form_consent", true ) ); ?>
+        <a class="selectable" href="<?php echo esc_url( $privacy ); ?>" target="_blank" rel="noopener"><?php echo esc_html( artdom_field( "form_consent_link", true ) ); ?></a>
       </label>
       <span class="field__error" aria-live="polite"></span>
     </p>

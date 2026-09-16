@@ -18,7 +18,7 @@ $artdom_sid = 'srch-' . wp_unique_id();
   <label class="vh" for="<?php echo esc_attr( $artdom_sid ); ?>">Поиск по сайту</label>
   <input class="field__input srch__in" type="search" id="<?php echo esc_attr( $artdom_sid ); ?>"
          name="s" value="<?php echo esc_attr( get_search_query() ); ?>"
-         placeholder="Например: пентхаус или ипотека">
+         placeholder="<?php echo esc_attr( artdom_field( "search_placeholder", true ) ); ?>">
   <button class="srch__go" type="submit">
     <span class="vh">Искать</span>
     <svg viewBox="0 0 24 16" aria-hidden="true"><use href="#i-arrow-xl"></use></svg>

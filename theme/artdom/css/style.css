@@ -1068,6 +1068,11 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .pagehead__lead { margin-block-start: max(12px, calc(18 * var(--k))); max-width: 52ch; color: var(--c-muted); }
 .pagehead__extra { margin-block-start: max(12px, calc(18 * var(--k))); }
 .pagehead__extra .rating { margin-block-start: 0; }
+/* Стоимость услуги в шапке страницы: подпись приглушённая, само число тем же
+   весом, что и цена в карточке объекта, — на сайте это одна и та же величина
+   и читаться она должна одинаково. */
+.pagehead__price { font-size: var(--t-mid); color: var(--c-ink); }
+.pagehead__price .muted { font-size: var(--t-body); }
 
 /* --- Фильтр каталога --- */
 /* Фильтры и счётчик стоят одной строкой: счётчик относится к отобранному и
@@ -1374,6 +1379,77 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .prose li + li { margin-block-start: 4px; }
 .prose a { color: var(--c-accent); text-decoration: underline; text-underline-offset: 3px; }
 
+/* --- Блоки редактора WordPress ---
+   16.09.2026. Оформлены были только абзацы, списки, h2, h3 и ссылки. Всё
+   остальное, что заказчик получает кнопкой в редакторе, выходило голым:
+   замер на боевом показал цитату кеглем абзаца с нулевыми полями, картинку
+   без единого отступа (у figure margin: 0 из сброса), подпись под ней тем же
+   кеглем, что текст, и таблицу без единой линейки шириной 131px вместо 760.
+   Заказчик ведёт блог сам, поэтому это не украшение, а рабочее условие:
+   любой набор блоков должен собираться в читаемую статью.
+
+   Классы wp-block-* не перечисляем — оформляем сами теги: тогда правила
+   работают и в классическом редакторе, и в блочном, и если блок вставят
+   через HTML. */
+.prose h4 {
+  margin-block-start: max(14px, calc(20 * var(--k)));
+  font-size: var(--t-body);
+  font-weight: 500;
+}
+.prose blockquote {
+  margin-block: max(18px, calc(28 * var(--k)));
+  padding-inline-start: max(14px, calc(22 * var(--k)));
+  border-inline-start: 2px solid var(--c-accent);
+  font-size: var(--t-mid);
+  line-height: 1.4;
+  color: var(--c-ink);
+}
+.prose blockquote p { font-size: inherit; line-height: inherit; }
+.prose blockquote cite {
+  display: block;
+  margin-block-start: max(8px, calc(12 * var(--k)));
+  font-size: var(--t-body);
+  font-style: normal;
+  color: var(--c-muted);
+}
+/* Картинка и подпись. figure сброшен в margin: 0 общим правилом, поэтому
+   поля задаём здесь явно — иначе снимок липнет к соседним абзацам. */
+.prose figure { margin-block: max(20px, calc(32 * var(--k))); }
+.prose figure img { width: 100%; height: auto; border-radius: var(--r-chip); }
+.prose figcaption {
+  margin-block-start: max(8px, calc(12 * var(--k)));
+  font-size: max(12px, calc(15 * var(--k)));
+  line-height: 1.4;
+  color: var(--c-muted);
+}
+/* Таблица. Уезжает в свою прокрутку на узком экране, а не ломает колонку:
+   строка с тремя столбцами на 375 иначе растягивает всю страницу. */
+/* Два селектора нарочно: `:has()` ловит таблицу в любой обёртке, а класс
+   Gutenberg — те браузеры, где `:has()` ещё нет. Правило одно, путей два. */
+.prose figure:has(table) { overflow-x: auto; }
+.prose .wp-block-table { overflow-x: auto; }
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--t-body);
+}
+.prose th, .prose td {
+  padding: max(8px, calc(12 * var(--k))) max(10px, calc(14 * var(--k)));
+  border-block-end: var(--dp) solid var(--c-rule-soft);
+  text-align: start;
+  vertical-align: top;
+}
+.prose th { font-weight: 500; color: var(--c-ink); }
+.prose td { color: var(--c-ink-soft); }
+.prose hr {
+  margin-block: max(24px, calc(40 * var(--k)));
+  border: 0;
+  border-block-start: var(--dp) solid var(--c-rule-soft);
+}
+/* Подпись ниже картинки внутри галереи редактора и выравнивания: широкие
+   блоки не должны вылезать за колонку текста. */
+.prose .alignwide, .prose .alignfull { width: 100%; margin-inline: 0; }
+
 /* --- Поиск и 404 --- */
 .results { border-block-start: 1px solid var(--c-rule); }
 .results__item { padding-block: max(14px, calc(20 * var(--k))); border-block-end: 1px solid var(--c-rule); }
@@ -1672,6 +1748,23 @@ body.is-sheet .hdr--solid { background: transparent; }
 @media (max-width: 899px) {
   .caddr__in { grid-template-columns: minmax(0, 1fr); gap: max(20px, calc(28 * var(--k))); }
   .caddr__claim { max-width: 100%; font-size: clamp(20px, 6vw, 28px); }
+}
+
+/* --- Карта под адресом ---
+   Появляется, только если заказчик загрузил картинку: пустой рамки на её
+   месте не бывает — секция целиком под условием в шаблоне. Скругление и
+   пропорция те же, что у фотографии офиса выше, чтобы два кадра на одной
+   странице читались одной парой, а не двумя разными вставками. */
+.cmap { padding-block-end: max(40px, calc(80 * var(--k))); }
+.cmap__link { display: block; }
+.cmap__link img {
+  width: 100%; height: auto;
+  aspect-ratio: 1320 / 480;
+  object-fit: cover;
+  border-radius: var(--r-chip);
+}
+@media (max-width: 899px) {
+  .cmap__link img { aspect-ratio: 4 / 3; }
 }
 
 /* --- Карточки перехода в подвале ---
@@ -2505,9 +2598,23 @@ form .btn {
    Доли при 1440: заголовок 48..400, портрет 400 (161x100), имя 723, роль
    1172 (ширина 195). Волоски между строками есть, у первой строки нет.
    Шаг строки 116. */
-.abteam__in { display: grid; grid-template-columns: 27.8% minmax(0, 1fr); align-items: start; }
-.abteam__head { grid-column: 1; margin-block-end: 0; }
-.abteam__list { grid-column: 2; display: grid; }
+/* Строки заданы явно, и это не перестраховка: список людей занимает обе, и
+   без template-rows браузер делит его высоту между ними поровну — подводка
+   уезжала на 291px вниз от заголовка вместо 18. Первая строка по высоте
+   заголовка, вторая забирает остаток. */
+.abteam__in { display: grid; grid-template-columns: 27.8% minmax(0, 1fr); grid-template-rows: auto 1fr; align-items: start; }
+.abteam__head { grid-column: 1; grid-row: 1; margin-block-end: 0; }
+/* Подводка блока команды встаёт под заголовком, в той же левой колонке.
+   Позиции заданы явно: при автоматической раскладке курсор сетки идёт только
+   вперёд, и список людей уехал бы во вторую строку — то есть ниже подводки,
+   вместо того чтобы стоять с ней рядом. */
+.abteam__lead {
+  grid-column: 1; grid-row: 2;
+  margin-block-start: max(12px, calc(18 * var(--k)));
+  max-width: 30ch;
+  color: var(--c-ink-soft);
+}
+.abteam__list { grid-column: 2; grid-row: 1 / span 2; display: grid; }
 .abteam__row {
   display: grid;
   /* Колонка портрета шире самого портрета: у референса он 161 в колонке
@@ -2548,9 +2655,12 @@ form .btn {
   /* Заголовок уходит НАД списком: в узком экране двухколоночная сетка
      оставляла ему четверть ширины, и «КОМАНДА» налезала на первую строку.
      Сетку блока разбираем целиком, а не только список внутри неё. */
-  .abteam__in { grid-template-columns: minmax(0, 1fr); }
-  .abteam__head { grid-column: 1; margin-block-end: calc(30 * var(--k)); }
-  .abteam__list { grid-column: 1; margin-inline-start: 0; }
+  .abteam__in { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .abteam__head { grid-column: 1; grid-row: auto; margin-block-end: calc(30 * var(--k)); }
+  /* Одна колонка — раскладку решает порядок в разметке, явные строки тут
+     только мешали бы: подводка должна идти сразу за заголовком. */
+  .abteam__lead { grid-column: 1; grid-row: auto; max-width: none; margin-block: calc(-18 * var(--k)) calc(30 * var(--k)); }
+  .abteam__list { grid-column: 1; grid-row: auto; margin-inline-start: 0; }
   .abteam__row {
     grid-template-columns: 96px minmax(0, 1fr);
     align-items: start; column-gap: 14px; row-gap: 4px;

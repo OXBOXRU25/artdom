@@ -24,7 +24,12 @@ $artdom_parts = array(
 	'/inc/artdom-forms.php',          // формы: обработчик и журнал заявок
 	'/inc/artdom-analytics.php',      // счётчик по согласию + плашка про cookie
 	'/inc/enqueue-script-style.php',  // стили и скрипты
-	'/inc/ajax-request.php',          // обработчик форм
+	/* '/inc/ajax-request.php' — снят с загрузки 16.09.2026. Это обработчик
+	   форм из базовой темы oxboxwise: он вешается на действие sendform, а наши
+	   формы шлют artdom_form и обрабатываются в artdom-forms.php. То есть код
+	   не выполнялся ни разу, но читал семь полей настройки письма, которых в
+	   админке нет и никогда не было, — и они всплывали в проверке охвата как
+	   «текст на сайте есть, поля нет». Сам файл пока оставлен на диске. */
 	'/inc/template-tags.php',
 	'/inc/template-functions.php',
 );

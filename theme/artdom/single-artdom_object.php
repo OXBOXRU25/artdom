@@ -39,14 +39,18 @@ while ( have_posts() ) :
 
 	/* Строки таблицы: только то, что заполнено. Пустая ячейка в таблице
 	   характеристик выглядит как недоделка, а не как отсутствие данных. */
+	/* Подписи берутся из «Надписи разделов» → «Карточка объекта»: раньше они
+	   стояли здесь словами, и заказчик не мог переименовать ни «Спален» в
+	   «Спальни», ни «Метро» в «Станция метро». Свои строки он по-прежнему
+	   добавляет полем «Дополнительно» у самого объекта. */
 	$rows = array();
-	if ( $area )     { $rows['Площадь']        = $area . ' м²'; }
-	if ( $rooms )    { $rows['Спален']         = $rooms; }
-	if ( $floor )    { $rows['Этаж']           = $floor; }
-	if ( $complex )  { $rows['Жилой комплекс'] = $complex; }
-	if ( $district ) { $rows['Район']          = $district; }
-	if ( $metro )    { $rows['Метро']          = $metro; }
-	if ( $year )     { $rows['Год']            = $year; }
+	if ( $area )     { $rows[ artdom_field( 'obj_lbl_area', true ) ]     = $area . ' м²'; }
+	if ( $rooms )    { $rows[ artdom_field( 'obj_lbl_rooms', true ) ]    = $rooms; }
+	if ( $floor )    { $rows[ artdom_field( 'obj_lbl_floor', true ) ]    = $floor; }
+	if ( $complex )  { $rows[ artdom_field( 'obj_lbl_complex', true ) ]  = $complex; }
+	if ( $district ) { $rows[ artdom_field( 'obj_lbl_district', true ) ] = $district; }
+	if ( $metro )    { $rows[ artdom_field( 'obj_lbl_metro', true ) ]    = $metro; }
+	if ( $year )     { $rows[ artdom_field( 'obj_lbl_year', true ) ]     = $year; }
 	if ( is_array( $facts ) ) {
 		foreach ( $facts as $f ) {
 			if ( ! empty( $f['name'] ) && ! empty( $f['value'] ) ) {
@@ -84,7 +88,7 @@ while ( have_posts() ) :
 
         <?php if ( $text ) : ?>
         <div class="object__text" data-rise>
-          <h2 class="h2">Об объекте</h2>
+          <h2 class="h2"><?php echo esc_html( artdom_field( "obj_about_title", true ) ); ?></h2>
           <?php foreach ( preg_split( '/\R{2,}/u', trim( $text ) ) as $p ) : ?>
           <p class="body"><?php echo artdom_lines( $p ); ?></p>
           <?php endforeach; ?>
@@ -93,7 +97,7 @@ while ( have_posts() ) :
 
         <?php if ( $rows ) : ?>
         <div class="object__specs" data-rise>
-          <h2 class="h2">Характеристики</h2>
+          <h2 class="h2"><?php echo esc_html( artdom_field( "obj_specs_title", true ) ); ?></h2>
           <dl class="specs selectable">
             <?php foreach ( $rows as $k => $v ) : ?>
             <div class="specs__row"><dt><?php echo esc_html( $k ); ?></dt><dd><?php echo esc_html( $v ); ?></dd></div>
@@ -117,8 +121,8 @@ while ( have_posts() ) :
           <?php if ( $area && $rooms ) : ?>
           <p class="pricebox__sub muted"><?php echo esc_html( $area ); ?> м² · <?php echo esc_html( $rooms ); ?> <?php echo esc_html( artdom_plural( $rooms, array( 'спальня', 'спальни', 'спален' ) ) ); ?></p>
           <?php endif; ?>
-          <?php artdom_btn( 'Записаться на просмотр', '#', 'btn btn--wide', array( 'data-form-open' => 'lead' ) ); ?>
-          <p class="pricebox__note muted">Ответим в течение часа. Показ&nbsp;— в удобное вам время, включая выходные.</p>
+          <?php artdom_btn( artdom_field( "obj_btn", true ), '#', 'btn btn--wide', array( 'data-form-open' => 'lead' ) ); ?>
+          <p class="pricebox__note muted"><?php echo artdom_lines( artdom_field( "obj_btn_note", true ) ); ?></p>
         </div>
       </aside>
 
@@ -141,7 +145,7 @@ while ( have_posts() ) :
   ?>
   <section class="sec sec--white">
     <div class="wrap">
-      <h2 class="h2" data-rise>Похожие объекты</h2>
+      <h2 class="h2" data-rise><?php echo esc_html( artdom_field( "obj_similar_title", true ) ); ?></h2>
       <?php /* Лента ровно та же, что на главной: трек и бегунок, без стрелок.
                Круглые стрелки здесь садились поверх карточки — по центру всей
                рамки, то есть на чип и на цену, — и на телефоне висели всегда:
@@ -166,9 +170,9 @@ while ( have_posts() ) :
   <?php endif; ?>
 
   <?php
-  set_query_var( 'artdom_cta_title', 'Хотите посмотреть вживую?' );
-  set_query_var( 'artdom_cta_text', 'Организуем показ в удобное время и подготовим документы по объекту заранее.' );
-  set_query_var( 'artdom_cta_btn', 'Записаться на просмотр' );
+  set_query_var( 'artdom_cta_title', artdom_field( 'cta_obj_title', true ) );
+  set_query_var( 'artdom_cta_text', artdom_field( 'cta_obj_text', true ) );
+  set_query_var( 'artdom_cta_btn', artdom_field( 'cta_obj_btn', true ) );
   ?>
 </main>
 

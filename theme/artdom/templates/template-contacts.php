@@ -62,25 +62,25 @@ while ( have_posts() ) :
         <dl class="crows selectable">
           <?php if ( $phone ) : ?>
           <div class="crows__row">
-            <dt>Телефон</dt>
+            <dt><?php echo esc_html( artdom_field( "ct_lbl_phone", true ) ); ?></dt>
             <dd><a href="tel:<?php echo esc_attr( artdom_tel( $phone ) ); ?>"><?php echo esc_html( artdom_phone_text( $phone ) ); ?></a></dd>
           </div>
           <?php endif; ?>
           <?php if ( $email ) : ?>
           <div class="crows__row">
-            <dt>Почта</dt>
+            <dt><?php echo esc_html( artdom_field( "ct_lbl_email", true ) ); ?></dt>
             <dd><a href="mailto:<?php echo esc_attr( $email ); ?>"><?php echo esc_html( $email ); ?></a></dd>
           </div>
           <?php endif; ?>
           <?php if ( $address ) : ?>
           <div class="crows__row">
-            <dt>Адрес</dt>
+            <dt><?php echo esc_html( artdom_field( "ct_lbl_address", true ) ); ?></dt>
             <dd><?php echo esc_html( $address ); ?></dd>
           </div>
           <?php endif; ?>
           <?php if ( is_array( $socials ) && $socials ) : ?>
           <div class="crows__row">
-            <dt>Мессенджеры</dt>
+            <dt><?php echo esc_html( artdom_field( "ct_lbl_socials", true ) ); ?></dt>
             <dd class="crows__soc">
               <?php foreach ( $socials as $artdom_s ) : ?>
               <a href="<?php echo esc_url( $artdom_s['url'] ); ?>" rel="noopener"><?php echo esc_html( $artdom_s['label'] ); ?></a>
@@ -139,7 +139,7 @@ while ( have_posts() ) :
         <p class="caddr__org"><?php echo esc_html( artdom_field( 'ct_org' ) ); ?></p>
         <p class="caddr__lines"><?php echo artdom_lines( artdom_field( 'ct_address' ) ); ?></p>
         <?php if ( $artdom_map_url ) : ?>
-        <p class="caddr__link">Смотреть на <a href="<?php echo esc_url( $artdom_map_url ); ?>" target="_blank" rel="noopener">Яндекс.Картах</a></p>
+        <p class="caddr__link"><a href="<?php echo esc_url( $artdom_map_url ); ?>" target="_blank" rel="noopener"><?php echo esc_html( artdom_field( "ct_map_link", true ) ); ?></a></p>
         <?php endif; ?>
       </div>
 
@@ -153,6 +153,24 @@ while ( have_posts() ) :
 
     </div>
   </section>
+
+  <?php
+  /* Картинка карты. Поле под неё было заведено с самого начала, но с
+     перепутанными аргументами — в админке оно называлось «image» и ни один
+     шаблон его не читал. Поле починено, блок выводится здесь.
+     Пусто — секции нет вовсе: пустая рамка на месте карты читается как
+     поломка, а не как «карту ещё не загрузили». */
+  $artdom_map = artdom_field( 'ct_map' );
+  if ( $artdom_map ) :
+  ?>
+  <section class="cmap">
+    <div class="wrap">
+      <a class="cmap__link" href="<?php echo esc_url( $artdom_map_url ); ?>" target="_blank" rel="noopener" data-rise="shutter">
+        <?php artdom_img( $artdom_map, '', 'Как нас найти на карте', array( 1320, 480 ) ); ?>
+      </a>
+    </div>
+  </section>
+  <?php endif; ?>
 
 </main>
 

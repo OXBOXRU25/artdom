@@ -14,7 +14,7 @@ get_header();
 $artdom_blog_page = (int) get_option( 'page_for_posts' );
 
 set_query_var( 'artdom_head_hide', true );
-set_query_var( 'artdom_head_title', $artdom_blog_page ? get_the_title( $artdom_blog_page ) : 'Блог' );
+set_query_var( 'artdom_head_title', $artdom_blog_page ? get_the_title( $artdom_blog_page ) : artdom_field( 'page_blog_title', true ) );
 /* Подводки нет: заголовок «Блог» и лента под ним объясняют раздел сами.
    Описание страницы остаётся в админке — вернуть его сюда одна строка. */
 set_query_var( 'artdom_head_lead', '' );
@@ -50,7 +50,7 @@ set_query_var( 'artdom_head_lead', '' );
       );
       ?>
       <?php else : ?>
-      <p class="body">Раздел наполняется.</p>
+      <p class="body"><?php echo esc_html( artdom_field( 'empty_section', true ) ); ?></p>
       <?php endif; ?>
     </div>
   </section>

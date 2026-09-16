@@ -56,7 +56,28 @@ while ( have_posts() ) :
     </div>
   </section>
 
-  <?php if ( count( $paras ) > 1 ) : ?>
+  <?php
+  /* Фотография вводной части. Поле в админке было с самого начала, вывода не
+     было ни одного — и стили .abintro__* лежали в style.css без разметки:
+     блок выпал при переработке страницы, а поле и CSS остались сиротами.
+     Пока фотография не загружена, раскладка ровно прежняя, в одну колонку. */
+  $artdom_ab_photo = artdom_field( 'ab_photo' );
+  ?>
+  <?php if ( count( $paras ) > 1 || $artdom_ab_photo ) : ?>
+  <?php if ( $artdom_ab_photo ) : ?>
+  <section class="sec sec--white abintro">
+    <div class="wrap abintro__in">
+      <div class="abintro__text" data-rise>
+        <?php foreach ( array_slice( $paras, 1 ) as $p ) : ?>
+        <p class="body"><?php echo artdom_lines( $p ); ?></p>
+        <?php endforeach; ?>
+      </div>
+      <figure class="abintro__media" data-rise="shutter">
+        <?php artdom_img( $artdom_ab_photo, '', 'Офис и команда АРТДОМ', array( 710, 470 ) ); ?>
+      </figure>
+    </div>
+  </section>
+  <?php else : ?>
   <section class="sec sec--white abtext">
     <div class="wrap abtext__in">
       <div class="abtext__col" data-rise>
@@ -66,6 +87,7 @@ while ( have_posts() ) :
       </div>
     </div>
   </section>
+  <?php endif; ?>
   <?php endif; ?>
 
   <?php if ( $quote ) : ?>
@@ -109,6 +131,15 @@ while ( have_posts() ) :
   <section class="sec sec--white abteam">
     <div class="wrap abteam__in">
       <h2 class="abhead abteam__head" data-rise><?php echo esc_html( artdom_field( "ab_team_title" ) ); ?></h2>
+      <?php
+      /* Подводка блока команды. Поле в админке было с самого начала, а
+         вывода не было вовсе: заказчик заполнял его и не понимал, куда
+         текст девается. Пусто — абзаца нет. */
+      $artdom_team_lead = artdom_field( 'ab_team_lead' );
+      if ( $artdom_team_lead ) :
+      ?>
+      <p class="body abteam__lead" data-rise><?php echo artdom_lines( $artdom_team_lead ); ?></p>
+      <?php endif; ?>
       <ul class="abteam__list" role="list">
         <?php foreach ( $team as $person ) : ?>
         <li class="abteam__row" data-rise>

@@ -17,7 +17,7 @@ $all     = get_post_type_archive_link( 'artdom_object' );
 $total   = (int) $GLOBALS['wp_query']->found_posts;
 
 set_query_var( 'artdom_head_hide', true );
-set_query_var( 'artdom_head_title', is_tax( 'artdom_object_type' ) ? single_term_title( '', false ) : 'Объекты' );
+set_query_var( 'artdom_head_title', is_tax( 'artdom_object_type' ) ? single_term_title( '', false ) : artdom_field( 'page_objects_title', true ) );
 /* У каталога подводки нет: заголовок «Объекты» и ряд фильтров под ним
    объясняют раздел лучше, чем абзац текста. У категории описание
    остаётся — его пишет заказчик, и оно про конкретный тип. */
@@ -71,7 +71,7 @@ set_query_var( 'artdom_head_lead', is_tax( 'artdom_object_type' ) ? term_descrip
       );
       ?>
       <?php else : ?>
-      <p class="body">В этой категории пока нет объектов. Напишите нам&nbsp;— расскажем о том, что не публикуется в открытом доступе.</p>
+      <p class="body"><?php echo artdom_lines( artdom_field( "empty_objects", true ) ); ?></p>
       <?php endif; ?>
 
     </div>

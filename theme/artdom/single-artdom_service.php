@@ -17,6 +17,18 @@ while ( have_posts() ) :
 
 	set_query_var( 'artdom_head_title', get_the_title() );
 	set_query_var( 'artdom_head_lead', $lead );
+
+	/* Стоимость. Поле было заведено с подсказкой «Пусто — строка не
+	   покажется», но строки в шаблоне не было вовсе: заказчик мог вписать
+	   цену и не увидеть её нигде. Выводим в шапку страницы, под подводкой —
+	   там же, где у объекта стоит цена. Пусто — строки нет, как и обещано. */
+	$price = get_field( 'svc_price' );
+	if ( $price ) {
+		set_query_var(
+			'artdom_head_extra',
+			'<p class="pagehead__price"><span class="muted">' . esc_html( artdom_field( 'obj_price_label', true ) ) . '</span> ' . esc_html( $price ) . '</p>'
+		);
+	}
 ?>
 
 <main id="main" class="sheet">
@@ -35,7 +47,7 @@ while ( have_posts() ) :
   <?php if ( is_array( $steps ) && $steps ) : ?>
   <section class="sec sec--surface">
     <div class="wrap">
-      <h2 class="h2" data-rise>Как проходит работа</h2>
+      <h2 class="h2" data-rise><?php echo esc_html( artdom_field( "svc_steps_title", true ) ); ?></h2>
       <div class="rule"></div>
       <ol class="steps">
         <?php foreach ( $steps as $i => $s ) : ?>
@@ -53,7 +65,7 @@ while ( have_posts() ) :
   <?php if ( is_array( $faq ) && $faq ) : ?>
   <section class="sec sec--white">
     <div class="wrap faq">
-      <h2 class="h2" data-rise>Вопросы и ответы</h2>
+      <h2 class="h2" data-rise><?php echo esc_html( artdom_field( "svc_faq_title", true ) ); ?></h2>
       <div class="acc" data-acc data-rise>
         <?php foreach ( $faq as $i => $q ) : ?>
         <div class="acc__item" data-open="<?php echo 0 === $i ? 'true' : 'false'; ?>">
@@ -78,9 +90,9 @@ while ( have_posts() ) :
   <?php endif; ?>
 
   <?php
-  set_query_var( 'artdom_cta_title', 'Обсудим вашу задачу?' );
-  set_query_var( 'artdom_cta_text', 'Расскажите, что нужно&nbsp;— ответим в течение часа и предложим порядок действий.' );
-  set_query_var( 'artdom_cta_btn', 'Оставить заявку' );
+  set_query_var( 'artdom_cta_title', artdom_field( 'cta_svc_title', true ) );
+  set_query_var( 'artdom_cta_text', artdom_field( 'cta_svc_text', true ) );
+  set_query_var( 'artdom_cta_btn', artdom_field( 'cta_svc_btn', true ) );
   ?>
 </main>
 

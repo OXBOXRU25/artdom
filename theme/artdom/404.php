@@ -7,8 +7,8 @@
 
 get_header();
 
-set_query_var( 'artdom_head_title', 'Такой страницы нет' );
-set_query_var( 'artdom_head_lead', 'Возможно, объект уже продан или адрес набран с опечаткой. Посмотрите каталог&nbsp;— там всё, что сейчас в работе.' );
+set_query_var( 'artdom_head_title', artdom_field( 'err404_title', true ) );
+set_query_var( 'artdom_head_lead', artdom_field( 'err404_text', true ) );
 ?>
 
 <main id="main" class="sheet">
@@ -16,7 +16,7 @@ set_query_var( 'artdom_head_lead', 'Возможно, объект уже про
 
   <section class="sec sec--white">
     <div class="wrap notfound" data-rise>
-      <?php artdom_btn( 'Смотреть объекты', get_post_type_archive_link( 'artdom_object' ), 'btn btn--wide' ); ?>
+      <?php artdom_btn( artdom_field( 'err404_btn', true ), get_post_type_archive_link( 'artdom_object' ), 'btn btn--wide' ); ?>
       <?php get_search_form(); ?>
     </div>
   </section>

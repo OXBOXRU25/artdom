@@ -25,7 +25,7 @@
 get_header();
 
 set_query_var( 'artdom_head_hide', true );
-set_query_var( 'artdom_head_title', 'Услуги' );
+set_query_var( 'artdom_head_title', artdom_field( 'page_services_title', true ) );
 
 $artdom_items = array();
 if ( have_posts() ) {
@@ -104,7 +104,7 @@ if ( have_posts() ) {
     </div>
   </section>
   <?php else : ?>
-  <section class="sec sec--white"><div class="wrap"><p class="body">Раздел наполняется.</p></div></section>
+  <section class="sec sec--white"><div class="wrap"><p class="body"><?php echo esc_html( artdom_field( 'empty_section', true ) ); ?></p></div></section>
   <?php endif; ?>
 </main>
 

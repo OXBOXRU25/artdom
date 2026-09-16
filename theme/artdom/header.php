@@ -93,7 +93,7 @@ $u = get_template_directory_uri();
       <?php $artdom_phone = artdom_field( 'opt_phone', true ); ?>
       <a class="hdr__tel selectable" href="tel:<?php echo esc_attr( artdom_tel( $artdom_phone ) ); ?>"><?php echo esc_html( artdom_phone_text( $artdom_phone ) ); ?></a>
       <a class="hdr__cta" href="#" data-form-open="lead">
-        <span class="hdr__cta-dot" aria-hidden="true"></span>Оставить заявку
+        <span class="hdr__cta-dot" aria-hidden="true"></span><?php echo esc_html( artdom_field( 'hdr_btn', true ) ); ?>
       </a>
     </div>
   </div>

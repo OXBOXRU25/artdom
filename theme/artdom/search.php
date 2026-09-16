@@ -9,7 +9,7 @@ get_header();
 
 $found = (int) $GLOBALS['wp_query']->found_posts;
 
-set_query_var( 'artdom_head_title', 'Поиск' );
+set_query_var( 'artdom_head_title', artdom_field( 'page_search_title', true ) );
 set_query_var(
 	'artdom_head_lead',
 	sprintf( 'По запросу «%s» %s %d %s', get_search_query(), 1 === $found ? 'найден' : 'найдено', $found, artdom_plural( $found, array( 'результат', 'результата', 'результатов' ) ) )
@@ -34,7 +34,7 @@ set_query_var(
       </ul>
       <?php the_posts_pagination( array( 'mid_size' => 2, 'prev_text' => 'Назад', 'next_text' => 'Дальше', 'class' => 'pager' ) ); ?>
       <?php else : ?>
-      <p class="body">Ничего не нашлось. Попробуйте другое слово или посмотрите каталог целиком.</p>
+      <p class="body"><?php echo esc_html( artdom_field( 'empty_search', true ) ); ?></p>
       <?php endif; ?>
     </div>
   </section>

@@ -25,7 +25,7 @@ if ( $posts ) {
 			return array(
 				'title'    => get_the_title( $p ),
 				'text'     => (string) get_field( 'svc_lead', $p->ID ),
-				'btn_text' => 'Узнать больше',
+				'btn_text' => artdom_field( 'services_item_btn', true ),
 				'btn_link' => get_permalink( $p ),
 			);
 		},

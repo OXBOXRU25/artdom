@@ -40,20 +40,20 @@ $text = '' !== $own ? $own : artdom_default( $counter ? 'cookie_text_analytics' 
   <p class="cookie__text">
     <?php echo esc_html( $text ); ?>
     <?php if ( $privacy ) : ?>
-    <a class="selectable" href="<?php echo esc_url( $privacy ); ?>"><?php echo esc_html( artdom_field( 'cookie_link' ) ); ?></a>
+    <a class="selectable" href="<?php echo esc_url( $privacy ); ?>"><?php echo esc_html( artdom_field( 'cookie_link', true ) ); ?></a>
     <?php endif; ?>
   </p>
   <div class="cookie__acts">
     <?php if ( $counter ) : ?>
     <button class="btn btn--sm cookie__ok" type="button" data-cookie-ok>
-      <?php echo esc_html( artdom_field( 'cookie_btn_yes' ) ); ?>
+      <?php echo esc_html( artdom_field( 'cookie_btn_yes', true ) ); ?>
     </button>
     <button class="cookie__no" type="button" data-cookie-no>
-      <?php echo esc_html( artdom_field( 'cookie_btn_no' ) ); ?>
+      <?php echo esc_html( artdom_field( 'cookie_btn_no', true ) ); ?>
     </button>
     <?php else : ?>
     <button class="btn btn--sm cookie__ok" type="button" data-cookie-ok>
-      <?php echo esc_html( artdom_field( 'cookie_btn' ) ); ?>
+      <?php echo esc_html( artdom_field( 'cookie_btn', true ) ); ?>
     </button>
     <?php endif; ?>
   </div>
