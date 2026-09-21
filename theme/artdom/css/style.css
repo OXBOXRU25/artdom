@@ -3128,92 +3128,173 @@ form .btn {
 
 /* ============================================================
    ПЛАШКА ПРО COOKIE
-   Уведомление в углу, а не диалог: страницу не затемняет и ничего не
-   блокирует. У образца (poedimdostavka.ru) подложка rgba(0,0,0,.7) на весь
-   экран — читать сайт нельзя, пока не ткнёшь; приём не взят.
+   Переделана 21.09.2026 по образцу afternow.co (плагин Complianz для
+   WordPress, элемент .cmplz-cookiebanner.cmplz-bottom-right). Числа сняты
+   с живой страницы через getComputedStyle при окне 1024, а не срисованы:
+   плашка 666x46, справа 25, снизу 25, фон rgba(245,245,244,.85), размытие
+   blur(4px), радиус 100, поля 8/8/8/16, ни рамки, ни тени.
 
-   Замеры образца при 1280: карточка 300x196, скругление 12, поля 52/16/16,
-   от правого края 39, от низа 24, кнопка 84x32 пилюлей.
-   Взято: угол, ширина карточки и порядок «текст, потом кнопка».
-   Не взято: затемнение; кнопка 84x32 — ниже нашего норматива зоны нажатия
-   в 44, у нас она обычная .btn--sm с min-height 48.
+   Значения записаны в ПИКСЕЛЯХ намеренно. Они абсолютные: переведи их в rem
+   или в наш токен --k, и плашка поедет вместе с масштабом страницы, а у
+   образца она одинаковая на любой ширине.
+
+   Три вещи, на которых легко промахнуться, — все три здесь соблюдены:
+   угол правый нижний (не центр), фон полупрозрачный с размытием (плотный
+   сразу выдаёт подделку) и нулевой радиус у кнопки согласия при капсулах
+   у остальных. Чего нельзя: положительный трекинг, тень, рамка.
+
+   Что осталось нашим и отступает от образца осознанно:
+   z-index 45, а не 55 — у нас на 50 висит модалка формы, и плашка обязана
+   лежать под ней, иначе она перекроет поля заявки.
    ============================================================ */
 .cookie {
-  position: fixed; z-index: 45;   /* ниже модалки (50) и бургерного меню */
-  inset-block-end: var(--gutter);
-  /* Угол ЛЕВЫЙ, а не правый как у образца: справа внизу на первом экране
-     стоит кнопка призыва, и плашка садилась ровно на неё — закрывала главное
-     действие страницы. Слева внизу пусто на всех шаблонах. */
-  inset-inline-start: var(--gutter);
-  /* Шире, чем нужно тексту при одной кнопке: со счётчиком кнопок две, и
-     колонка текста иначе ужимается до четырёх строк, а плашка растёт вверх
-     и лезет на заголовок первого экрана. */
-  width: min(620px, calc(100vw - 2 * var(--gutter)));
-  /* Текст и кнопка в строку, а не столбиком. Столбиком карточка выходила
-     196 в высоту и накрывала заголовок первого экрана — тот самый, что
-     только что вернули в кандидаты LCP. В строку она вдвое ниже. */
-  display: flex; align-items: center;
-  gap: max(14px, calc(20 * var(--k)));
-  padding: max(18px, calc(26 * var(--k)));
-  background: var(--c-white);
-  /* Скругление как у плиток «Почему мы»: у подложек в проекте оно есть,
-     у картинок нет. Собственного числа не заводим. */
-  border-radius: 6px;
-  border: var(--dp) solid var(--c-rule);
-  /* Тень вместо затемнения экрана: карточка обязана читаться поверх любого
-     блока, а гасить страницу ради уведомления мы не будем. */
-  box-shadow: 0 18px 40px rgba(16, 18, 22, .16);
+  position: fixed;
+  z-index: 45;
+  right: 25px;
+  bottom: 25px;
+  display: flex;
+  align-items: center;
+  max-width: calc(100vw - 50px);
+  padding: 8px 8px 8px 16px;
+  border-radius: 100px;
+  background: rgba(245, 245, 244, .85);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  color: #000;
+  /* Ни рамки, ни тени: у образца box-shadow: none, и это заметно — плашка
+     держится на размытии, а не на подложке. Прежняя версия имела и то и
+     другое. */
+  border: 0;
+  box-shadow: none;
 }
-/* Авторский display перебивает браузерное [hidden] { display: none } —
-   специфичность та же, а авторский стиль весит больше. Без этой строки
-   плашка висела бы на экране вопреки атрибуту. */
-.cookie[hidden] { display: none; }
+
+/* ОБЯЗАТЕЛЬНО. Атрибут hidden — это всего лишь display: none из таблицы
+   браузера, и любой display в нашем CSS его перебивает: у .cookie стоит
+   flex, у панели тоже. Без этих двух строк список категорий виден всегда,
+   а сама плашка стоит на экране ещё до своего появления. На чистой странице
+   без сброса это давало 984x158 вместо 666x46. */
+.cookie[hidden],
+.cookie__manage[hidden] { display: none; }
+
+/* Раскрытые категории превращают капсулу в карточку: флажки в 46 пикселей
+   высоты не помещаются. */
+.cookie[data-managing="true"] {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 16px;
+  border-radius: 20px;
+}
+
+.cookie__row { display: flex; align-items: center; }
+
+/* Трекинг отрицательный — он у образца такой; положительный не ставить
+   нигде. margin: 0 обязателен: у <p> есть собственный отступ от браузера, и
+   без сброса плашка от него становится выше и отъезжает от нижнего края
+   (13 вместо 25). У нас сброс есть, строка стоит страховкой — чужой стиль
+   или плагин вернут отступ молча. */
 .cookie__text {
-  font-size: var(--t-body); line-height: 1.5; color: var(--c-muted);
+  margin: 0 12px 0 0;
+  font-size: 13.58px;
+  line-height: 20.37px;
+  font-weight: 500;
+  letter-spacing: -.02em;
+  color: #000;
 }
-/* Кнопки не ужимаются под длинный текст: их ширина — зона нажатия. */
-.cookie__acts { flex: none; display: flex; align-items: center; gap: max(6px, calc(10 * var(--k))); }
-/* Отказ подан текстовой кнопкой, а не второй заливкой: два равных
-   прямоугольника рядом заставляют выбирать между ними, а согласие здесь
-   основное действие. Зона нажатия при этом полная — 48 по высоте. */
-.cookie__no {
-  flex: none;
-  min-height: 48px; padding-inline: max(10px, calc(14 * var(--k)));
-  border: 0; background: none; cursor: pointer;
-  font-family: inherit; font-size: var(--t-body); line-height: 1.2;
-  color: var(--c-muted);
-  text-decoration: underline; text-underline-offset: 3px;
-  transition: color var(--dur) var(--ease);
-}
-@media (hover: hover) {
-  .cookie__no:hover { color: var(--c-ink); }
-}
-/* Поля по вертикали у строчного элемента не двигают строку, но зону нажатия
-   расширяют: 19 своих плюс 26 полей дают 45. inline-block тут не годится —
-   ссылка переносится на две строки, а он бы её склеил в одну коробку. */
+/* Ссылка на политику. Цвет наш фирменный, а не чёрный образца: ссылка
+   обязана отличаться от обычного текста, иначе её не видно вовсе. */
 .cookie__text a {
   color: var(--c-accent);
-  text-decoration: underline; text-underline-offset: 2px;
-  padding-block: 13px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 @media (hover: hover) {
-  .cookie__text a:hover { color: var(--c-ink); }
+  .cookie__text a:hover { color: #000; }
 }
-/* Появление снизу. Класс ставит скрипт после полной загрузки: до неё плашка
-   лежит под hidden и не участвует ни в отрисовке, ни в замере LCP. */
-.cookie { opacity: 0; transform: translateY(14px); transition: opacity .4s var(--ease), transform .4s var(--ease); }
-.cookie.is-in { opacity: 1; transform: none; }
 
-@media (max-width: 639px) {
-  /* На телефоне угол не нужен: карточка во всю рабочую ширину внизу —
-     иначе она отъедает половину экрана и всё равно перекрывает контент. */
+.cookie__acts { display: flex; flex-shrink: 0; gap: 4px; }
+
+.cookie__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 100px;
+  background: rgba(0, 0, 0, .05);
+  color: #000;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .18s ease;
+}
+@media (hover: hover) {
+  .cookie__btn:hover { background: rgba(0, 0, 0, .1); }
+}
+
+/* Квадратная среди капсул — так у образца, и это первое, что замечаешь на
+   его плашке. Намеренная белая ворона, а не недосмотр. */
+.cookie__btn--yes {
+  border-radius: 0;
+  background: #000;
+  color: #fff;
+}
+@media (hover: hover) {
+  .cookie__btn--yes:hover { background: #1a1a1a; }
+}
+
+.cookie__manage {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0, 0, 0, .12);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.cookie__cat { display: flex; align-items: flex-start; gap: 8px; cursor: pointer; }
+.cookie__cat input {
+  margin-top: 2px;
+  width: 14px; height: 14px;
+  accent-color: #000;
+}
+.cookie__cat input:disabled { cursor: not-allowed; opacity: .55; }
+.cookie__cat-none { margin: 0; color: rgba(0, 0, 0, .62); }
+.cookie__manage .cookie__btn { align-self: flex-start; min-height: 36px; }
+
+/* Появление. Класс ставит скрипт после полной загрузки: до неё плашка лежит
+   под hidden и не участвует ни в отрисовке, ни в замере LCP. */
+.cookie { transform: translateY(12px); opacity: 0; transition: transform .24s cubic-bezier(.32, .72, 0, 1), opacity .24s ease; }
+.cookie.is-in { transform: translateY(0); opacity: 1; }
+
+/* Ниже 760 плашка во всю ширину, кнопки в столбик по 44.
+   Это НЕ образец: его 666 не влезают в 375, а кнопка высотой 30 вдвое ниже
+   того, что нужно пальцу. Ширины равные — согласие не должно быть легче для
+   нажатия, чем отказ. */
+@media (max-width: 760px) {
   .cookie {
-    inset-inline: var(--gutter);
-    width: auto;
-    /* Здесь наоборот столбиком: в строку на 335 доступной ширины тексту
-       остаётся половина, и он рвётся по два слова в строку. */
-    flex-direction: column; align-items: flex-start;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    max-width: none;
+    flex-direction: column;
+    align-items: stretch;
+    border-radius: 20px;
+    padding: 14px;
   }
+  .cookie__row { flex-direction: column; align-items: stretch; gap: 12px; }
+  .cookie__text { margin: 0; }
+  .cookie__btn { flex: 1 1 0; min-height: 44px; padding: 0 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cookie { transform: none; transition: opacity .2s ease; }
 }
 
 /* ============================================================
