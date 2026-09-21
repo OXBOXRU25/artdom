@@ -204,11 +204,6 @@ function artdom_register_fields() {
 				   на сайте «Принять» и «Отклонить» и не мог их изменить. */
 				artdom_f( 'cookie_btn_yes', 'Плашка про cookie: кнопка согласия', 'text', array( 'wrapper' => array( 'width' => 50 ), 'instructions' => 'Появляется вместо кнопки выше, когда подключён счётчик посещаемости. Нажатие включает счётчик.' ) ),
 				artdom_f( 'cookie_btn_no', 'Плашка про cookie: кнопка отказа', 'text', array( 'wrapper' => array( 'width' => 50 ), 'instructions' => 'Вторая кнопка. Нажатие закрывает плашку и счётчик не включает.' ) ),
-				artdom_f( 'cookie_btn_manage', 'Плашка про cookie: кнопка «Настроить»', 'text', array( 'wrapper' => array( 'width' => 50 ), 'instructions' => 'Раскрывает список категорий прямо в плашке.' ) ),
-				artdom_f( 'cookie_btn_save', 'Плашка про cookie: кнопка сохранения выбора', 'text', array( 'wrapper' => array( 'width' => 50 ), 'instructions' => 'Появляется в раскрытом списке категорий.' ) ),
-				artdom_f( 'cookie_cat_need', 'Категория: необходимые', 'text', array( 'instructions' => 'Первая строка в раскрытом списке. Галочка стоит всегда и снять её нельзя — без этих cookie сайт не работает.' ) ),
-				artdom_f( 'cookie_cat_stat', 'Категория: аналитика', 'text', array( 'instructions' => 'Вторая строка. Показывается, только когда вписан номер счётчика.' ) ),
-				artdom_f( 'cookie_cat_none', 'Список категорий без счётчика', 'textarea', array( 'rows' => 2, 'instructions' => 'Что написано в раскрытом списке, пока счётчик не подключён и настраивать нечего.' ) ),
 				artdom_f(
 					'opt_metrika',
 					'Яндекс.Метрика: номер счётчика',

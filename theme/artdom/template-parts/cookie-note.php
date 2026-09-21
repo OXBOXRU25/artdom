@@ -55,16 +55,16 @@ $own  = function_exists( 'get_field' ) ? trim( (string) get_field( 'cookie_text'
 $text = '' !== $own ? $own : artdom_default( $counter ? 'cookie_text_analytics' : 'cookie_text' );
 ?>
 <?php
-/* 21.09.2026. Построение переделано по образцу afternow.co (плагин Complianz):
-   капсула в правом нижнем углу, полупрозрачный фон с размытием, три кнопки в
-   строку и раскрывающийся список категорий. Числа сняты с образца щупом и
-   перенесены в стили как есть, в пикселях.
+/* 21.09.2026. Построение снято с afternow.co (плагин Complianz): капсула в
+   правом нижнем углу, полупрозрачный фон с размытием, кнопки в строку.
+   Числа сняты с образца щупом и перенесены в стили как есть, в пикселях;
+   типографика при этом наша, по токенам сайта.
 
-   Три кнопки стоят ВСЕГДА, даже пока счётчик не подключён, — иначе вид
-   плашки зависел бы от настройки, и на сайте без счётчика он расходился бы
-   с образцом. Меняется не набор кнопок, а содержимое раскрытого списка:
-   со счётчиком там переключатель аналитики, без него — строка о том, что
-   собирать нечего. */
+   Кнопки «Настроить» и списка категорий здесь БОЛЬШЕ НЕТ — убраны по
+   просьбе заказчика в тот же день. Выбор из двух кнопок закрывает всё, что
+   сайту нужно: согласие включает счётчик, отказ его не включает и больше не
+   переспрашивает. Подробности — что именно хранится и как отключить
+   остальное — лежат на странице по ссылке «Подробнее», а не в плашке. */
 ?>
 <aside class="cookie" data-cookie hidden aria-label="Про файлы cookie">
   <div class="cookie__row">
@@ -81,27 +81,6 @@ $text = '' !== $own ? $own : artdom_default( $counter ? 'cookie_text_analytics' 
       <button class="cookie__btn" type="button" data-cookie-no>
         <?php echo esc_html( artdom_field( 'cookie_btn_no', true ) ); ?>
       </button>
-      <button class="cookie__btn" type="button" data-cookie-manage aria-expanded="false">
-        <?php echo esc_html( artdom_field( 'cookie_btn_manage', true ) ); ?>
-      </button>
     </div>
-  </div>
-
-  <div class="cookie__manage" data-cookie-panel hidden>
-    <label class="cookie__cat">
-      <input type="checkbox" checked disabled>
-      <span><?php echo esc_html( artdom_field( 'cookie_cat_need', true ) ); ?></span>
-    </label>
-    <?php if ( $counter ) : ?>
-    <label class="cookie__cat">
-      <input type="checkbox" data-cookie-stat>
-      <span><?php echo esc_html( artdom_field( 'cookie_cat_stat', true ) ); ?></span>
-    </label>
-    <?php else : ?>
-    <p class="cookie__cat-none"><?php echo esc_html( artdom_field( 'cookie_cat_none', true ) ); ?></p>
-    <?php endif; ?>
-    <button class="cookie__btn cookie__btn--yes" type="button" data-cookie-save>
-      <?php echo esc_html( artdom_field( 'cookie_btn_save', true ) ); ?>
-    </button>
   </div>
 </aside>

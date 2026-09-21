@@ -1371,6 +1371,18 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 
 /* --- Текстовые страницы --- */
 .prose { max-width: 68ch; }
+/* Колонка чтения по центру — для страниц, где .prose стоит прямо на .wrap:
+   правовые документы, страница услуги, «О компании». Без этого правила
+   текст держал 68ch (около 510 пикселей) и жался к левому краю широкого
+   экрана: заказчик увидел это на странице про cookie как «с края, столбиком».
+   Число своё не выдумываем — 760 уже выбрано для текста статьи
+   (.postbody__in > .prose), и колонка обязана быть той же во всех
+   материалах сайта. К gutter прибавляем, потому что .wrap несёт поля
+   внутри своей ширины. */
+.wrap.prose {
+  max-width: calc(760px + 2 * var(--gutter));
+  margin-inline: auto;
+}
 .prose p, .prose ul, .prose ol { font-size: var(--t-body); line-height: 1.55; }
 .prose p + p, .prose ul, .prose ol { margin-block-start: max(10px, calc(14 * var(--k))); }
 .prose h2 { margin-block-start: max(24px, calc(36 * var(--k))); font-size: var(--t-title); }
@@ -3173,17 +3185,8 @@ form .btn {
    flex, у панели тоже. Без этих двух строк список категорий виден всегда,
    а сама плашка стоит на экране ещё до своего появления. На чистой странице
    без сброса это давало 984x158 вместо 666x46. */
-.cookie[hidden],
-.cookie__manage[hidden] { display: none; }
+.cookie[hidden] { display: none; }
 
-/* Раскрытые категории превращают капсулу в карточку: флажки в 46 пикселей
-   высоты не помещаются. */
-.cookie[data-managing="true"] {
-  flex-direction: column;
-  align-items: stretch;
-  padding: 16px;
-  border-radius: 20px;
-}
 
 .cookie__row { display: flex; align-items: center; }
 
@@ -3257,25 +3260,6 @@ form .btn {
   .cookie__btn--yes:hover { background: #1a1a1a; }
 }
 
-.cookie__manage {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(0, 0, 0, .12);
-  font-size: var(--t-chip);
-  line-height: 1.45;
-}
-.cookie__cat { display: flex; align-items: flex-start; gap: 8px; cursor: pointer; }
-.cookie__cat input {
-  margin-top: 2px;
-  width: 14px; height: 14px;
-  accent-color: #000;
-}
-.cookie__cat input:disabled { cursor: not-allowed; opacity: .55; }
-.cookie__cat-none { margin: 0; color: rgba(0, 0, 0, .62); }
-.cookie__manage .cookie__btn { align-self: flex-start; min-height: 36px; }
 
 /* Появление. Класс ставит скрипт после полной загрузки: до неё плашка лежит
    под hidden и не участвует ни в отрисовке, ни в замере LCP. */
