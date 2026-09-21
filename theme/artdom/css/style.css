@@ -1068,6 +1068,17 @@ textarea.field__input { resize: vertical; min-height: 96px; }
 .pagehead__lead { margin-block-start: max(12px, calc(18 * var(--k))); max-width: 52ch; color: var(--c-muted); }
 .pagehead__extra { margin-block-start: max(12px, calc(18 * var(--k))); }
 .pagehead__extra .rating { margin-block-start: 0; }
+/* Шапка страницы-материала: та же колонка, что у текста под ней. Число
+   общее с .wrap.prose и с текстом статьи — 760; заводить своё нельзя,
+   иначе заголовок и абзацы снова разойдутся. Заголовку снимаем потолок в
+   18ch: в узкой колонке он и так переносится, а ограничение резало его
+   вдвое раньше нужного. */
+.pagehead--narrow .wrap {
+  max-width: calc(760px + 2 * var(--gutter));
+  margin-inline: auto;
+}
+.pagehead--narrow .pagehead__title { max-width: none; }
+.pagehead--narrow .pagehead__lead { max-width: none; }
 /* Стоимость услуги в шапке страницы: подпись приглушённая, само число тем же
    весом, что и цена в карточке объекта, — на сайте это одна и та же величина
    и читаться она должна одинаково. */
@@ -2718,10 +2729,15 @@ form .btn {
 
 /* Строка крошек в серой полосе под меню. Она же и держит эту полосу: раньше
    её задавал верхний отступ .sheet, и крошки лежали уже на белом листе. */
+/* Полоса крошек. Отступ сверху и снизу ОДИНАКОВЫЙ — просьба заказчика
+   21.09.2026: «под крошками должен быть такой же отступ, как и над».
+   Раньше здесь стояла min-height: 172 * --k — на 1440 это 129 пикселей при
+   строке в 19 и верхнем поле в 16, то есть под крошками зияло 93. Серая
+   полоса выглядела пустой панелью, а не подложкой под навигацию.
+   Высоту теперь задаёт само содержимое плюс два равных поля. */
 .crumbbar {
-  min-height: max(30px, calc(172 * var(--k)));
   display: grid; align-items: start;
-  padding-block-start: max(10px, calc(22 * var(--k)));
+  padding-block: max(10px, calc(22 * var(--k)));
 }
 .crumbbar .crumbs { justify-content: center; }
 

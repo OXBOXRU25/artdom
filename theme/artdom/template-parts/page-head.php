@@ -20,8 +20,12 @@ $head_title = get_query_var( 'artdom_head_title' );
 $head_lead  = get_query_var( 'artdom_head_lead' );
 $head_extra = get_query_var( 'artdom_head_extra' );
 $head_hide  = (bool) get_query_var( 'artdom_head_hide' );
+/* Узкая шапка — для страниц-материалов: заголовок встаёт в ту же колонку,
+   что и текст под ним. У каталогов и услуг под шапкой идут сетки во всю
+   ширину, там флаг не ставится. */
+$head_narrow = (bool) get_query_var( 'artdom_head_narrow' );
 ?>
-  <section class="sec sec--white pagehead<?php echo $head_hide ? ' pagehead--bare' : ''; ?>">
+  <section class="sec sec--white pagehead<?php echo $head_hide ? ' pagehead--bare' : ''; ?><?php echo $head_narrow ? ' pagehead--narrow' : ''; ?>">
     <div class="wrap">
       <h1 class="h1 pagehead__title<?php echo $head_hide ? ' vh' : ''; ?>"><?php echo artdom_lines( $head_title ); ?></h1>
       <?php if ( $head_lead ) : ?>
