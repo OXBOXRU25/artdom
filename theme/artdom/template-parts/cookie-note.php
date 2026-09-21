@@ -24,8 +24,26 @@
  * @package artdom
  */
 
+/* Ссылка ведёт на документ ПРО COOKIE, а не на первый попавшийся правовой.
+   Раньше здесь стоял $legal[0] — то есть политика конфиденциальности: в
+   плашке про cookie ссылка «Подробнее» открывала документ про персональные
+   данные, где про cookie не сказано ни слова.
+   Ищем по адресу, а не по названию: название заказчик волен переписать, а
+   адрес страницы задаётся один раз. Не нашли — откатываемся на первый
+   документ, чтобы ссылка не исчезла вовсе. */
 $legal   = artdom_field( 'opt_legal', true );
-$privacy = ( is_array( $legal ) && ! empty( $legal[0]['url'] ) ) ? $legal[0]['url'] : '';
+$privacy = '';
+if ( is_array( $legal ) ) {
+	foreach ( $legal as $artdom_док ) {
+		if ( ! empty( $artdom_док['url'] ) && false !== strpos( $artdom_док['url'], '/cookie' ) ) {
+			$privacy = $artdom_док['url'];
+			break;
+		}
+	}
+	if ( '' === $privacy && ! empty( $legal[0]['url'] ) ) {
+		$privacy = $legal[0]['url'];
+	}
+}
 
 $counter = artdom_metrika_id();
 

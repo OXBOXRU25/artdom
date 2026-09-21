@@ -3192,12 +3192,19 @@ form .btn {
    без сброса плашка от него становится выше и отъезжает от нижнего края
    (13 вместо 25). У нас сброс есть, строка стоит страховкой — чужой стиль
    или плагин вернут отступ молча. */
+/* Типографика НАША, а не образца — правка заказчика 21.09.2026.
+   У образца здесь 13.58px, вес 500 и трекинг −0.02em: это его шкала, и на
+   нашем сайте такой кегль не встречается больше нигде. Берём токен --t-body,
+   тот же, которым набран весь текст сайта, вес 400 и трекинг normal.
+   Геометрия капсулы при этом остаётся образцовой — меняется только набор.
+   margin: 0 обязателен: у <p> есть собственный отступ от браузера, без него
+   плашка становится выше и отъезжает от нижнего края. */
 .cookie__text {
   margin: 0 12px 0 0;
-  font-size: 13.58px;
-  line-height: 20.37px;
-  font-weight: 500;
-  letter-spacing: -.02em;
+  font-size: var(--t-body);
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: normal;
   color: #000;
 }
 /* Ссылка на политику. Цвет наш фирменный, а не чёрный образца: ссылка
@@ -3224,7 +3231,9 @@ form .btn {
   background: rgba(0, 0, 0, .05);
   color: #000;
   font: inherit;
-  font-size: 12px;
+  /* Кегль наш: --t-chip, тот же, которым набраны чипы и мелкие подписи
+     сайта. У образца здесь 12px — число из его шкалы. */
+  font-size: var(--t-chip);
   font-weight: 500;
   line-height: 1;
   letter-spacing: normal;
@@ -3255,7 +3264,7 @@ form .btn {
   margin-top: 14px;
   padding-top: 14px;
   border-top: 1px solid rgba(0, 0, 0, .12);
-  font-size: 13px;
+  font-size: var(--t-chip);
   line-height: 1.45;
 }
 .cookie__cat { display: flex; align-items: flex-start; gap: 8px; cursor: pointer; }
